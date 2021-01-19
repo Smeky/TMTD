@@ -7,9 +7,13 @@ body {
     background-color: #1e2840;
 }
 
-h1 {
-    font-family: $font;
-    color: $primary-color;
-    text-align: center;
-    margin-top: 20%;
+#app {
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+}
+
+#app canvas {
+    border: 1px solid #3a405a;
+    box-shadow: 0 5px 20px 1px #00000085;
 }

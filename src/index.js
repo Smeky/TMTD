@@ -1,10 +1,13 @@
 import "./style.scss"
-console.log("TMTD Terminal")
 
-const esTest = () => {
-    return [1, 2]
-}
+import * as pixi from "pixi.js"
 
-const [a, b] = esTest()
+pixi.utils.skipHello() // Don't spam the console banner
+const app = new pixi.Application({
+    width: 1024,
+    height: 768,
+    antialias: true,
+    backgroundColor: 0x313548
+})
 
-console.warn(a, b)
+document.getElementById("app").appendChild(app.view)
