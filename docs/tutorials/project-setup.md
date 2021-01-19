@@ -19,3 +19,5 @@ Install node_modules
 And to see if it went ok
 
     yarn start
+
+Then go to http://localhost:8080/. If the page loads up, it works :)
