@@ -19,10 +19,7 @@ class Game {
     }
 
     setupEventListeners() {
-        document.body.addEventListener("keydown", event => {
-            // Don't trigger while holding a key down
-            if (event.repeat) return
-
+        document.body.addEventListener("keyup", event => {
             if (event.key.toLowerCase() === "b") {
                 this.grid.toggleDisplayGrid()
             }
@@ -34,8 +31,7 @@ class Game {
     }
 
     update = (delta) => {
-        this.graphics.app.renderer.render(this.graphics.app.stage)
-        requestAnimationFrame(this.update)
+
     }
 }
 
