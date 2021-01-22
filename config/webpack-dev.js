@@ -4,11 +4,16 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
     mode: "development",
+    devtool: "eval-source-map",
     module: {
         rules: [
             {
                 test: /\.scss$/,
                 use: ["Style-loader", "css-loader", "sass-loader"]
+            },
+            {
+                test: /\.png/,
+                use: ["file-loader"]
             },
             {
                 test: /\.js$/,
