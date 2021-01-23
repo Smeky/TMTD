@@ -1,6 +1,7 @@
 import * as pixi from "pixi.js"
 import Graphics from "game/graphics"
 import Grid from "game/core/grid"
+import { Vec2 } from "./structs"
 
 class Game {
     constructor() {}

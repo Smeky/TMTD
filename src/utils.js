@@ -1,23 +1,21 @@
+import { Vec2, Rect } from "./structs"
 
 /**
- * 
- * @param {number} x 
- * @param {number} y 
- * @param {object} bounds 
- * @param {number} bounds.x
- * @param {number} bounds.y
- * @param {number} bounds.w
- * @param {number} bounds.h
+ * Creates a new positions that is limited to bounds
+ * @param {Vec2} pos
+ * @param {Rect} bounds
+ * @returns {Vec2} bound position
  */
-// Todo: Replace x & y by pos, bounds by rect
-export function clampPosInBounds(x, y, bounds = {x: 0, y: 0, w: 0, h: 0}) {
-    let res = {x, y}
 
-    if (x < bounds.x) res.x = bounds.x
-    else if (x > bounds.x + bounds.w) res.x = bounds.x + bounds.w
+// Todo: Replace x & y by pos, bounds by rect
+export function clampPosInBounds(pos, bounds) {
+    let res = new Vec2(pos)
+
+    if (pos.x < bounds.x) res.x = bounds.x
+    else if (pos.x > bounds.x + bounds.w) res.x = bounds.x + bounds.w
     
-    if (y < bounds.y) res.y = bounds.y
-    else if (y > bounds.y + bounds.h) res.y = bounds.y + bounds.h
+    if (pos.y < bounds.y) res.y = bounds.y
+    else if (pos.y > bounds.y + bounds.h) res.y = bounds.y + bounds.h
 
     return res
 }

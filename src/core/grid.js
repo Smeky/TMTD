@@ -1,5 +1,6 @@
 import * as pixi from "pixi.js"
 import * as utils from "game/utils"
+import { Rect, Vec2 } from "../structs"
 
 class GridCell {
     constructor(index, x, y, w, h) {
@@ -97,9 +98,12 @@ class Grid {
         const x = event.layerX - this.cellWidth / 2
         const y = event.layerY - this.cellHeight / 2
 
-        let xIndex = Math.floor(x / this.cellWidth)
-        let yIndex = Math.floor(y / this.cellHeight)
-        const pos = utils.clampPosInBounds(xIndex, yIndex, {x: 0, y: 0, w: this.gridWidth - 2, h: this.gridHeight - 2})
+        const posIndex = new Vec2(
+            Math.floor(x / this.cellWidth),
+            Math.floor(y / this.cellHeight),
+        )
+
+        const pos = utils.clampPosInBounds(posIndex, new Rect(0, 0, this.gridWidth - 2, this.gridHeight - 2))
 
         // Select 4 cells around the cursor (tpi = top left index)
         const tpi = pos.x + this.gridWidth * pos.y
