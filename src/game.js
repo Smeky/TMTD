@@ -1,6 +1,7 @@
 import * as pixi from "pixi.js"
 import Graphics from "game/graphics"
 import Grid from "game/core/grid"
+import SceneHandler, {LevelScene} from "game/scenes"
 import { Vec2 } from "./structs"
 
 class Game {
@@ -17,6 +18,9 @@ class Game {
 
         // Todo: Create some sort of event handler, this should be moved there.
         this.setupEventListeners()
+
+        this.sceneHandler = new SceneHandler()
+        this.sceneHandler.setScene(LevelScene)
 
         // Set of debug features, probably should be here
         this.debug = {
