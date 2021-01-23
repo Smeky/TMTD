@@ -1,14 +1,15 @@
 import * as pixi from "pixi.js"
+import * as utils from "/src/utils" // Todo:fix-path
 
 class GridCell {
-    constructor(x, y, w, h) {
+    constructor(index, x, y, w, h) {
+        this.index = index
         this.x = x
         this.y = y
         
+        // Replace by flags so we can use switch for alpha value by state
         this.isVisible = false
-        this.isBuildable = false
-        this.isBlocked = false
-        this.isPath = false
+        this.isHighlighted = false
 
         this.sprite = pixi.Sprite.from("../../media/tile.png")
         this.sprite.anchor.set(0.5, 0.5)
@@ -22,12 +23,22 @@ class GridCell {
         this.updateAlpha()
     } 
 
+    setHighlighted(state) {
+        this.isHighlighted = state
+        this.updateAlpha()
+    }
+
     updateAlpha() {
-        if (this.isVisible) {
-            this.sprite.alpha = 0.07
+        if (!this.isVisible) {
+            this.sprite.alpha = 0
+            return
+        }
+
+        if (this.isHighlighted) {
+            this.sprite.alpha = 0.3
         }
         else {
-            this.sprite.alpha = 0
+            this.sprite.alpha = 0.02
         }
     }
 }
@@ -57,7 +68,8 @@ class Grid {
 
         for (let y = 0; y < this.gridHeight; y++) {
             for (let x = 0; x < this.gridWidth; x++) {
-                const cell = new GridCell(x, y, this.cellWidth, this.cellHeight)
+                const index = x + this.gridWidth * y
+                const cell = new GridCell(index, x, y, this.cellWidth, this.cellHeight)
 
                 this.cells.push(cell)
                 this.spriteContainer.addChild(cell.sprite)
@@ -69,6 +81,35 @@ class Grid {
         this.isDisplayGridOn = !this.isDisplayGridOn
 
         this.cells.forEach(cell => cell.setVisible(this.isDisplayGridOn))
+
+        if (this.isDisplayGridOn) {
+            // Todo: event listener
+            const el = document.getElementsByTagName("canvas")[0]
+            el.addEventListener('mousemove', this.onMouseMove)
+        }
+        else {
+            const el = document.getElementsByTagName("canvas")[0]
+            el.removeEventListener('mousemove', this.onMouseMove)
+        }
+    }
+
+    onMouseMove = (event) => {
+        const x = event.layerX - this.cellWidth / 2
+        const y = event.layerY - this.cellHeight / 2
+
+        let xIndex = Math.floor(x / this.cellWidth)
+        let yIndex = Math.floor(y / this.cellHeight)
+        const pos = utils.clampPosInBounds(xIndex, yIndex, {x: 0, y: 0, w: this.gridWidth - 2, h: this.gridHeight - 2})
+
+        // Select 4 cells around the cursor (tpi = top left index)
+        const tpi = pos.x + this.gridWidth * pos.y
+        const indices = [tpi, tpi + 1, tpi + this.gridWidth, tpi + this.gridWidth + 1]
+
+        // Check if we should highlight some new cells
+        if (!indices.every(index => this.cells[index].isHighlighted)) {
+            this.cells.forEach(cell => cell.setHighlighted(false))
+            indices.forEach(index => this.cells[index].setHighlighted(true))
+        }
     }
 }
 
