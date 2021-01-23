@@ -1,5 +1,5 @@
 import * as pixi from "pixi.js"
-import * as utils from "/src/utils" // Todo:fix-path
+import * as utils from "game/utils"
 
 class GridCell {
     constructor(index, x, y, w, h) {

@@ -1,6 +1,6 @@
 import * as pixi from "pixi.js"
-import Graphics from "./graphics"
-import Grid from "./structures/grid"
+import Graphics from "game/graphics"
+import Grid from "game/structures/grid"
 
 class Game {
     constructor() {}
@@ -16,6 +16,11 @@ class Game {
 
         // Todo: Create some sort of event handler, this should be moved there.
         this.setupEventListeners()
+
+        // Set of debug features, probably should be here
+        this.debug = {
+
+        }
     }
 
     setupEventListeners() {

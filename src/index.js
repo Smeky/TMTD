@@ -1,6 +1,6 @@
-import "./style.scss"
+import "game/style.scss"
 
-import Game from "./game"
+import Game from "game/game"
 
 const game = new Game(app)
 window.game = game // Expose the game to global scope
