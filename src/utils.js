@@ -1,4 +1,4 @@
-import { Vec2, Rect } from "./structs"
+import { Vec2, Rect } from "game/core/structs"
 
 /**
  * Creates a new positions that is limited to bounds
