@@ -52,6 +52,9 @@ class Grid {
         this.cellHeight  = 32
 
         this.isDisplayGridOn = false
+
+        // Todo: don't forget to cleanup
+        this.eventProxy = game.events.getProxy()
         
         this.setupGrid()
     }
@@ -84,13 +87,10 @@ class Grid {
         this.cells.forEach(cell => cell.setVisible(this.isDisplayGridOn))
 
         if (this.isDisplayGridOn) {
-            // Todo: event listener
-            const el = document.getElementsByTagName("canvas")[0]
-            el.addEventListener('mousemove', this.onMouseMove)
+            this.eventProxy.listen("mousemove", this.onMouseMove)
         }
         else {
-            const el = document.getElementsByTagName("canvas")[0]
-            el.removeEventListener('mousemove', this.onMouseMove)
+            this.eventProxy.leave("mousemove", this.onMouseMove)
         }
     }
 

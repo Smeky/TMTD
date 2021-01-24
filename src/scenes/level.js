@@ -7,16 +7,16 @@ export default class LevelScene extends Scene {
 
         game.ticker.add(this.update)
 
-        console.log("LevelScene is set up")
-
-        // Todo: Move to scene
         this.grid = new Grid()
-
-        document.body.addEventListener("keyup", this.onKeyUp)
+        
+        this.eventProxy = game.events.getProxy()
+        this.eventProxy.listen("keyup", this.onKeyUp)
+        
+        console.log("LevelScene is set up")
     }
-
+    
     close() {
-        document.body.removeEventListener("keyup", this.onKeyUp)
+        this.eventProxy.close()
     }
 
     update = (delta) => {
