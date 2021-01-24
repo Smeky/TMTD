@@ -1,8 +1,6 @@
 import * as pixi from "pixi.js"
 import Graphics from "game/graphics"
-import Grid from "game/core/grid"
 import SceneHandler, {LevelScene} from "game/scenes"
-import { Vec2 } from "./structs"
 
 class Game {
     constructor() {}
@@ -12,9 +10,6 @@ class Game {
         this.ticker = pixi.Ticker.shared
         this.ticker.autoStart = false
         this.ticker.add(this.update)
-
-        // Todo: Move to scene
-        this.grid = new Grid()
 
         // Todo: Create some sort of event handler, this should be moved there.
         this.setupEventListeners()
@@ -29,11 +24,7 @@ class Game {
     }
 
     setupEventListeners() {
-        document.body.addEventListener("keyup", event => {
-            if (event.key.toLowerCase() === "b") {
-                this.grid.toggleDisplayGrid()
-            }
-        })
+        
     }
     
     run() {
