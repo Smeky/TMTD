@@ -3,17 +3,12 @@
 $font: "Karla", sans-serif;
 $primary-color: #ffffff;
 
+html, body, div {
+    padding: 0;
+    margin: 0;
+}
+
 body {
-    background-color: #1e2840;
-}
-
-#app {
-    display: flex;
-    justify-content: center;
-    margin-top: 5%;
-}
-
-#app canvas {
-    border: 1px solid #3a405a;
-    box-shadow: 0 5px 20px 1px #00000085;
+    background-color: #10121b;
+    overflow: hidden;
 }

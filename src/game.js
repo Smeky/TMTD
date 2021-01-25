@@ -1,6 +1,6 @@
 import * as pixi from "pixi.js"
 import Graphics from "game/graphics"
-import SceneHandler, {LevelScene} from "game/scenes"
+import SceneHandler, {LevelScene, EditorScene} from "game/scenes"
 import EventHandler from "game/core/events"
 
 class Game {
@@ -21,7 +21,7 @@ class Game {
 
         // Scene init should be last
         this.sceneHandler = new SceneHandler()
-        this.sceneHandler.setScene(LevelScene)
+        this.sceneHandler.setScene(EditorScene)
     }
     
     run() {
@@ -29,7 +29,7 @@ class Game {
     }
 
     update = (delta) => {
-
+        // this.graphics.renderer.render(this.graphics.app.stage)
     }
 }
 
