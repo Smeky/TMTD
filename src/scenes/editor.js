@@ -16,6 +16,8 @@ export default class EditorScene extends Scene {
         
         const tex = game.graphics.createTextureFromObject(gra)
         const sprite = new pixi.Sprite.from(tex)
+        sprite.anchor.x = 0.5
+        sprite.anchor.y = 0.5
         this.sceneContainer.addChild(sprite)
     }
 

@@ -1,9 +1,15 @@
 import "game/style.scss"
 
 import Game from "game/game"
+import * as pixi from "pixi.js"
 
 const game = new Game()
-window.game = game // Expose the game to global scope
+
+if (process.env.NODE_ENV === "development") {
+    // Expose to global scope
+    window.game = game
+    window.game.pixi = pixi 
+}
 
 console.log(window.game)
 
