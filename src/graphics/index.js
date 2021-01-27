@@ -9,6 +9,7 @@ class Graphics {
             width: window.innerWidth,
             height: window.innerHeight,
             antialias: true,
+            resizeTo: window,
             backgroundColor: 0x000000
         })
 
