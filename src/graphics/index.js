@@ -1,4 +1,5 @@
 import * as pixi from "pixi.js"
+import {Rect} from "game/core/structs"
 
 pixi.utils.skipHello() // Don't spam the console banner
 
@@ -27,6 +28,21 @@ class Graphics {
         const pixels = this.renderer.extract.pixels(displayObject)
 
         return pixi.Texture.fromBuffer(pixels, width, height)
+    }
+
+    /**
+     * Creates a new Sprite instance of rectangular shape
+     * @param {Rect} bounds Bounds of the rectangle
+     * @param {number} color Hexadecimal color
+     * @returns {pixi.Sprite} new PIXI Sprite instance
+     */
+    createRectSprite(bounds, color) {
+        const g = new pixi.Graphics()
+        g.beginFill(color)
+        g.drawRect(bounds.x, bounds.y, bounds.w, bounds.h)
+        g.endFill()
+
+        return new pixi.Sprite.from(this.createTextureFromObject(g))
     }
 }
 

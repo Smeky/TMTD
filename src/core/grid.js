@@ -1,5 +1,5 @@
 import * as pixi from "pixi.js"
-import * as utils from "game/utils"
+import utils from "game/utils"
 import { Rect, Vec2 } from "game/core/structs"
 
 class GridCell {
