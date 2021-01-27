@@ -1,5 +1,6 @@
 import * as pixi from "pixi.js"
 import Graphics from "game/graphics"
+import Debugger from "game/debug"
 import SceneHandler, {LevelScene, EditorScene} from "game/scenes"
 import EventHandler from "game/core/events"
 
@@ -13,11 +14,8 @@ class Game {
         this.ticker.add(this.update)
 
         this.events = new EventHandler()
-
-        // Set of debug features, probably should be here
-        this.debug = {
-
-        }
+        this.debug = new Debugger()
+        this.graphics.stage.addChild(this.debug)
 
         this.setupScene()
     }

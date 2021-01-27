@@ -19,7 +19,10 @@ class Pallete extends pixi.Container {
             const sprite = game.graphics.createRectSprite(new Rect(0, 0, size, size), utils.rbgColorToHex(color))
                 
             sprite.interactive = true
-            sprite.on("mouseup", () => this.selectColor(color))
+            sprite.on("mouseup", (event) => {
+                event.stopPropagation()
+                this.selectColor(color)
+            })
 
             const total = index * sizeAndOffset
             sprite.x = Math.floor(total / (perCol * sizeAndOffset)) * sizeAndOffset
@@ -62,9 +65,12 @@ export default class EditorScene extends Scene {
         this.eventProxy = game.events.getProxy()
 
         this.pallete = new Pallete(["#ff0000", "#00ff00", "#0000ff", "#00ffff", "#ff00ff"])
-        this.pallete.x = -Math.min(window.innerWidth / 2, 700) + 100
-        this.pallete.y = -window.innerHeight / 2 + 50
+        this.pallete.x = Math.round(-Math.min(window.innerWidth / 2, 700) + 100)
+        this.pallete.y = Math.round(-window.innerHeight / 2 + 50)
         this.sceneContainer.addChild(this.pallete)
+
+        game.debug.displayBounds(this.pallete)
+        // game.debug.hideBounds(this.pallete)
     }
 
     close() {

@@ -20,8 +20,8 @@ class Graphics {
         this.stage = this.app.stage
 
         this.stage.addChild(this.camera)
-        this.stage.pivot.x = - window.innerWidth / 2
-        this.stage.pivot.y = - window.innerHeight / 2
+        this.stage.pivot.x = Math.round(-window.innerWidth / 2)
+        this.stage.pivot.y = Math.round(-window.innerHeight / 2)
     }
 
     createTextureFromObject(displayObject) {
