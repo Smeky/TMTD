@@ -8,6 +8,17 @@ export default class Debugger extends pixi.Container {
         this.addChild(this.boundsGraphics)
 
         this.displayedObjects = []
+
+        this.centerRuler = new pixi.Graphics()
+        this.centerRuler.lineStyle(1, 0xff0000)
+        this.centerRuler.moveTo(0, -window.innerHeight / 2 - 1)
+        this.centerRuler.lineTo(0,  window.innerHeight / 2 + 1)
+        this.centerRuler.moveTo(-window.innerWidth / 2 - 1, 0)
+        this.centerRuler.lineTo( window.innerWidth / 2 + 1, 0)
+        this.centerRuler.endFill()
+        this.centerRuler.visible = false
+
+        this.addChild(this.centerRuler)
     }
 
     displayBounds(graphicsObject) {
@@ -32,6 +43,10 @@ export default class Debugger extends pixi.Container {
         }
 
         this.boundsGraphics.endFill()
+    }
+
+    toggleCenterRuler() {
+        this.centerRuler.visible = !this.centerRuler.visible
     }
 }
 

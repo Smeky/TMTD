@@ -8,7 +8,7 @@ class Graphics {
         this.app = new pixi.Application({
             width: window.innerWidth,
             height: window.innerHeight,
-            antialias: true,
+            // antialias: true,
             resizeTo: window,
             backgroundColor: 0x000000
         })
