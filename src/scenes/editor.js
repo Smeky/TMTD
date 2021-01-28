@@ -10,8 +10,8 @@ export default class EditorScene extends Scene {
     constructor() {
         super("editor")
 
-        this.eventProxy = game.events.getProxy()
-        this.eventProxy.listen("mousemove", this.handleMouseMove)
+        this.inputProxy = game.input.getProxy()
+        this.inputProxy.on("mousemove", this.handleMouseMove)
 
         this.sceneContainer.interactive = true
         this.sceneContainer.on("mousedown", this.togglePainting)
@@ -40,7 +40,7 @@ export default class EditorScene extends Scene {
     }
 
     close() {
-        this.eventProxy.close()
+        this.inputProxy.close()
     }
 
     handleTilePlacement(clampedPos) {

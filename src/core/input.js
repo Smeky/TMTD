@@ -1,14 +1,14 @@
 
-class EventProxy {
+class InputProxy {
     constructor(id, handler) {
         this.id = id
         this.handler = handler
         this.callbacks = [] // Tuples of (event, callback)
     }
 
-    listen(event, callback) {
+    on(event, callback) {
         this.callbacks.push([event, callback])
-        this.handler.listen(event, callback)
+        this.handler.on(event, callback)
     }
 
     leave(callback) {
@@ -24,7 +24,7 @@ class EventProxy {
     }
 }
 
-export default class EventHandler {
+export default class InputHandler {
     constructor() {
         // {event-name: [], ...}
         this.proxies = []
@@ -36,7 +36,7 @@ export default class EventHandler {
     }
 
     getProxy() {
-        const proxy = new EventProxy(this.proxyIdCounter++, this)
+        const proxy = new InputProxy(this.proxyIdCounter++, this)
         this.proxies.push(proxy)
 
         return proxy
@@ -47,7 +47,7 @@ export default class EventHandler {
         this.proxies.splice(index, 1)
     }
 
-    listen(event, callback) {
+    on(event, callback) {
         // Events that should be trigger only from the canvas DOM
         if (this._doesBelongToCanvas(event)) {
             // Todo: move to constructor (might cause troubles with pixi app not being running yet)

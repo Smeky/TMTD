@@ -1,26 +1,36 @@
 import * as pixi from "pixi.js"
 import Debugger from "game/debug"
 import SceneHandler, {LevelScene, EditorScene} from "game/scenes"
-import EventHandler from "game/core/events"
+import InputHandler from "game/core/input"
 
 pixi.utils.skipHello()
 
 class Game {
     constructor() {}
 
+    get width() {
+        return this.renderer.view.width
+    }
+
+    get height() {
+        return this.renderer.view.height
+    }
+
     init() {
-        this.width = window.innerWidth
-        this.height = window.innerHeight
-        
+        const width = window.innerWidth
+        const height = window.innerHeight
+
         this.renderer = new pixi.Renderer({ 
-            width: this.width, 
-            height: this.height, 
+            width: width, 
+            height: height,
             backgroundColor: 0x1c2433 
         })
 
         this.stage = new pixi.Container()
-        this.stage.pivot.x = Math.round(-window.innerWidth / 2)
-        this.stage.pivot.y = Math.round(-window.innerHeight / 2)
+        this.stage.pivot.x = Math.round(-width / 2)
+        this.stage.pivot.y = Math.round(-height / 2)
+
+        window.addEventListener("resize", this.handleResize)
 
         document.body.appendChild(this.renderer.view)
 
@@ -28,7 +38,7 @@ class Game {
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
         this.ticker.start()
 
-        this.events = new EventHandler()
+        this.input = new InputHandler()
         this.debug = new Debugger()
 
         this.setupScene()
@@ -69,6 +79,11 @@ class Game {
     update = (delta) => {
         this.sceneHandler.update(delta)
         this.renderer.render(this.stage)
+    }
+
+    handleResize = (event) => {
+        this.renderer.view.width = event.target.innerWidth
+        this.renderer.view.height = event.target.innerHeight
     }
 }
 

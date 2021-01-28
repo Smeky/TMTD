@@ -4,11 +4,11 @@ export default class LevelScene extends Scene {
     constructor() {
         super("level")
 
-        this.eventProxy = game.events.getProxy()
+        this.inputProxy = game.input.getProxy()
     }
     
     close() {
-        this.eventProxy.close()
+        this.inputProxy.close()
     }
 
     update(delta) {
