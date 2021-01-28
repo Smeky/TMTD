@@ -33,8 +33,12 @@ export class Rect {
         if (typeof x === "object") {
             this.x = x.x
             this.y = x.y
-            this.w = x.w
-            this.h = x.h
+
+            // pixi.Rectangle
+            if (x.hasOwnProperty("width")) {
+                this.w = x.width
+                this.h = x.height
+            }
         }
         else {
             this.x = x
@@ -42,5 +46,19 @@ export class Rect {
             this.w = w
             this.h = h
         }
+    }
+
+    compare(other) {
+        if (this.x !== other.x || this.y !== other.y) return false
+
+        // pixi.Rectangle
+        if (other.hasOwnProperty("width")) {
+            if (this.w !== other.width || this.h !== other.height) return false
+        }
+        else {
+            if (this.w !== other.w || this.h !== other.h) return false
+        }
+
+        return true
     }
 }

@@ -21,9 +21,37 @@ export default {
         return res
     },
 
+    clampPosToGrid(pos, cellSize) {
+        return new Vec2(
+            Math.floor((pos.x + cellSize / 2) / cellSize) * cellSize,
+            Math.floor((pos.y + cellSize / 2) / cellSize) * cellSize,
+        )
+    },
+
     rbgColorToHex: function(str) {
         // According to docs of parseInt():
         //    - If the string begins with "0x", the radix is 16 (hexadecimal)
         return parseInt(str.replace("#", "0x"))
     },
+
+    // Todo: Just an idea:
+    // animate: function(opts = {
+    //     target,
+    //     transform, // compares, finds differences and updates just those
+    //     type, // linear, ..
+    //     time
+    // }) {
+    //     ...
+    //     // Returns a callback that gets registered in game.ticker
+    //     return (delta) => {
+    //         target.x += vel.x * delta
+    //         ...
+    //     }
+    // },
+
+    // Todo: Another Idea:
+    // Remember that scaling of canvas to window size for editor?
+    // What if we did that, just reversed, for boss fights, making them harder.
+    // Or just increased difficulty in general. Imagine having hard mobs
+    // that if they do something speceial, they reduce your game window size. lol
 }
