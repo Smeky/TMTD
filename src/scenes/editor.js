@@ -1,66 +1,10 @@
 import Scene from "game/scenes/scene"
-import utils from "game/utils"
-import {Vec2, Rect} from "game/core/structs"
+import {TilePalette} from "game/editor/palette"
+import {Tile} from "game/core/tile"
+import {Vec2} from "game/core/structs"
 import * as pixi from "pixi.js"
-
-// Todo:ui: Make this into some kind of UI element
-class Pallete extends pixi.Container {
-    constructor(colors) {
-        super()
-
-        this.colors = []
-        this.onColorSet = null
-
-        const offset = 5
-        const size = 50
-        const sizeAndOffset = size + offset
-        const perCol = 5
-
-        colors.forEach((color, index) => {
-            const sprite = game.graphics.createRectSprite(new Rect(0, 0, size, size), utils.rbgColorToHex(color))
-                
-            sprite.interactive = true
-            sprite.on("mouseup", (event) => {
-                event.stopPropagation()
-                this.selectColor(color)
-            })
-
-            const total = index * sizeAndOffset
-            sprite.x = Math.floor(total / (perCol * sizeAndOffset)) * sizeAndOffset
-            sprite.y = total % (perCol * sizeAndOffset)
-
-            this.addChild(sprite)
-            this.colors.push({
-                value: color,
-                sprite
-            })
-        })
-
-        const border = new pixi.Graphics()
-        border.lineStyle(2, 0xffffff, 1)
-        border.drawRoundedRect(0, 0, size, size, 0.1)
-        border.endFill()
-
-        this.addChild(border)
-
-        this.selection = {
-            color: this.colors[0],
-            border
-        }
-    }
-
-    selectColor(color) {
-        
-        const newColor = this.colors.find(newColor => newColor.value === color)
-        this.selection.color = newColor
-        this.selection.border.x = newColor.sprite.x
-        this.selection.border.y = newColor.sprite.y
-
-        if (this.onColorSet) {
-            this.onColorSet()
-        }
-    }
-}
+import utils from "game/utils"
+import { Rect } from "../core/structs"
 
 export default class EditorScene extends Scene {
     constructor() {
@@ -68,87 +12,79 @@ export default class EditorScene extends Scene {
 
         this.eventProxy = game.events.getProxy()
         this.eventProxy.listen("mousemove", this.handleMouseMove)
-        this.eventProxy.listen("mousedown", this.handleMouseDown)
-        this.eventProxy.listen("mouseup",   this.handleMouseUp)
 
-        this.pallete = new Pallete(["#ff0000", "#00ff00", "#0000ff", "#00ffff", "#ff00ff"])
-        this.pallete.x = Math.round(-Math.min(window.innerWidth / 2, 700) + 100)
-        this.pallete.y = Math.round(-window.innerHeight / 2 + 50)
-        this.pallete.onColorSet = this.updateMouseTile
+        this.sceneContainer.interactive = true
+        this.sceneContainer.on("mousedown", this.togglePainting)
+        this.sceneContainer.on("mouseup", this.togglePainting)
 
-        this.mouseTile = new pixi.Sprite(this.pallete.selection.color.sprite.texture)
-        this.mouseTile.width = 32
-        this.mouseTile.height = 32
-
-        this.tempGrid = new pixi.Container()
         this.isPainting = false
 
-        this.sceneContainer.addChild(this.tempGrid)
-        this.sceneContainer.addChild(this.mouseTile)
-        this.sceneContainer.addChild(this.pallete)
+        this.defaultPreviewAlpha = 0.5
+        this.preview = new pixi.Sprite()
+        this.preview.alpha = this.defaultPreviewAlpha
+
+        this.palette = new TilePalette("media/tileset.png")
+        this.palette.x = Math.round(-Math.min(window.innerWidth / 2, 700) + 50)
+        this.palette.y = Math.round(-window.innerHeight / 2 + 100)
+        this.palette.onSelected = (index) => {
+            this.preview.texture = this.palette.getTileTexture(index)
+        }
+
+        this.tiles = new pixi.Container()
+
+        this.sceneContainer.addChild(this.tiles)
+        this.sceneContainer.addChild(this.preview)
+        this.sceneContainer.addChild(this.palette)
+
+        game.debug.displayBounds(this.sceneContainer)
     }
 
     close() {
         this.eventProxy.close()
     }
 
-    clampPosToGrid(pos) {
-        return new Vec2(
-            Math.floor((pos.x + 16) / 32) * 32,
-            Math.floor((pos.y + 16) / 32) * 32,
-        )
-    }
-    
-    handleTilePlacement(pos) {
-        if (!this.tempGrid.children.find(tile => tile.x === pos.x && tile.y === pos.y)) {
-            const tile = new pixi.Sprite(this.pallete.selection.color.sprite.texture)
-            tile.x = pos.x
-            tile.y = pos.y
-            tile.width = 32
-            tile.height = 32
+    handleTilePlacement(clampedPos) {
+        let tile = this.tiles.children.find(tile => tile.x === clampedPos.x && tile.y === clampedPos.y)
 
-            this.tempGrid.addChild(tile)
+        if (!tile) {
+            tile = new pixi.Sprite(this.palette.getSelectedTileTexture())
+            tile.x = clampedPos.x
+            tile.y = clampedPos.y
+
+            this.tiles.addChild(tile)
         }
+        else {
+            const texture = this.palette.getSelectedTileTexture()
+
+            // resolve tile type, layer, etc..
+            if (!new Rect(texture.orig).compare(tile.texture.orig)) {
+                tile.texture = texture
+            }
+        }
+    }
+
+    togglePainting = () => {
+        this.isPainting = !this.isPainting
+        // Need to use alpha because visible would reduce the size of container
+        // and we would not be able to catch mouse events -.-'
+        this.preview.alpha = this.isPainting ? 0 : this.defaultPreviewAlpha
     }
 
     handleMouseMove = (event) => {
         const {layerX, layerY} = event
-        
+
+        // Todo:util: PLEASE make some func that would give pos based on stage's pivot and size
         let pos = new Vec2(
-            layerX - window.innerWidth / 2 - 16,
-            layerY - window.innerHeight / 2 - 16
+            layerX - window.innerWidth / 2 - Tile.Size / 2,
+            layerY - window.innerHeight / 2 - Tile.Size / 2,
         )
+        
+        pos = utils.clampPosToGrid(pos, Tile.Size)
+        this.preview.x = pos.x
+        this.preview.y = pos.y
 
-        pos = this.clampPosToGrid(pos)
-
-        this.mouseTile.alpha = 0.3
-        this.mouseTile.x = pos.x
-        this.mouseTile.y = pos.y
-
-        if (this.isPainting) {
+        if (this.isPainting && this.palette.hasTileSelected()) {
             this.handleTilePlacement(pos)
         }
-    }
-
-    handleMouseDown = (event) => {
-        const {layerX, layerY} = event
-        
-        let pos = new Vec2(
-            layerX - window.innerWidth / 2 - 16,
-            layerY - window.innerHeight / 2 - 16
-        )
-
-        pos = this.clampPosToGrid(pos)
-
-        this.handleTilePlacement(pos)
-        this.isPainting = true
-    }
-
-    handleMouseUp = () => {
-        this.isPainting = false
-    }
-
-    updateMouseTile = () => {
-        this.mouseTile.texture = this.pallete.selection.color.sprite.texture
     }
 }

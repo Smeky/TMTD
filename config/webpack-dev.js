@@ -8,6 +8,7 @@ module.exports = {
     resolve: {
         alias: {
             game: path.resolve("src"),
+            media: path.resolve("media")
         }
     },
     module: {
