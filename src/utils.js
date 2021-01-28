@@ -34,6 +34,29 @@ export default {
         return parseInt(str.replace("#", "0x"))
     },
 
+    // Todo: moved those two here for now. Move it somewhere appropriate
+    createTextureFromObject(displayObject) {
+        const {width, height} = displayObject.getLocalBounds()
+        const pixels = this.renderer.extract.pixels(displayObject)
+
+        return pixi.Texture.fromBuffer(pixels, width, height)
+    },
+
+    /**
+     * Creates a new Sprite instance of rectangular shape
+     * @param {Rect} bounds Bounds of the rectangle
+     * @param {number} color Hexadecimal color
+     * @returns {pixi.Sprite} new PIXI Sprite instance
+     */
+    createRectSprite(bounds, color) {
+        const g = new pixi.Graphics()
+        g.beginFill(color)
+        g.drawRect(bounds.x, bounds.y, bounds.w, bounds.h)
+        g.endFill()
+
+        return new pixi.Sprite.from(this.createTextureFromObject(g))
+    },
+
     // Todo: Just an idea:
     // animate: function(opts = {
     //     target,

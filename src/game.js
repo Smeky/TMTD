@@ -1,21 +1,35 @@
 import * as pixi from "pixi.js"
-import Graphics from "game/graphics"
 import Debugger from "game/debug"
 import SceneHandler, {LevelScene, EditorScene} from "game/scenes"
 import EventHandler from "game/core/events"
+
+pixi.utils.skipHello()
 
 class Game {
     constructor() {}
 
     init() {
-        this.graphics = new Graphics()
-        this.ticker = pixi.Ticker.shared
-        this.ticker.autoStart = false
-        this.ticker.add(this.update)
+        this.width = window.innerWidth
+        this.height = window.innerHeight
+        
+        this.renderer = new pixi.Renderer({ 
+            width: this.width, 
+            height: this.height, 
+            backgroundColor: 0x1c2433 
+        })
+
+        this.stage = new pixi.Container()
+        this.stage.pivot.x = Math.round(-window.innerWidth / 2)
+        this.stage.pivot.y = Math.round(-window.innerHeight / 2)
+
+        document.body.appendChild(this.renderer.view)
+
+        this.ticker = new pixi.Ticker()
+        this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
+        this.ticker.start()
 
         this.events = new EventHandler()
         this.debug = new Debugger()
-        this.graphics.stage.addChild(this.debug)
 
         this.setupScene()
     }
@@ -43,8 +57,8 @@ class Game {
             editor.addChild(new pixi.Text("Editor Scene", {fill: "#ffffff"}))
             editor.pivot.x = editor.getLocalBounds().width / 2
             
-            this.graphics.stage.addChild(level)
-            this.graphics.stage.addChild(editor)
+            this.stage.addChild(level)
+            this.stage.addChild(editor)
         }
     }
     
@@ -53,7 +67,8 @@ class Game {
     }
 
     update = (delta) => {
-        // this.graphics.renderer.render(this.graphics.app.stage)
+        this.sceneHandler.update(delta)
+        this.renderer.render(this.stage)
     }
 }
 

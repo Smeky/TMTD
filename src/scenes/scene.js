@@ -6,4 +6,6 @@ export default class Scene {
         this.id = id
         this.sceneContainer = new pixi.Container()
     }
+
+    update(delta) {}
 }

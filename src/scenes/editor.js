@@ -36,7 +36,7 @@ export default class EditorScene extends Scene {
         this.sceneContainer.addChild(this.preview)
         this.sceneContainer.addChild(this.palette)
 
-        game.debug.displayBounds(this.sceneContainer)
+        // game.debug.displayBounds(this.sceneContainer)
     }
 
     close() {
