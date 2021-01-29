@@ -28,10 +28,33 @@ export default {
         )
     },
 
-    rbgColorToHex: function(str) {
+    stringColorToHex: function(str) {
+        if (str[0] !== "#") {
+            str = "#" + str
+        }
         // According to docs of parseInt():
         //    - If the string begins with "0x", the radix is 16 (hexadecimal)
         return parseInt(str.replace("#", "0x"))
+    },
+
+    /**
+     * Convert RGB integers to string representation of color - "ff00ff"
+     * @param {number} r Red color as integer
+     * @param {number} g Green color as integer
+     * @param {number} b Blue color as integer
+     * @return {string} String representation of color
+     */
+    rgbColorToString: function(r, g, b) {
+        // Handle default (if some args were not passed)
+        [r, g, b] = [r || 0, g || 0, b || 0]
+
+        // Convert each color into a hexa string (00-ff), prepend with 0 if needed
+        // and spit out concated string of all three
+        // Todo:performance: This could be heavy
+        return [r, g, b].reduce((str, numColor) => {
+            const strColor = numColor.toString(16)
+            return str + (strColor.length < 2 ? "0" + strColor : strColor)
+        }, "")
     },
 
     // Todo: moved those two here for now. Move it somewhere appropriate
@@ -55,7 +78,7 @@ export default {
         g.endFill()
 
         return new pixi.Sprite.from(this.createTextureFromObject(g))
-    },
+    }
 
     // Todo: Just an idea:
     // animate: function(opts = {

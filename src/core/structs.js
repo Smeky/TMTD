@@ -18,6 +18,26 @@ export class Vec2 {
             this.y = y
         }
     }
+
+    multiply(other) {
+        return new Vec2(
+            this.x * other.x,
+            this.y * other.y
+        )
+    }
+
+    length() {
+        return Math.hypot(this.x, this.y)
+    }
+
+    normalize() {
+        const length = this.length()
+
+        return new Vec2(
+            this.x * (1 / length),
+            this.y * (1 / length),
+        )
+    }
 }
 
 /** Rect class represents both 2D position and size */
@@ -60,5 +80,12 @@ export class Rect {
         }
 
         return true
+    }
+
+    split() {
+        return [
+            new Vec2(this.x, this.y),
+            new Vec2(this.w, this.h),
+        ]
     }
 }

@@ -47,7 +47,7 @@ class Game {
     setupScene() {
         // Scene init should be last
         this.sceneHandler = new SceneHandler()
-        this.sceneHandler.setScene(EditorScene)
+        this.sceneHandler.setScene(LevelScene)
 
         // Buttons to switch between scenes 
         {
@@ -77,7 +77,10 @@ class Game {
     }
 
     update = (delta) => {
-        this.sceneHandler.update(delta)
+        // We don't use delta, since we want option (B)
+        //  A) pixi.Ticker.delta * velocity is "pixels per frame"
+        //  B) pixi.Ticker.elapsedMS / 1000 * velocity is "pixels per second"
+        this.sceneHandler.update(this.ticker.elapsedMS / 1000)
         this.renderer.render(this.stage)
     }
 
