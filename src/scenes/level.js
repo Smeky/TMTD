@@ -1,22 +1,20 @@
-import {EntityHandler} from "game/entities"
 import {TilePalette} from "game/core/palette"
 import {Tile} from "game/core/tile"
 import Scene from "game/scenes/scene"
 import { Vec2 } from "game/core/structs"
-import * as cmps from "game/entities/components"
 import * as pixi from "pixi.js"
-import utils from "game/utils"
+import { Entities } from "game/entity/entities"
 
 export default class LevelScene extends Scene {
     constructor() {
         super("level")
 
-        this.sceneContainer.sortableChildren = true  // enable zindex for sprites
-
         this.inputProxy = game.input.getProxy()
-        this.entityHandler = new EntityHandler()
+
+        this.entities = new Entities()
 
         this.setupGrid()
+        this.createEntity()
         
         this.cd = 0.7
         this.cdProgress = 0.0
@@ -67,8 +65,7 @@ export default class LevelScene extends Scene {
     }
 
     createEntity() {
-        const texture = new pixi.Texture.from("media/tile.png")
-
+        // Temporary, duh :D 
         const {pivot} = this.gridContainer
         const path = [
             new Vec2(5  * Tile.Size - pivot.x, 6  * Tile.Size - pivot.y),
@@ -76,25 +73,29 @@ export default class LevelScene extends Scene {
             new Vec2(12 * Tile.Size - pivot.x, 13 * Tile.Size - pivot.y),
         ]
 
-        const entity = this.entityHandler.createEntity()
-        const pos = new Vec2(- Tile.Size * 3, (- 13 / 2) * Tile.Size)
+        const entity = this.entities.createEntity()
 
-        entity.addComponent(new cmps.TransformComponent(pos))
+        const property = entity.addComponent("property")
+        property.pos.x = 5 * Tile.Size - pivot.x
+        property.pos.y = - pivot.y
 
-        const movementCmp = entity.addComponent(new cmps.MovementComponent({velocity: 50}))
-        path.forEach(point => movementCmp.moveTo(point))
+        const display = entity.addComponent("display")
+        display.object = new pixi.Sprite.from("media/tile.png")
+        display.object.anchor.set(0.5, 0.5)
 
-        const spriteCmp = entity.addComponent(new cmps.SpriteComponent(texture))
-        spriteCmp.sprite.anchor.set(0.5, 0.5)
+        this.sceneContainer.addChild(display.object)
 
-        this.entityContainer.addChild(entity)
-        entity.init()
+        const movement = entity.addComponent("movement")
+        movement.speed = 50
+        movement.destinations = movement.destinations.concat(path)
+
+        this.entities.initEntity(entity)
     }
 
     update(delta) {
-        this.entityHandler.update(delta)
+        this.entities.update(delta)
 
-        if (this.entityHandler.entities.length < 30) {
+        if (this.entities.length < 30) {
             this.cdProgress += delta
             if (this.cdProgress >= this.cd) {
                 this.cdProgress %= this.cd
@@ -102,6 +103,5 @@ export default class LevelScene extends Scene {
                 this.createEntity()
             }
         }
-
     }
 }

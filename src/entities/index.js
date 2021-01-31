@@ -1,1 +1,0 @@
-export {default as EntityHandler} from "game/entities/entityHandler"
