@@ -21,11 +21,11 @@ export class DisplayHandler extends EntityHandler {
 
     updateDisplayPosition(entity) {
         const display = entity.components.display
-        const property = entity.components.property
+        const transform = entity.components.transform
 
-        if (display.object && property) {
-            display.object.x = property.pos.x
-            display.object.y = property.pos.y
+        if (display.object && transform) {
+            display.object.x = transform.pos.x
+            display.object.y = transform.pos.y
         }
     }
 }

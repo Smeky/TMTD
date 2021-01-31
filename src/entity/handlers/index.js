@@ -1,9 +1,9 @@
-import { PropertyHandler } from "./property"
+import { TransformHandler } from "./transform"
 import { DisplayHandler } from "./display"
 import { MovementHandler } from "./movement"
 
 export default {
-    [PropertyHandler.HandlerName]: PropertyHandler,
+    [TransformHandler.HandlerName]: TransformHandler,
     [DisplayHandler.HandlerName]: DisplayHandler,
     [MovementHandler.HandlerName]: MovementHandler,
 }

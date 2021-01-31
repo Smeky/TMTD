@@ -17,8 +17,8 @@ export default class LevelScene extends Scene {
         this.setupGrid()
         this.path();
         this.createEntity()
-
-        this.cd = 0.7
+        
+        this.cd = 0.3
         this.cdProgress = 0.0
     }
     path() {
@@ -85,10 +85,10 @@ export default class LevelScene extends Scene {
                 ] */
 
         const entity = this.entities.createEntity()
+        const transform = entity.addComponent("transform")
 
-        const property = entity.addComponent("property")
-        property.pos.x = 5 * Tile.Size - pivot.x
-        property.pos.y = - pivot.y
+        transform.pos.x = 5 * Tile.Size - pivot.x
+        transform.pos.y = - pivot.y
 
         const display = entity.addComponent("display")
         display.object = new pixi.Sprite.from("media/tile.png")
@@ -97,7 +97,7 @@ export default class LevelScene extends Scene {
         this.sceneContainer.addChild(display.object)
 
         const movement = entity.addComponent("movement")
-        movement.speed = 50
+        movement.speed = 100
         movement.destinations = movement.destinations.concat(this.finalPath)
 
         this.entities.initEntity(entity)
