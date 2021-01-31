@@ -1,5 +1,5 @@
 import Scene from "game/scenes/scene"
-import {TilePalette} from "game/editor/palette"
+import {TilePalette} from "game/core/palette"
 import {Tile} from "game/core/tile"
 import {Vec2} from "game/core/structs"
 import * as pixi from "pixi.js"
@@ -23,7 +23,7 @@ export default class EditorScene extends Scene {
         this.preview = new pixi.Sprite()
         this.preview.alpha = this.defaultPreviewAlpha
 
-        this.palette = new TilePalette("media/tileset.png")
+        this.palette = new TilePalette("media/tileset.png", {visible: true})
         this.palette.x = Math.round(-Math.min(window.innerWidth / 2, 700) + 50)
         this.palette.y = Math.round(-window.innerHeight / 2 + 100)
         this.palette.onSelected = (index) => {

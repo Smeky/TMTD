@@ -19,6 +19,20 @@ export class Vec2 {
         }
     }
 
+    add(other) {
+        return new Vec2(
+            this.x + other.x,
+            this.y + other.y
+        )
+    }
+
+    subtract(other) {
+        return new Vec2(
+            this.x - other.x,
+            this.y - other.y
+        )
+    }
+
     multiply(other) {
         return new Vec2(
             this.x * other.x,
@@ -34,9 +48,21 @@ export class Vec2 {
         const length = this.length()
 
         return new Vec2(
-            this.x * (1 / length),
-            this.y * (1 / length),
+            this.x * (1.0 / length),
+            this.y * (1.0 / length),
         )
+    }
+
+    dot(other) {
+        return this.x * other.x + this.y * other.y
+    }
+
+    angle(other) {
+        return Math.atan2(other.y - this.y, other.x - this.x)
+    }
+
+    distance(other) {
+        return Math.sqrt((other.x - this.x) ** 2 + (other.y - this.y) ** 2)
     }
 }
 

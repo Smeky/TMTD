@@ -1,4 +1,5 @@
 import * as pixi from "pixi.js"
+import { Vec2 } from "./core/structs"
 
 export default class Debugger extends pixi.Container {
     constructor() {
@@ -53,6 +54,23 @@ export default class Debugger extends pixi.Container {
         }
 
         this.boundsGraphics.endFill()
+    }
+
+    // Todo: add some remove() for points 
+    drawPoint = (pos) => {
+        const cross = new pixi.Graphics()
+        const size = 10
+
+        cross.lineStyle(1, 0xff0000)
+        cross.moveTo(pos.x, pos.y - size)
+        cross.lineTo(pos.x, pos.y + size)
+        cross.moveTo(pos.x - size, pos.y)
+        cross.lineTo(pos.x + size, pos.y)
+        cross.endFill()
+
+        this.addChild(cross)
+
+        return cross
     }
 }
 

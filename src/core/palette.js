@@ -2,9 +2,10 @@ import * as pixi from "pixi.js"
 import {Tile} from "game/core/tile"
 
 export class TilePalette extends pixi.Container {
-    constructor(filename) {
+    constructor(filename, opts = {visible: false}) {
         super()
 
+        this.visible = opts.visible
         this.onSelected = null
         this.atlas = new pixi.Texture.from(filename)
         this.tiles = new pixi.Container()
@@ -19,15 +20,17 @@ export class TilePalette extends pixi.Container {
             for (let x = 0; x < w; x++) {
                 const clip = new pixi.Rectangle(x * Tile.Size, y * Tile.Size, Tile.Size, Tile.Size)
                 const sprite = new pixi.Sprite(new pixi.Texture(this.atlas, clip))
+                
+                if (this.visible) {
+                    sprite.scale.set(2, 2)
+                    sprite.x = x * (Tile.Size * 2 + offset)
+                    sprite.y = y * (Tile.Size * 2 + offset)
 
-                sprite.scale.set(2, 2)
-                sprite.x = x * (Tile.Size * 2 + offset)
-                sprite.y = y * (Tile.Size * 2 + offset)
-
-                const index = x + y * w
-                sprite.interactive = true
-                sprite.on("mouseover", this.getMouseOverCallback(index))
-                sprite.on("mouseup", this.getMouseUpCallback(index))
+                    const index = x + y * w
+                    sprite.interactive = true
+                    sprite.on("mouseover", this.getMouseOverCallback(index))
+                    sprite.on("mouseup", this.getMouseUpCallback(index))
+                }
 
                 this.tiles.addChild(sprite)
             }
@@ -40,11 +43,22 @@ export class TilePalette extends pixi.Container {
         }
 
         this.addChild(this.tiles)
-        this.addChild(this.selection.graphics)
-        this.updateSelection()
+
+        if (this.visible) {
+            this.addChild(this.selection.graphics)
+            this.updateGraphics()
+        }
     }
 
-    updateSelection() {
+    selectTile(index) {
+        this.selection.selected = index
+
+        if (this.onSelected) {
+            this.onSelected(index)
+        }
+    }
+
+    updateGraphics() {
         const {graphics} = this.selection
 
         graphics.clear()
@@ -70,7 +84,7 @@ export class TilePalette extends pixi.Container {
         return () => {
             if (this.selection.hover !== index) {
                 this.selection.hover = index
-                this.updateSelection()
+                this.updateGraphics()
             }
         }
     }
@@ -78,12 +92,8 @@ export class TilePalette extends pixi.Container {
     getMouseUpCallback(index) {
         return () => {
             if (this.selection.selected !== index) {
-                this.selection.selected = index
-                this.updateSelection()
-                
-                if (this.onSelected) {
-                    this.onSelected(index)
-                }
+                this.selectTile(index)
+                this.updateGraphics()
             }
         }
     }

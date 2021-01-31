@@ -2,6 +2,7 @@ import * as pixi from "pixi.js"
 import Debugger from "game/debug"
 import SceneHandler, {LevelScene, EditorScene} from "game/scenes"
 import InputHandler from "game/core/input"
+import { Vec2 } from "./core/structs"
 
 pixi.utils.skipHello()
 
@@ -42,6 +43,8 @@ class Game {
         this.debug = new Debugger()
 
         this.setupScene()
+
+        this.stage.addChild(this.debug)
     }
 
     setupScene() {
@@ -74,9 +77,12 @@ class Game {
     
     run() {
         this.ticker.start()
+        this.counter = 0
     }
 
+
     update = (delta) => {
+        // if (++this.counter > 10) return
         // We don't use delta, since we want option (B)
         //  A) pixi.Ticker.delta * velocity is "pixels per frame"
         //  B) pixi.Ticker.elapsedMS / 1000 * velocity is "pixels per second"

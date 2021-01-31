@@ -1,6 +1,8 @@
 import {EntityHandler} from "game/entities"
+import {TilePalette} from "game/core/palette"
+import {Tile} from "game/core/tile"
 import Scene from "game/scenes/scene"
-import { Vec2 } from "../core/structs"
+import { Vec2 } from "game/core/structs"
 import * as cmps from "game/entities/components"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
@@ -9,54 +11,97 @@ export default class LevelScene extends Scene {
     constructor() {
         super("level")
 
+        this.sceneContainer.sortableChildren = true  // enable zindex for sprites
+
         this.inputProxy = game.input.getProxy()
         this.entityHandler = new EntityHandler()
 
-        // Temporary stuff for fun.. :)
-        const texture = new pixi.Texture.from("media/tile.png")
-        const count = 100
-
-        for (let i = 0; i < count; i++) {
-            const entity = this.entityHandler.createEntity()
-            entity._radius = (i / count) * (Math.PI * 2)
-
-            const spriteCmp = entity.addComponent(new cmps.SpriteComponent(texture))
-            spriteCmp.sprite.scale.set(2, 2)
-            
-            const pos = new Vec2(
-                Math.sin(entity._radius) * 100,
-                Math.cos(entity._radius) * 100,
-            )
-
-            entity.addComponent(new cmps.TransformComponent(pos))
-            entity.init()
-
-            this.sceneContainer.addChild(entity)
-        }
+        this.setupGrid()
+        
+        this.cd = 0.7
+        this.cdProgress = 0.0
     }
     
     close() {
         this.inputProxy.close()
     }
 
-    update(delta) {
-        const {entities} = this.entityHandler
+    setupGrid() {
+        this.gridWidth = 16
+        this.gridHeight = 13
 
-        for (const entity of entities) {
-            entity._radius = (entity._radius + 1 * delta) % (Math.PI * 2)
+        this.grid = []
+        this.gridContainer = new pixi.Container()
+        this.gridContainer.pivot.x = (this.gridWidth * Tile.Size) / 2
+        this.gridContainer.pivot.y = (this.gridHeight * Tile.Size) / 2
 
-            const transformCmp = entity.getComponent("transform") 
-            transformCmp.pos.x = (Math.sin(entity._radius) * 100) * (250 * delta)
-            transformCmp.pos.y = (Math.cos(entity._radius) * 100) * (100 * delta)
+        this.palette = new TilePalette("media/tileset.png")
 
-            const spriteCmp = entity.getComponent("sprite")
-            const sin = (Math.cos(entity._radius) + 1) / 2
-            const red = Math.round(sin * 255)
-            
-            spriteCmp.sprite.tint = utils.stringColorToHex(utils.rgbColorToString(red))
-            
+        for (let y = 0; y < this.gridHeight; y++) {
+            for (let x = 0; x < this.gridWidth; x++) {
+                if ((x >= 4  && x <= 5  && y >= 0 && y <= 5) ||
+                    (x >= 4  && x <= 12 && y >= 5 && y <= 6) ||
+                    (x >= 11 && x <= 12 && y >= 6 && y <= 13)) 
+                {
+                    this.palette.selectTile(11)
+                } 
+                else {
+                    this.palette.selectTile(4)
+                }
+
+                const sprite = new pixi.Sprite(this.palette.getSelectedTileTexture())
+                
+                sprite.width = Tile.Size
+                sprite.height = Tile.Size
+                sprite.x = x * Tile.Size
+                sprite.y = y * Tile.Size
+
+                this.gridContainer.addChild(sprite)
+            }
         }
 
+        this.sceneContainer.addChild(this.gridContainer)
+
+        this.entityContainer = new pixi.Container()
+        this.sceneContainer.addChild(this.entityContainer)
+    }
+
+    createEntity() {
+        const texture = new pixi.Texture.from("media/tile.png")
+
+        const {pivot} = this.gridContainer
+        const path = [
+            new Vec2(5  * Tile.Size - pivot.x, 6  * Tile.Size - pivot.y),
+            new Vec2(12 * Tile.Size - pivot.x, 6  * Tile.Size - pivot.y),
+            new Vec2(12 * Tile.Size - pivot.x, 13 * Tile.Size - pivot.y),
+        ]
+
+        const entity = this.entityHandler.createEntity()
+        const pos = new Vec2(- Tile.Size * 3, (- 13 / 2) * Tile.Size)
+
+        entity.addComponent(new cmps.TransformComponent(pos))
+
+        const movementCmp = entity.addComponent(new cmps.MovementComponent({velocity: 50}))
+        path.forEach(point => movementCmp.moveTo(point))
+
+        const spriteCmp = entity.addComponent(new cmps.SpriteComponent(texture))
+        spriteCmp.sprite.anchor.set(0.5, 0.5)
+
+        this.entityContainer.addChild(entity)
+        entity.init()
+    }
+
+    update(delta) {
         this.entityHandler.update(delta)
+
+        if (this.entityHandler.entities.length < 30) {
+            this.cdProgress += delta
+            if (this.cdProgress >= this.cd) {
+                this.cdProgress %= this.cd
+    
+                this.createEntity()
+            }
+        }
+
     }
 }

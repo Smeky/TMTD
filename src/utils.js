@@ -78,7 +78,11 @@ export default {
         g.endFill()
 
         return new pixi.Sprite.from(this.createTextureFromObject(g))
-    }
+    },
+
+    checkOppositeSigns(first, second) {
+        return (first ^ second) < 0
+    },
 
     // Todo: Just an idea:
     // animate: function(opts = {
