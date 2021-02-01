@@ -40,6 +40,7 @@ export default class LevelScene extends Scene {
         this.cdDamage = 0.1
         this.cdDamageProgress = 0.0
     }
+    
     path() {
         this.pathFinder = new PathFinder(this.availableTiles,
             { x: 5, y: 0 },
@@ -95,13 +96,7 @@ export default class LevelScene extends Scene {
     }
 
     createEntity() {
-        // Temporary, duh :D 
         const { pivot } = this.gridContainer
-        /*         const path = [
-                    new Vec2(5  * Tile.Size - pivot.x, 6  * Tile.Size - pivot.y),
-                    new Vec2(12 * Tile.Size - pivot.x, 6  * Tile.Size - pivot.y),
-                    new Vec2(12 * Tile.Size - pivot.x, 13 * Tile.Size - pivot.y),
-                ] */
 
         const entity = this.entities.createEntity()
         const transform = entity.addComponent("transform")

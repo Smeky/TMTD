@@ -1,4 +1,5 @@
 import { EntityHandler } from "./handler"
+import { Vec2 } from "game/core/structs"
 
 export class MovementHandler extends EntityHandler {
     static HandlerName = "movement"
@@ -20,7 +21,9 @@ export class MovementHandler extends EntityHandler {
             }
 
             if (transform.pos.distance(movement.destinations[0]) < movement.speed * delta) {
-                transform.pos = movement.destinations.shift()
+                // Todo: ensure this can't happen please
+                // Copy vec since we don't want to mutate the destinations vectors
+                transform.pos = new Vec2(movement.destinations.shift())
             }
             else {
                 const angle = transform.pos.angle(movement.destinations[0])
