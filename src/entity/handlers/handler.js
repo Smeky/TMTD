@@ -9,7 +9,7 @@ export class EntityHandler {
 
     static createComponent() { throw "EntityHandler.createComponent must be overrided!" }
 
-    initComponent(entities) {}
+    initComponent(entity) {}
     update(entities, delta) {}
     close() {}
 }

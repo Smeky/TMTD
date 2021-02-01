@@ -9,17 +9,36 @@ import { PathFinder } from "../core/pathfinder"
 export default class LevelScene extends Scene {
     constructor() {
         super("level")
+        
+        // Todo: Please, please, need a better solution
+        // Setup layers so we can control zIndex better
+        this.sceneContainer.sortableChildren = true
+        this.containers = ["grid", "entities", "healthbars"]
+            .map((name, index) => {
+                const container = new pixi.Container()
+                
+                this.sceneContainer.addChild(container)
+                container.zIndex = index
+
+                return [name, container]
+            })
+            .reduce((acc, [name, container]) => {
+                acc[name] = container
+                return acc 
+            }, {})
 
         this.inputProxy = game.input.getProxy()
-
         this.entities = new Entities()
-
+        
         this.setupGrid()
         this.path();
         this.createEntity()
         
-        this.cd = 0.3
-        this.cdProgress = 0.0
+        this.cdEntity = 0.6
+        this.cdEntityProgress = 0.0
+
+        this.cdDamage = 0.1
+        this.cdDamageProgress = 0.0
     }
     path() {
         this.pathFinder = new PathFinder(this.availableTiles,
@@ -94,11 +113,14 @@ export default class LevelScene extends Scene {
         display.object = new pixi.Sprite.from("media/tile.png")
         display.object.anchor.set(0.5, 0.5)
 
-        this.sceneContainer.addChild(display.object)
+        this.containers.entities.addChild(display.object)
 
         const movement = entity.addComponent("movement")
         movement.speed = 100
         movement.destinations = movement.destinations.concat(this.finalPath)
+
+        const hp = entity.addComponent("health")
+        this.containers.healthbars.addChild(hp.healthBar)
 
         this.entities.initEntity(entity)
     }
@@ -106,12 +128,24 @@ export default class LevelScene extends Scene {
     update(delta) {
         this.entities.update(delta)
 
-        if (this.entities.length < 30) {
-            this.cdProgress += delta
-            if (this.cdProgress >= this.cd) {
-                this.cdProgress %= this.cd
-
+        if (this.entities.length < 70) {
+            this.cdEntityProgress += delta
+            if (this.cdEntityProgress >= this.cdEntity) {
+                this.cdEntityProgress %= this.cdEntity
+    
                 this.createEntity()
+            }
+        }
+
+        // Do.. damage.. because.. reasons..
+        this.cdDamageProgress += delta
+        if (this.cdDamageProgress >= this.cdDamage) {
+            this.cdDamageProgress %= this.cdDamageProgress
+
+            for (const entity of this.entities) {
+                if (entity.components.health.current > 0) {
+                    entity.components.health.current -= 2
+                }
             }
         }
     }

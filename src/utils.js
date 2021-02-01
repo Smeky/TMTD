@@ -1,4 +1,5 @@
 import { Vec2, Rect } from "game/core/structs"
+import * as pixi from "pixi.js"
 
 export default {
     /**
@@ -60,7 +61,7 @@ export default {
     // Todo: moved those two here for now. Move it somewhere appropriate
     createTextureFromObject(displayObject) {
         const {width, height} = displayObject.getLocalBounds()
-        const pixels = this.renderer.extract.pixels(displayObject)
+        const pixels = game.renderer.extract.pixels(displayObject)
 
         return pixi.Texture.fromBuffer(pixels, width, height)
     },
