@@ -29,6 +29,7 @@ export class HealthHandler extends EntityHandler {
         
         health.healthBar.scale.x = health.current / health.maximum
 
+
         if (transform) {
             health.healthBar.x = transform.pos.x - 10
             health.healthBar.y = transform.pos.y - 16

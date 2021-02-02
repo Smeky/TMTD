@@ -24,6 +24,10 @@ export class MovementHandler extends EntityHandler {
                 // Todo: ensure this can't happen please
                 // Copy vec since we don't want to mutate the destinations vectors
                 transform.pos = new Vec2(movement.destinations.shift())
+
+                if (movement.destinations.length === 0) {
+                    entity.emit("destReached")
+                }
             }
             else {
                 const angle = transform.pos.angle(movement.destinations[0])

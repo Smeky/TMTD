@@ -1,7 +1,9 @@
 import Handlers from "game/entity/handlers"
+import EventEmitter from "eventemitter3"
 
-class Entity {
+class Entity extends EventEmitter {
     constructor(id) {
+        super()
         this.id = id
         this.needsInit = true
         this.components = {}
@@ -18,17 +20,20 @@ class Entity {
     }
 }
 
-export class Entities extends Array {
-    constructor(...args) {
-        super(...args)
-
+export class Entities {
+    constructor() {
         this.idCounter = 0 // Todo:id: Replace me
         this.handlers = []
+        this.entities = []
     }
 
     createEntity() {
-        this.push(new Entity(++this.idCounter))
-        return this[this.length - 1]
+        this.entities.push(new Entity(++this.idCounter))
+        return this.entities[this.entities.length - 1]
+    }
+
+    removeEntity(id) {
+        this.entities = this.entities.filter(e => e.id !== id)
     }
 
     initEntity(entity) {
@@ -60,8 +65,12 @@ export class Entities extends Array {
 
     update(delta) {
         for (const handler of this.handlers) {
-            const entities = this.filterEntitiesByHandler(this, handler.constructor.HandlerName)
+            const entities = this.filterEntitiesByHandler(this.entities, handler.constructor.HandlerName)
             handler.update(entities, delta)
         }
+    }
+
+    count() {
+        return this.entities.length
     }
 }

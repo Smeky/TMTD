@@ -34,11 +34,8 @@ export default class LevelScene extends Scene {
         this.path()
         this.createEntity()
         
-        this.cdEntity = 0.6
+        this.cdEntity = 0.45
         this.cdEntityProgress = 0.0
-
-        this.cdDamage = 0.1
-        this.cdDamageProgress = 0.0
     }
 
     path() {
@@ -111,11 +108,19 @@ export default class LevelScene extends Scene {
         this.containers.entities.addChild(display.object)
 
         const movement = entity.addComponent("movement")
-        movement.speed = 100
+        movement.speed = 150
         movement.destinations = movement.destinations.concat(this.finalPath)
 
         const hp = entity.addComponent("health")
         this.containers.healthbars.addChild(hp.healthBar)
+
+        entity.on("destReached", () => {
+            this.entities.removeEntity(entity.id)
+            this.containers.entities.removeChild(display.object)
+            this.containers.healthbars.removeChild(hp.healthBar)
+            
+            console.log(`Entity ${entity.id} reached destination`)
+        })
 
         this.entities.initEntity(entity)
     }
@@ -123,24 +128,12 @@ export default class LevelScene extends Scene {
     update(delta) {
         this.entities.update(delta)
 
-        if (this.entities.length < 70) {
+        if (this.entities.count() < 70) {
             this.cdEntityProgress += delta
             if (this.cdEntityProgress >= this.cdEntity) {
                 this.cdEntityProgress %= this.cdEntity
     
                 this.createEntity()
-            }
-        }
-
-        // Do.. damage.. because.. reasons..
-        this.cdDamageProgress += delta
-        if (this.cdDamageProgress >= this.cdDamage) {
-            this.cdDamageProgress %= this.cdDamageProgress
-
-            for (const entity of this.entities) {
-                if (entity.components.health.current > 0) {
-                    entity.components.health.current -= 2
-                }
             }
         }
     }
