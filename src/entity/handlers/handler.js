@@ -1,15 +1,18 @@
 
 export class EntityHandler {
-    constructor() {
+    constructor(name) {
+        this.name = name
+
         // Todo:test: Replace with a test please
         if (process.env.NODE_ENV === "development") {
-            this.constructor.createComponent() // will throw if not overrided
+            if (typeof this.name !== "string") {
+                throw "Invalid handler name"
+            }
         }
     }
 
-    static createComponent() { throw "EntityHandler.createComponent must be overrided!" }
-
     initComponent(entity) {}
+    closeComponent(entity) {}
     update(entities, delta) {}
     close() {}
 }

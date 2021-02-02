@@ -4,8 +4,8 @@ import { MovementHandler } from "./movement"
 import { HealthHandler } from "./health"
 
 export default {
-    [TransformHandler.HandlerName]: TransformHandler,
-    [DisplayHandler.HandlerName]: DisplayHandler,
-    [MovementHandler.HandlerName]: MovementHandler,
-    [HealthHandler.HandlerName]: HealthHandler,
+    "transform": TransformHandler,
+    "display": DisplayHandler,
+    "movement": MovementHandler,
+    "health": HealthHandler,
 }

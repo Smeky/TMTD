@@ -2,19 +2,20 @@ import { EntityHandler } from "./handler"
 import { Vec2 } from "game/core/structs"
 
 export class MovementHandler extends EntityHandler {
-    static HandlerName = "movement"
+    constructor() {
+        super("movement")
+    }
 
-    static createComponent() {
+    createComponent(opts = {}) {
         return {
-            speed: 0,
-            destinations: [],
+            speed: opts.speed || 0,
+            destinations: opts.destinations ? [...opts.destinations] : [],
         }
     }
 
     update(entities, delta) {
         for (const entity of entities) {
-            const movement = entity.components.movement
-            const transform = entity.components.transform
+            const {movement, transform} = entity.components
 
             if (movement.destinations.length === 0) {
                 continue

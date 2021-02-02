@@ -5,6 +5,7 @@ import { Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
 import { Entities } from "game/entity/entities"
 import { PathFinder } from "../core/pathfinder"
+import Handlers from "game/entity/handlers"
 
 export default class LevelScene extends Scene {
     constructor() {
@@ -28,7 +29,15 @@ export default class LevelScene extends Scene {
             }, {})
 
         this.inputProxy = game.input.getProxy()
-        this.entities = new Entities()
+
+        const entityHandlers = [
+            new Handlers.transform,
+            new Handlers.display,
+            new Handlers.movement,
+            new Handlers.health,
+        ]
+
+        this.entities = new Entities(entityHandlers)
         
         this.setupGrid()
         this.path()
@@ -95,34 +104,33 @@ export default class LevelScene extends Scene {
     createEntity() {
         const { pivot } = this.gridContainer
 
-        const entity = this.entities.createEntity()
-        const transform = entity.addComponent("transform")
+        const sprite = new pixi.Sprite.from("media/tile.png")
+        sprite.anchor.set(0.5, 0.5)
+        this.containers.entities.addChild(sprite)
 
-        transform.pos.x = 5 * Tile.Size - pivot.x
-        transform.pos.y = - pivot.y
+        const components = {
+            "transform": {
+                pos: new Vec2(5 * Tile.Size - pivot.x, - pivot.y)
+            },
+            "display": {
+                object: sprite
+            },
+            "movement": {
+                speed: 150,
+                destinations: this.finalPath
+            },
+            "health": {
+                parent: this.containers.healthbars
+            }
+        }
 
-        const display = entity.addComponent("display")
-        display.object = new pixi.Sprite.from("media/tile.png")
-        display.object.anchor.set(0.5, 0.5)
-
-        this.containers.entities.addChild(display.object)
-
-        const movement = entity.addComponent("movement")
-        movement.speed = 150
-        movement.destinations = movement.destinations.concat(this.finalPath)
-
-        const hp = entity.addComponent("health")
-        this.containers.healthbars.addChild(hp.healthBar)
+        const entity = this.entities.createEntity(components)
+        this.entities.initEntity(entity)
 
         entity.on("destReached", () => {
             this.entities.removeEntity(entity.id)
-            this.containers.entities.removeChild(display.object)
-            this.containers.healthbars.removeChild(hp.healthBar)
-            
             console.log(`Entity ${entity.id} reached destination`)
         })
-
-        this.entities.initEntity(entity)
     }
 
     update(delta) {

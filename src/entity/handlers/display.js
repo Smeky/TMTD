@@ -1,16 +1,26 @@
 import { EntityHandler } from "./handler"
 
 export class DisplayHandler extends EntityHandler {
-    static HandlerName = "display"
+    constructor() {
+        super("display")
+    }
 
-    static createComponent() {
+    createComponent(opts = {}) {
         return {
-            object: null
+            object: opts.object || null
         }
     }
 
     initComponent(entity) {
         this.updateDisplayPosition(entity)
+    }
+
+    closeComponent(entity) {
+        const {display} = entity.components
+
+        if (display.object) {
+            display.object.parent.removeChild(display.object)
+        }
     }
 
     update(entities, delta) {
@@ -20,8 +30,7 @@ export class DisplayHandler extends EntityHandler {
     }
 
     updateDisplayPosition(entity) {
-        const display = entity.components.display
-        const transform = entity.components.transform
+        const {display, transform} = entity.components
 
         if (display.object && transform) {
             display.object.x = transform.pos.x
