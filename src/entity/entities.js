@@ -1,4 +1,5 @@
 import EventEmitter from "eventemitter3"
+import Handlers from "game/entity/handlers"
 
 class Entity extends EventEmitter {
     constructor(id) {
@@ -13,11 +14,11 @@ class Entity extends EventEmitter {
     }
 }
 
-// Todo:rename: ECS or somethin' like that
-export class Entities {
-    constructor(handlers) {
+
+export class ECS {
+    constructor() {
         this.idCounter = 0 // Todo:id: Replace me
-        this.handlers = handlers
+        this.handlers = []
         this.entities = []
     }
 
@@ -25,7 +26,7 @@ export class Entities {
         const entity = new Entity(++this.idCounter)
         
         for (const [name, options] of Object.entries(components)) {
-            const component = this.getHandler(name).createComponent(options)
+            const component = this.ensureHandler(name).createComponent(options)
             entity.components[name] = component
         }
 
@@ -56,7 +57,7 @@ export class Entities {
     }
 
     addComponent(entity, name, opts) {
-        const component = this.getHandler(name).createComponent(opts)
+        const component = this.ensureHandler(name).createComponent(opts)
         entity.components[name] = component
         return component
     }
@@ -69,8 +70,15 @@ export class Entities {
         return entity.components[name]
     }
 
-    getHandler(name) {
-        return this.handlers.find(handler => handler.name === name)
+    ensureHandler(name) {
+        let handler = this.handlers.find(handler => handler.name === name)
+
+        if (!handler) {
+            handler = new Handlers[name]()
+            this.handlers.push(handler)
+        }
+
+        return handler
     }
 
     filterEntitiesByHandler(entities, name) {
