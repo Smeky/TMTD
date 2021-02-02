@@ -3,9 +3,8 @@ import { Tile } from "game/core/tile"
 import Scene from "game/scenes/scene"
 import { Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
-import { Entities } from "game/entity/entities"
+import { ECS } from "game/entity/entities"
 import { PathFinder } from "../core/pathfinder"
-import Handlers from "game/entity/handlers"
 
 export default class LevelScene extends Scene {
     constructor() {
@@ -29,15 +28,7 @@ export default class LevelScene extends Scene {
             }, {})
 
         this.inputProxy = game.input.getProxy()
-
-        const entityHandlers = [
-            new Handlers.transform,
-            new Handlers.display,
-            new Handlers.movement,
-            new Handlers.health,
-        ]
-
-        this.entities = new Entities(entityHandlers)
+        this.entities = new ECS()
         
         this.setupGrid()
         this.path()
