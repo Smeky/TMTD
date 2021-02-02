@@ -31,7 +31,7 @@ export default class LevelScene extends Scene {
         this.entities = new Entities()
         
         this.setupGrid()
-        this.path();
+        this.path()
         this.createEntity()
         
         this.cdEntity = 0.6
@@ -40,7 +40,7 @@ export default class LevelScene extends Scene {
         this.cdDamage = 0.1
         this.cdDamageProgress = 0.0
     }
-    
+
     path() {
         this.pathFinder = new PathFinder(this.availableTiles,
             { x: 5, y: 0 },

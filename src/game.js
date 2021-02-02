@@ -45,6 +45,8 @@ class Game {
         this.setupScene()
 
         this.stage.addChild(this.debug)
+
+        this.firstUpdate = true
     }
 
     setupScene() {
@@ -82,6 +84,11 @@ class Game {
 
 
     update = (delta) => {
+        if (this.firstUpdate) {
+            this.firstUpdate = false
+            return
+        }
+
         // if (++this.counter > 10) return
         // We don't use delta, since we want option (B)
         //  A) pixi.Ticker.delta * velocity is "pixels per frame"
