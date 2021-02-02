@@ -2,11 +2,18 @@ import { EntityHandler } from "./handler"
 import { Vec2 } from "game/core/structs"
 
 export class TransformHandler extends EntityHandler {
-    static HandlerName = "transform"
+    DefaultTransform = {
+        pos: new Vec2(0, 0)
+    }
 
-    static createComponent() {
+    constructor() {
+        super("transform")
+    }
+
+    createComponent(opts) {
         return {
-            pos: new Vec2(0, 0)
+            ...this.DefaultTransform,
+            ...opts
         }
     }
 }

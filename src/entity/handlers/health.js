@@ -1,21 +1,36 @@
 import { EntityHandler } from "./handler"
-import { Sprite } from "pixi.js"
 import { Rect } from "game/core/structs"
 import utils from "game/utils"
 
 export class HealthHandler extends EntityHandler {
-    static HandlerName = "health"
+    constructor() {
+        super("health")
+    }
 
-    static createComponent() {
+    createComponent(opts = {}) {
+        const sprite = utils.createRectSprite(new Rect(0, 0, 20, 4), 0xff0000)
+
+        if (opts.parent) {
+            opts.parent.addChild(sprite)
+        }
+
         return {
-            current: 100,
-            maximum: 100,
-            healthBar: utils.createRectSprite(new Rect(0, 0, 20, 4), 0xff0000),
+            current: typeof opts.current === "undefined" ? 100 : opts.current,
+            maximum: typeof opts.maximum === "undefined" ? 100 : opts.maximum,
+            healthBar: sprite
         }
     }
 
     initComponent(entity) {
         this.updateDisplayPosition(entity)
+    }
+
+    closeComponent(entity) {
+        const {health} = entity.components
+
+        if (health.healthBar.parent) {
+            health.healthBar.parent.removeChild(health.healthBar)
+        }
     }
 
     update(entities, delta) {

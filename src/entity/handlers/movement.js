@@ -2,19 +2,20 @@ import { EntityHandler } from "./handler"
 import { Vec2 } from "game/core/structs"
 
 export class MovementHandler extends EntityHandler {
-    static HandlerName = "movement"
+    constructor() {
+        super("movement")
+    }
 
-    static createComponent() {
+    createComponent(opts = {}) {
         return {
-            speed: 0,
-            destinations: [],
+            speed: opts.speed || 0,
+            destinations: opts.destinations ? [...opts.destinations] : [],
         }
     }
 
     update(entities, delta) {
         for (const entity of entities) {
-            const movement = entity.components.movement
-            const transform = entity.components.transform
+            const {movement, transform} = entity.components
 
             if (movement.destinations.length === 0) {
                 continue
@@ -24,6 +25,10 @@ export class MovementHandler extends EntityHandler {
                 // Todo: ensure this can't happen please
                 // Copy vec since we don't want to mutate the destinations vectors
                 transform.pos = new Vec2(movement.destinations.shift())
+
+                if (movement.destinations.length === 0) {
+                    entity.emit("destReached")
+                }
             }
             else {
                 const angle = transform.pos.angle(movement.destinations[0])
