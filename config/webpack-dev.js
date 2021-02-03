@@ -5,6 +5,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 module.exports = {
     mode: "development",
     devtool: "eval-source-map",
+    devServer: {
+        port: 9000
+    },
     resolve: {
         alias: {
             game: path.resolve("src"),
