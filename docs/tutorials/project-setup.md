@@ -20,7 +20,7 @@ Next I'd recommend to install [yarn](https://classic.yarnpkg.com/en/docs/install
 
     yarn start
 
-Will Start a webpack's devserver, which allows us to go to **http://localhost:8080/**. If the page loads up, it works and you're good to go! :)
+Will Start a webpack's devserver, which allows us to go to **http://localhost:9000/**. If the page loads up, it works and you're good to go! :)
 
 ---
 
