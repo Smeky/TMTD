@@ -1,7 +1,9 @@
-export { default as LevelScene } from "game/scenes/level"
-export { default as EditorScene } from "game/scenes/editor" // Todo: Ensure this exists inly in dev mode 
+export { default as Scene} from "./base"
+export { default as LevelScene } from "./level"
+export { default as EditorScene } from "./editor"
+export { default as TomGroundScene} from "./tomground"
 
-export default class SceneHandler {
+export class SceneHandler {
     constructor() {
         this.scene = null
     }

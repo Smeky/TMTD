@@ -1,8 +1,14 @@
 import * as pixi from "pixi.js"
 import Debugger from "game/debug"
-import SceneHandler, {LevelScene, EditorScene} from "game/scenes"
 import InputHandler from "game/core/input"
 import { Vec2 } from "./core/structs"
+
+import {
+    SceneHandler,
+    LevelScene, 
+    EditorScene, 
+    TomGroundScene
+} from "game/scene"
 
 pixi.utils.skipHello()
 
@@ -57,23 +63,31 @@ class Game {
         // Buttons to switch between scenes 
         {
             const level = new pixi.Container()
-            level.position.x = -90
+            level.position.x = -150
             level.position.y = -window.innerHeight / 2 + 30
             level.interactive = true
             level.on("mouseup", () => this.sceneHandler.setScene(LevelScene))
-            level.addChild(new pixi.Text("Level Scene", {fill: "#ffffff"}))
+            level.addChild(new pixi.Text("Level Scene", {fill: "#ffffff", fontSize: 18}))
             level.pivot.x = level.getLocalBounds().width / 2
     
             const editor = new pixi.Container()
-            editor.position.x = 90
             editor.position.y = -window.innerHeight / 2 + 30
             editor.interactive = true
             editor.on("mouseup", () => this.sceneHandler.setScene(EditorScene))
-            editor.addChild(new pixi.Text("Editor Scene", {fill: "#ffffff"}))
+            editor.addChild(new pixi.Text("Editor Scene", {fill: "#ffffff", fontSize: 18}))
             editor.pivot.x = editor.getLocalBounds().width / 2
+            
+            const tomground = new pixi.Container()
+            tomground.position.x = 150
+            tomground.position.y = -window.innerHeight / 2 + 30
+            tomground.interactive = true
+            tomground.on("mouseup", () => this.sceneHandler.setScene(TomGroundScene))
+            tomground.addChild(new pixi.Text("Tom's playground", {fill: "#ffffff", fontSize: 18}))
+            tomground.pivot.x = tomground.getLocalBounds().width / 2
             
             this.stage.addChild(level)
             this.stage.addChild(editor)
+            this.stage.addChild(tomground)
         }
     }
     
