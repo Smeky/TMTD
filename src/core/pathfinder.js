@@ -7,13 +7,13 @@ export class PathFinder {
         // dives Tile for more precise path finding; maybe move it elsewhere?
         this.tileDivider = 2
         this.updatedAvailableTiles = []
-        
+
         this.availableTiles = availableTiles
         this.start = { x: start.x * this.tileDivider, y: start.y * this.tileDivider }
         this.end = { x: end.x * this.tileDivider, y: end.y * this.tileDivider }
         this.pivot = pivot
         this.path = []
-        
+
         this.divideTile()
     }
 
@@ -52,6 +52,38 @@ export class PathFinder {
                     let newX = currentNode.x + i
                     let newY = currentNode.y + j
 
+                    //look for corners
+
+                    if (i == -1 && j == -1) {
+                        if (this.updatedAvailableTiles.findIndex(node => (node.x == newX + 1 && node.y == newY)) == -1 ||
+                            this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY + 1)) == -1
+                            ){
+                                continue
+                        }
+                    }
+
+                    if (i == 1 && j == -1) {
+                        if (this.updatedAvailableTiles.findIndex(node => (node.x == newX - 1 && node.y == newY)) == -1 ||
+                            this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY + 1)) == -1
+                            ){
+                                continue
+                        }
+                    }
+
+                    if (i == -1 && j == 1) {
+                        if (this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY - 1)) == -1 ||
+                            this.updatedAvailableTiles.findIndex(node => (node.x == newX + 1 && node.y == newY)) == -1
+                            ){
+                                continue
+                        }
+                    }
+                    if (i == -1 && j == -1) {
+                        if (this.updatedAvailableTiles.findIndex(node => (node.x == newX - 1 && node.y == newY)) == -1 ||
+                            this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY - 1)) == -1
+                            ){
+                                continue
+                        }
+                    }
                     let nextNode
                     let indexOfNextNode = this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY))
                     if (indexOfNextNode != -1) {
@@ -92,7 +124,7 @@ export class PathFinder {
         this.path = finalPath.reverse()
     }
 
-    getPath(){
+    getPath() {
         return this.path
     }
 }
