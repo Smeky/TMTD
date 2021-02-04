@@ -32,11 +32,18 @@ export default class EditorScene extends Scene {
 
         this.tiles = new pixi.Container()
 
+        const tilesToClipboard = new pixi.Container()
+        tilesToClipboard.position.x = 0
+        tilesToClipboard.position.y = -window.innerHeight / 2 + 70
+        tilesToClipboard.interactive = true
+        tilesToClipboard.on("mouseup", () => utils.copyToClipboard(this.getTilesInJSON()))
+        tilesToClipboard.addChild(new pixi.Text("Copy to clipboard", {fill: "#ffffff"}))
+        tilesToClipboard.pivot.x = tilesToClipboard.getLocalBounds().width / 2
+
         this.sceneContainer.addChild(this.tiles)
         this.sceneContainer.addChild(this.preview)
         this.sceneContainer.addChild(this.palette)
-
-        // game.debug.displayBounds(this.sceneContainer)
+        this.sceneContainer.addChild(tilesToClipboard)
     }
 
     close() {
@@ -50,15 +57,18 @@ export default class EditorScene extends Scene {
             tile = new pixi.Sprite(this.palette.getSelectedTileTexture())
             tile.x = clampedPos.x
             tile.y = clampedPos.y
+            tile.textureIndex = this.palette.getSelectedTileTextureIndex()
 
             this.tiles.addChild(tile)
         }
         else {
             const texture = this.palette.getSelectedTileTexture()
+            let textureIndex = this.palette.getSelectedTileTextureIndex()
 
             // resolve tile type, layer, etc..
             if (!new Rect(texture.orig).compare(tile.texture.orig)) {
                 tile.texture = texture
+                tile.textureIndex = textureIndex
             }
         }
     }
@@ -85,6 +95,31 @@ export default class EditorScene extends Scene {
 
         if (this.isPainting && this.palette.hasTileSelected()) {
             this.handleTilePlacement(pos)
+        }
+    }
+
+    getTilesInJSON() {
+        try {
+            let tempTiles = {
+                filename: this.tiles.getChildAt(0).texture.baseTexture.cacheId,
+                grid: []
+            }
+            for (let tileIndex = 0; tileIndex < this.tiles.children.length; tileIndex++) {
+                let tile =  {
+                    x: this.tiles.getChildAt(tileIndex).x,
+                    y: this.tiles.getChildAt(tileIndex).y,
+                    textureIndex: this.tiles.getChildAt(tileIndex).textureIndex
+                }
+                tempTiles.grid.push(tile)
+            }
+            
+            return JSON.stringify(tempTiles)
+        } catch (e) {
+            if (e instanceof Error) {
+                console.warn("Tiles are empty")
+            } else {
+                console.error(e)
+            }
         }
     }
 }
