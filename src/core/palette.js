@@ -30,6 +30,8 @@ export class TilePalette extends pixi.Container {
                     sprite.interactive = true
                     sprite.on("mouseover", this.getMouseOverCallback(index))
                     sprite.on("mouseup", this.getMouseUpCallback(index))
+
+                    sprite.textureIndex = index
                 }
 
                 this.tiles.addChild(sprite)
@@ -106,7 +108,27 @@ export class TilePalette extends pixi.Container {
         return this.getTileTexture(this.selection.selected)
     }
 
+    getSelectedTileTextureIndex () {
+        return this.selection.selected
+    }
+
     hasTileSelected() {
         return this.selection.selected >= 0
+    }
+
+    getTilesInJSON() {
+        let tempTiles = {
+            filename: this.tiles.getChildAt(0).texture.baseTexture.cacheId,
+            grid: []
+        }
+        for (let tileIndex = 0; tileIndex < this.tiles.children.length; tileIndex++) {
+            let tile =  {
+                x: this.tiles.getChildAt(tileIndex).x,
+                y: this.tiles.getChildAt(tileIndex).y,
+                textureIndex: this.tiles.getChildAt(tileIndex).textureIndex
+            }
+            tempTiles.grid.push(tile)
+        }
+        return JSON.stringify(tempTiles)
     }
 }
