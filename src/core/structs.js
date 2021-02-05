@@ -64,6 +64,13 @@ export class Vec2 {
     distance(other) {
         return Math.sqrt((other.x - this.x) ** 2 + (other.y - this.y) ** 2)
     }
+
+    apply(func) {
+        return new Vec2(
+            func(this.x),
+            func(this.y),
+        )
+    }
 }
 
 /** Rect class represents both 2D position and size */
