@@ -7,6 +7,7 @@ export class TilePalette extends pixi.Container {
 
         this.visible = opts.visible
         this.onSelected = null
+        this.filename = filename
         this.atlas = new pixi.Texture.from(filename)
         this.tiles = new pixi.Container()
 

@@ -30,17 +30,20 @@ export default class EditorScene extends Scene {
             this.preview.texture = this.palette.getTileTexture(index)
         }
 
-        this.tiles = new pixi.Container()
-
+        this.tiles = []
+        this.tilesContainer = new pixi.Container()
+        
         const tilesToClipboard = new pixi.Container()
         tilesToClipboard.position.x = 0
         tilesToClipboard.position.y = -window.innerHeight / 2 + 70
         tilesToClipboard.interactive = true
-        tilesToClipboard.on("mouseup", () => utils.copyToClipboard(this.getTilesInJSON()))
+        tilesToClipboard.on("mouseup", () => {
+            utils.strToClipboard(JSON.stringify(this.exportGrid(), null, 2))
+        })
         tilesToClipboard.addChild(new pixi.Text("Copy to clipboard", {fill: "#ffffff"}))
         tilesToClipboard.pivot.x = tilesToClipboard.getLocalBounds().width / 2
-
-        this.sceneContainer.addChild(this.tiles)
+        
+        this.sceneContainer.addChild(this.tilesContainer)
         this.sceneContainer.addChild(this.preview)
         this.sceneContainer.addChild(this.palette)
         this.sceneContainer.addChild(tilesToClipboard)
@@ -51,7 +54,7 @@ export default class EditorScene extends Scene {
     }
 
     handleTilePlacement(clampedPos) {
-        let tile = this.tiles.children.find(tile => tile.x === clampedPos.x && tile.y === clampedPos.y)
+        let tile = this.tiles.find(tile => tile.x === clampedPos.x && tile.y === clampedPos.y)
 
         if (!tile) {
             tile = new pixi.Sprite(this.palette.getSelectedTileTexture())
@@ -59,7 +62,8 @@ export default class EditorScene extends Scene {
             tile.y = clampedPos.y
             tile.textureIndex = this.palette.getSelectedTileTextureIndex()
 
-            this.tiles.addChild(tile)
+            this.tiles.push(tile)
+            this.tilesContainer.addChild(tile)
         }
         else {
             const texture = this.palette.getSelectedTileTexture()
@@ -98,28 +102,50 @@ export default class EditorScene extends Scene {
         }
     }
 
-    getTilesInJSON() {
-        try {
-            let tempTiles = {
-                filename: this.tiles.getChildAt(0).texture.baseTexture.cacheId,
-                grid: []
-            }
-            for (let tileIndex = 0; tileIndex < this.tiles.children.length; tileIndex++) {
-                let tile =  {
-                    x: this.tiles.getChildAt(tileIndex).x,
-                    y: this.tiles.getChildAt(tileIndex).y,
-                    textureIndex: this.tiles.getChildAt(tileIndex).textureIndex
-                }
-                tempTiles.grid.push(tile)
-            }
-            
-            return JSON.stringify(tempTiles)
-        } catch (e) {
-            if (e instanceof Error) {
-                console.warn("Tiles are empty")
-            } else {
-                console.error(e)
-            }
+    exportGrid() {
+        if (this.tiles.length === 0) {
+            return null
+        }
+
+        // Calc offset so we can set topleft position of the grid to 0,0
+        // and reposition all tiles accordingly
+        const offset = this.tiles
+            .reduce((smallest, tile) => {
+                if (tile.x < smallest.x) smallest.x = tile.x
+                if (tile.y < smallest.y) smallest.y = tile.y
+
+                return smallest
+            }, new Vec2())
+            .apply(Math.abs)
+
+        const tiles = this.tiles
+            .map(tile => ({
+                // Fix position as explained above & positions should be
+                // relative (0, 1, 2)
+                x: (tile.x + offset.x) / Tile.Size,
+                y: (tile.y + offset.y) / Tile.Size,
+                index: tile.textureIndex
+            }))
+            // Sort tiles top down, left to right 
+            .sort((a, b) => a.y < b.y || (a.y === b.y && a.x < b.x) ? -1 : 1)
+
+        // Calc width and height of the grid 
+        const size = tiles
+            .reduce((highest, tile) => {
+                if (tile.x > highest.x) highest.x = tile.x
+                if (tile.y > highest.y) highest.y = tile.y
+
+                return highest
+            }, new Vec2())
+            .add(new Vec2(1, 1))
+
+        return {
+            meta: {
+                width: size.x,
+                height: size.y,
+                paletteFile: this.palette.filename
+            },
+            tiles
         }
     }
 }

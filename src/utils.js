@@ -85,14 +85,18 @@ export default {
         return (first ^ second) < 0
     },
     
-    copyToClipboard: function(str) {
-        const el = document.createElement('textarea');
-        el.value = str;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-    }
+    strToClipboard: function(str) {
+        const el = document.createElement("textarea")
+        el.value = str
+        document.body.appendChild(el)
+        el.select()
+        document.execCommand("copy")
+        document.body.removeChild(el)
+    },
+
+    getRangeBetweenNumbers: function(first, second) {
+        return Math.abs(first - second)
+    },
 
     // Todo: Just an idea:
     // animate: function(opts = {
