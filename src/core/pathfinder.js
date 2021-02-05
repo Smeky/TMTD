@@ -51,7 +51,7 @@ export class PathFinder {
                 for (let j = -1; j <= 1; j++) {
 
                     // current node being skipped
-                    if (i == 0 && j == 0) {
+                    if (i === 0 && j === 0) {
                         continue
                     }
 
@@ -60,32 +60,32 @@ export class PathFinder {
 
                     //look for corners, if there is a corner, path cannot go diagonally
                     {
-                        if (i == -1 && j == -1) {
-                            if ((this.updatedAvailableTiles.findIndex(node => (node.x == newX + this.tileDivider && node.y == newY)) == -1 ||
-                                this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY + this.tileDivider)) == -1)
+                        if (i === -1 && j === -1) {
+                            if ((this.updatedAvailableTiles.findIndex(node => (node.x === newX + this.tileDivider && node.y === newY)) === -1 ||
+                                this.updatedAvailableTiles.findIndex(node => (node.x === newX && node.y === newY + this.tileDivider)) === -1)
                             ) {
                                 continue
                             }
                         }
 
-                        if (i == 1 && j == -1) {
-                            if ((this.updatedAvailableTiles.findIndex(node => (node.x == newX - this.tileDivider && node.y == newY)) == -1 ||
-                                this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY + this.tileDivider)) == -1)
+                        if (i === 1 && j === -1) {
+                            if ((this.updatedAvailableTiles.findIndex(node => (node.x === newX - this.tileDivider && node.y === newY)) === -1 ||
+                                this.updatedAvailableTiles.findIndex(node => (node.x === newX && node.y === newY + this.tileDivider)) === -1)
                             ) {
                                 continue
                             }
                         }
 
-                        if (i == -1 && j == 1) {
-                            if ((this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY - this.tileDivider)) == -1 ||
-                                this.updatedAvailableTiles.findIndex(node => (node.x == newX + this.tileDivider && node.y == newY)) == -1)
+                        if (i === -1 && j === 1) {
+                            if ((this.updatedAvailableTiles.findIndex(node => (node.x === newX && node.y === newY - this.tileDivider)) === -1 ||
+                                this.updatedAvailableTiles.findIndex(node => (node.x === newX + this.tileDivider && node.y === newY)) === -1)
                             ) {
                                 continue
                             }
                         }
-                        if (i == 1 && j == 1) {
-                            if ((this.updatedAvailableTiles.findIndex(node => (node.x == newX - this.tileDivider && node.y == newY)) == -1 ||
-                                this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY - this.tileDivider)) == -1)
+                        if (i === 1 && j === 1) {
+                            if ((this.updatedAvailableTiles.findIndex(node => (node.x === newX - this.tileDivider && node.y === newY)) === -1 ||
+                                this.updatedAvailableTiles.findIndex(node => (node.x === newX && node.y === newY - this.tileDivider)) === -1)
                             ) {
                                 continue
                             }
@@ -93,17 +93,17 @@ export class PathFinder {
                     }
 
                     let nextNode
-                    let indexOfNextNode = this.updatedAvailableTiles.findIndex(node => (node.x == newX && node.y == newY))
+                    let indexOfNextNode = this.updatedAvailableTiles.findIndex(node => (node.x === newX && node.y === newY))
                     if (indexOfNextNode != -1) {
                         nextNode = this.updatedAvailableTiles[indexOfNextNode]
                     } else {
                         continue
                     }
 
-                    let nodesToProcessIndex = nodesToProcess.findIndex(node => (node.x == nextNode.x && node.y == nextNode.y))
+                    let nodesToProcessIndex = nodesToProcess.findIndex(node => (node.x === nextNode.x && node.y === nextNode.y))
                     if (nodesToProcessIndex != -1) {
                         let newBetaValue
-                        if (i == 0 || j == 0) {
+                        if (i === 0 || j === 0) {
                             newBetaValue = currentNode.betaValue + 1
                         } else {
                             newBetaValue = currentNode.betaValue + Math.sqrt(2)
@@ -114,16 +114,16 @@ export class PathFinder {
                         }
                         continue
                     }
-                    if (nodesFinished.findIndex(node => (node.x == newX && node.y == newY)) != -1) {
+                    if (nodesFinished.findIndex(node => (node.x === newX && node.y === newY)) != -1) {
                         continue
                     }
-                    if (nextNode.x == this.end.x && nextNode.y == this.end.y) {
+                    if (nextNode.x === this.end.x && nextNode.y === this.end.y) {
                         nodesToProcess = []
                         winnerNode = currentNode
                         break loop1
                     }
                     nextNode.alphaValue = new Vec2(nextNode).distance(this.end);
-                    if (i == 0 || j == 0) {
+                    if (i === 0 || j === 0) {
                         nextNode.betaValue = currentNode.betaValue + 1
                     } else {
                         nextNode.betaValue = currentNode.betaValue + Math.sqrt(2)
@@ -138,7 +138,9 @@ export class PathFinder {
         let finalPathXY = []
         while (winnerNode.parentNode) {
             winnerNode = winnerNode.parentNode
-            finalPath.push(new Vec2(winnerNode.x * Tile.Size / this.tileDivider - this.pivot.x + this.entitySize, winnerNode.y * Tile.Size / this.tileDivider - this.pivot.y + this.entitySize))
+            let x = winnerNode.x * Tile.Size / this.tileDivider - this.pivot.x + this.entitySize
+            let y = winnerNode.y * Tile.Size / this.tileDivider - this.pivot.y + this.entitySize
+            finalPath.push(new Vec2(x, y))
             finalPathXY.push(new Vec2(winnerNode.x, winnerNode.y))
         }
 
