@@ -1,7 +1,7 @@
 import * as pixi from "pixi.js"
 import Debugger from "game/debug"
 import InputHandler from "game/core/input"
-import { Vec2 } from "./core/structs"
+import EventEmitter from "eventemitter3"
 
 import {
     SceneHandler,
@@ -9,11 +9,14 @@ import {
     EditorScene, 
     TomGroundScene
 } from "game/scene"
+import { Vec2 } from "./core/structs"
 
 pixi.utils.skipHello()
 
-class Game {
-    constructor() {}
+class Game extends EventEmitter {
+    constructor() {
+        super()
+    }
 
     get width() {
         return this.renderer.view.width
@@ -82,7 +85,7 @@ class Game {
             tomground.position.y = -window.innerHeight / 2 + 30
             tomground.interactive = true
             tomground.on("mouseup", () => this.sceneHandler.setScene(TomGroundScene))
-            tomground.addChild(new pixi.Text("Tom's playground", {fill: "#ffffff", fontSize: 18}))
+            tomground.addChild(new pixi.Text("Tom's Ground", {fill: "#ffffff", fontSize: 18}))
             tomground.pivot.x = tomground.getLocalBounds().width / 2
             
             this.stage.addChild(level)
@@ -103,7 +106,6 @@ class Game {
             return
         }
 
-        // if (++this.counter > 10) return
         // We don't use delta, since we want option (B)
         //  A) pixi.Ticker.delta * velocity is "pixels per frame"
         //  B) pixi.Ticker.elapsedMS / 1000 * velocity is "pixels per second"
@@ -112,8 +114,17 @@ class Game {
     }
 
     handleResize = (event) => {
-        this.renderer.view.width = event.target.innerWidth
-        this.renderer.view.height = event.target.innerHeight
+        const {view} = this.renderer
+
+        const forward = {
+            before: new Vec2(view.width, view.height),
+            after: new Vec2(event.target.innerWidth, event.target.innerHeight)
+        }
+
+        view.width = event.target.innerWidth
+        view.height = event.target.innerHeight
+
+        this.emit("windowResized", forward)
     }
 }
 
