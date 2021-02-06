@@ -1,6 +1,6 @@
 import { TilePalette } from "game/core/palette"
 import { Tile } from "game/core/tile"
-import Scene from "game/scenes/scene"
+import { Scene } from "game/scene"
 import { Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
 import { ECS } from "game/entity/entities"

@@ -40,6 +40,13 @@ export class Vec2 {
         )
     }
 
+    divide(other) {
+        return new Vec2(
+            this.x / other.y,
+            this.y / other.y
+        )
+    }
+
     length() {
         return Math.hypot(this.x, this.y)
     }

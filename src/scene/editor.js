@@ -1,7 +1,7 @@
-import Scene from "game/scenes/scene"
-import {TilePalette} from "game/core/palette"
-import {Tile} from "game/core/tile"
-import {Vec2} from "game/core/structs"
+import { Scene } from "game/scene"
+import { TilePalette } from "game/core/palette"
+import { Tile } from "game/core/tile"
+import { Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
 import { Rect } from "../core/structs"
@@ -116,15 +116,18 @@ export default class EditorScene extends Scene {
 
                 return smallest
             }, new Vec2())
-            .apply(Math.abs)
+            .apply(c => -c) // negate x & y (so we move the grid to 0, 0 by pos + offset)
 
         const tiles = this.tiles
+            // Todo: Temporary
+            .filter(tile => [4, 10].includes(tile.textureIndex))
             .map(tile => ({
                 // Fix position as explained above & positions should be
                 // relative (0, 1, 2)
                 x: (tile.x + offset.x) / Tile.Size,
                 y: (tile.y + offset.y) / Tile.Size,
-                index: tile.textureIndex
+                index: tile.textureIndex,
+                isPath: tile.textureIndex === 10 // Todo: Temporary
             }))
             // Sort tiles top down, left to right 
             .sort((a, b) => a.y < b.y || (a.y === b.y && a.x < b.x) ? -1 : 1)
