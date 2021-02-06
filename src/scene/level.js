@@ -4,7 +4,7 @@ import { Scene } from "game/scene"
 import { Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
 import { ECS } from "game/entity/entities"
-import { PathFinder } from "../core/pathfinder"
+import * as pf from "game/core/pathfinding"
 
 export default class LevelScene extends Scene {
     constructor() {
@@ -45,6 +45,9 @@ export default class LevelScene extends Scene {
 
         await this.grid.loadFromFile("dev.json")
 
+        const start = new Vec2(3, 2)
+        const end = new Vec2(14, 11)
+
         // Todo: Temporary - Hacky solution to center everything based on grid's size
         this.sceneContainer.pivot = this.grid.pivot
         this.grid.pivot.set(0, 0)
@@ -53,14 +56,7 @@ export default class LevelScene extends Scene {
         const pathTiles = this.grid.getPathTiles()
                                    .map(tile => new Vec2(tile.pos).divide(new Vec2(Tile.Size, Tile.Size)))
 
-        this.pathFinder = new PathFinder(
-            pathTiles,
-            { x: 3, y: 2 },
-            { x: 14, y: 11 }
-        )
-
-        this.pathFinder.findPath()
-        this.finalPath = this.pathFinder.getPath();
+        this.path = pf.findPath({cells: pathTiles, start, end}).map(cell => cell.multiply(Tile.Size))
     }
 
     start() {
@@ -85,7 +81,7 @@ export default class LevelScene extends Scene {
             },
             "movement": {
                 speed: 200,
-                destinations: this.finalPath
+                destinations: this.path
             },
             "health": {
                 parent: this.containers.healthbars

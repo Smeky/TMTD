@@ -20,31 +20,63 @@ export class Vec2 {
     }
 
     add(other) {
-        return new Vec2(
-            this.x + other.x,
-            this.y + other.y
-        )
+        if (typeof other === "object") {
+            return new Vec2(
+                this.x + other.x,
+                this.y + other.y
+            )
+        }
+        else {
+            return new Vec2(
+                this.x + other,
+                this.y + other
+            )
+        }
     }
 
     subtract(other) {
-        return new Vec2(
-            this.x - other.x,
-            this.y - other.y
-        )
+        if (typeof other === "object") {
+            return new Vec2(
+                this.x - other.x,
+                this.y - other.y
+            )
+        }
+        else {
+            return new Vec2(
+                this.x - other,
+                this.y - other
+            )
+        }
     }
 
     multiply(other) {
-        return new Vec2(
-            this.x * other.x,
-            this.y * other.y
-        )
+        if (typeof other === "object") {
+            return new Vec2(
+                this.x * other.x,
+                this.y * other.y
+            )
+        }
+        else {
+            return new Vec2(
+                this.x * other,
+                this.y * other
+            )
+        }
     }
 
     divide(other) {
-        return new Vec2(
-            this.x / other.y,
-            this.y / other.y
-        )
+        if (typeof other === "object") {
+            return new Vec2(
+                this.x / other.x,
+                this.y / other.y
+            )
+        }
+        else {
+            return new Vec2(
+                this.x / other,
+                this.y / other
+            )
+        }
     }
 
     length() {
