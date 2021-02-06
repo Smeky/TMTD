@@ -6,10 +6,13 @@ import * as pixi from "pixi.js"
 export class Grid extends pixi.Container {
     constructor() {
         super()
+
+        this.tiles = []
     }
 
     async loadFromFile(filename) {
         // Todo: copy pixi's way of dynamic imports.. or find better than this
+        //       because here we have to specify folder path (webpack's dynamic import)
         const file = await import("media/levels/" + filename)
         const palette = new TilePalette(file.meta.paletteFile)
         
@@ -24,7 +27,18 @@ export class Grid extends pixi.Container {
             const pos = new Vec2(tileData.x, tileData.y).multiply(new Vec2(Tile.Size, Tile.Size))
 
             const tile = new Tile(pos, sprite)
+            tile.isPath = tileData.isPath
+
+            this.tiles.push(tile)
             this.addChild(sprite)
         }
+    }
+
+    getPathTiles() {
+        return this.tiles.filter(tile => tile.isPath)
+    }
+
+    getAllGroundTiles() {
+        return this.tiles.filter(tile => !tile.isPath)
     }
 }
