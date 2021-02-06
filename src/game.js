@@ -2,6 +2,7 @@ import * as pixi from "pixi.js"
 import Debugger from "game/debug"
 import InputHandler from "game/core/input"
 import EventEmitter from "eventemitter3"
+import { Button } from "game/ui/button"
 
 import {
     SceneHandler,
@@ -65,28 +66,23 @@ class Game extends EventEmitter {
 
         // Buttons to switch between scenes 
         {
-            const level = new pixi.Container()
+            const style = {fill: "#ffffff", fontSize: 18}
+
+            const level     = new Button(new pixi.Text("Level Scene",  style))
+            const editor    = new Button(new pixi.Text("Editor Scene", style))
+            const tomground = new Button(new pixi.Text("Tom's Ground", style))
+
+            level.onClick(() => this.sceneHandler.setScene(LevelScene))
+            editor.onClick(() => this.sceneHandler.setScene(EditorScene))
+            tomground.onClick(() => this.sceneHandler.setScene(TomGroundScene))
+
+            const y = Math.round(-window.innerHeight / 2 + 30)
+
             level.position.x = -150
-            level.position.y = -window.innerHeight / 2 + 30
-            level.interactive = true
-            level.on("mouseup", () => this.sceneHandler.setScene(LevelScene))
-            level.addChild(new pixi.Text("Level Scene", {fill: "#ffffff", fontSize: 18}))
-            level.pivot.x = level.getLocalBounds().width / 2
-    
-            const editor = new pixi.Container()
-            editor.position.y = -window.innerHeight / 2 + 30
-            editor.interactive = true
-            editor.on("mouseup", () => this.sceneHandler.setScene(EditorScene))
-            editor.addChild(new pixi.Text("Editor Scene", {fill: "#ffffff", fontSize: 18}))
-            editor.pivot.x = editor.getLocalBounds().width / 2
-            
-            const tomground = new pixi.Container()
+            level.position.y = y
+            editor.position.y = y
             tomground.position.x = 150
-            tomground.position.y = -window.innerHeight / 2 + 30
-            tomground.interactive = true
-            tomground.on("mouseup", () => this.sceneHandler.setScene(TomGroundScene))
-            tomground.addChild(new pixi.Text("Tom's Ground", {fill: "#ffffff", fontSize: 18}))
-            tomground.pivot.x = tomground.getLocalBounds().width / 2
+            tomground.position.y = y
             
             this.stage.addChild(level)
             this.stage.addChild(editor)

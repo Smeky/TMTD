@@ -93,7 +93,6 @@ export default class LevelScene extends Scene {
 
         entity.on("destReached", () => {
             this.entities.removeEntity(entity.id)
-            console.log(`Entity ${entity.id} reached destination`)
         })
     }
 

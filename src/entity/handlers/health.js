@@ -1,5 +1,6 @@
 import { EntityHandler } from "./handler"
 import { Rect } from "game/core/structs"
+import { Sprite } from "pixi.js"
 import utils from "game/utils"
 
 export class HealthHandler extends EntityHandler {
@@ -8,7 +9,8 @@ export class HealthHandler extends EntityHandler {
     }
 
     createComponent(opts = {}) {
-        const sprite = utils.createRectSprite(new Rect(0, 0, 20, 4), 0xff0000)
+        const texture = utils.createRectTexture(new Rect(0, 0, 20, 4), 0xff0000)
+        const sprite = new Sprite.from(texture)
 
         if (opts.parent) {
             opts.parent.addChild(sprite)
