@@ -3,16 +3,15 @@ import { Vec2 } from "game/core/structs"
 
 export class PathFinder {
 
-    constructor(availableTiles, start, end, pivot) {
+    constructor(availableTiles, start, end) {
 
         // dives Tile for more precise path finding; maybe move it elsewhere?
-        this.tileDivider = 1
+        this.tileDivider = 2
         this.updatedAvailableTiles = []
 
-        this.availableTiles = availableTiles
+        this.availableTiles = [...availableTiles]
         this.start = new Vec2(start.x * this.tileDivider, start.y * this.tileDivider)
         this.end = new Vec2(end.x * this.tileDivider, end.y * this.tileDivider)
-        this.pivot = pivot
         this.path = []
         this.pathXY = []
 
@@ -36,7 +35,7 @@ export class PathFinder {
         startNode.pathValue = 0
         startNode.betaValue = 0
 
-        let winnerNode
+        let winnerNode = null
         let nodesToProcess = [startNode]
         const nodesFinished = []
 
@@ -134,12 +133,19 @@ export class PathFinder {
                 }
             }
         }
+
+        
         let finalPath = []
         let finalPathXY = []
+
+        if (!winnerNode) {
+            return
+        }
+
         while (winnerNode.parentNode) {
             winnerNode = winnerNode.parentNode
-            let x = winnerNode.x * Tile.Size / this.tileDivider - this.pivot.x + this.entitySize
-            let y = winnerNode.y * Tile.Size / this.tileDivider - this.pivot.y + this.entitySize
+            let x = winnerNode.x * Tile.Size / this.tileDivider + this.entitySize
+            let y = winnerNode.y * Tile.Size / this.tileDivider + this.entitySize
             finalPath.push(new Vec2(x, y))
             finalPathXY.push(new Vec2(winnerNode.x, winnerNode.y))
         }
