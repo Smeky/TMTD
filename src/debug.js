@@ -41,7 +41,7 @@ export default class Debugger extends pixi.Container {
 
     updateDisplays = () => {
         this.boundsGraphics.clear()
-        this.boundsGraphics.lineStyle(2, 0xff0000)
+        this.boundsGraphics.lineStyle(1, 0xff0000)
 
         for (const obj of this.displayedObjects) {
             let {x, y, width, height} = obj.getBounds()

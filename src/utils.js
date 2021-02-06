@@ -72,13 +72,13 @@ export default {
      * @param {number} color Hexadecimal color
      * @returns {pixi.Sprite} new PIXI Sprite instance
      */
-    createRectSprite(bounds, color) {
+    createRectTexture(bounds, color) {
         const g = new pixi.Graphics()
         g.beginFill(color)
         g.drawRect(bounds.x, bounds.y, bounds.w, bounds.h)
         g.endFill()
 
-        return new pixi.Sprite.from(this.createTextureFromObject(g))
+        return this.createTextureFromObject(g)
     },
 
     checkOppositeSigns(first, second) {

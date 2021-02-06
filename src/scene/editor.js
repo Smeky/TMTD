@@ -4,7 +4,8 @@ import { Tile } from "game/core/tile"
 import { Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
-import { Rect } from "../core/structs"
+import { Rect } from "game/core/structs"
+import { Button } from "game/ui/button"
 
 export default class EditorScene extends Scene {
     constructor() {
@@ -33,20 +34,17 @@ export default class EditorScene extends Scene {
         this.tiles = []
         this.tilesContainer = new pixi.Container()
         
-        const tilesToClipboard = new pixi.Container()
-        tilesToClipboard.position.x = 0
-        tilesToClipboard.position.y = -window.innerHeight / 2 + 70
-        tilesToClipboard.interactive = true
-        tilesToClipboard.on("mouseup", () => {
+        const style = {fill: "#ffffff", fontSize: 18}
+        const button = new Button(new pixi.Text("Copy to clipboard", style))
+        button.y = Math.round(-window.innerHeight / 2 + 70)
+        button.onClick(() => {
             utils.strToClipboard(JSON.stringify(this.exportGrid(), null, 2))
         })
-        tilesToClipboard.addChild(new pixi.Text("Copy to clipboard", {fill: "#ffffff"}))
-        tilesToClipboard.pivot.x = tilesToClipboard.getLocalBounds().width / 2
         
         this.sceneContainer.addChild(this.tilesContainer)
         this.sceneContainer.addChild(this.preview)
         this.sceneContainer.addChild(this.palette)
-        this.sceneContainer.addChild(tilesToClipboard)
+        this.sceneContainer.addChild(button)
     }
 
     close() {
