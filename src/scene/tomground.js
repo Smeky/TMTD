@@ -3,6 +3,9 @@ import { Grid } from "game/core/grid"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
 
+import {Entities} from "game/entity"
+import { Rect, Vec2 } from "game/core/structs"
+
 export default class TomGroundScene extends Scene {
     constructor() {
         super("tomground")
@@ -15,10 +18,32 @@ export default class TomGroundScene extends Scene {
 
         // Todo: move this to camera
         this.setupBlueprintBg()
+
+        this.entities = new Entities()
+        this.sceneContainer.addChild(this.entities)
+
+        this.createEntity()
     }
 
     update(delta) {
+        this.entities.update(delta)
+    }
 
+    createEntity() {
+        const components = {
+            "transform": {
+                pos: new Vec2(0, 0)
+            },
+            "display": {
+                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), 0xffffff))
+            },
+            "movement": {
+                speed: 100,
+                destinations: [new Vec2(200, 0), new Vec2(200, 200), new Vec2(0, 200), new Vec2(0, 0)]
+            }
+        }
+
+        this.entities.createEntity(components)
     }
 
     setupBlueprintBg() {
