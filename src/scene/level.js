@@ -5,6 +5,7 @@ import { Rect, Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
 import { ECS } from "game/entity/entities"
 import * as pf from "game/core/pathfinding"
+import { TowerSelection } from "game/core/towerSelection"
 import utils from "game/utils"
 
 const TowerSize = 50
@@ -19,7 +20,7 @@ export default class LevelScene extends Scene {
         // Todo: Please, please, need a better solution
         // Setup layers so we can control zIndex better
         this.sceneContainer.sortableChildren = true
-        this.containers = ["grid", "towers", "entities", "healthbars"]
+        this.containers = ["grid", "towers", "entities", "healthbars", "ui"]
             .map((name, index) => {
                 const container = new pixi.Container()
                 
@@ -35,6 +36,9 @@ export default class LevelScene extends Scene {
 
         this.inputProxy = game.input.getProxy()
         this.entities = new ECS()
+
+        this.towerSelection = new TowerSelection()
+        this.containers.ui.addChild(this.towerSelection)
 
         this.started = false
         this.load()
@@ -56,6 +60,9 @@ export default class LevelScene extends Scene {
         // Todo: Temporary - Hacky solution to center everything based on grid's size
         this.sceneContainer.pivot = this.grid.pivot
         this.grid.pivot.set(0, 0)
+
+        this.towerSelection.x = this.sceneContainer.pivot.x
+        this.towerSelection.y = this.sceneContainer.getLocalBounds().height + 50
 
         // Todo:vectors: fix into divide(Tile.size)
         const pathTiles = this.grid.getPathTiles()
@@ -133,7 +140,7 @@ export default class LevelScene extends Scene {
         }
 
         const baseBounds = new Rect(0, 0, TowerSize, TowerSize)
-        const baseTexture = utils.createRectTexture(baseBounds, 0xff0000)
+        const baseTexture = utils.createRectTexture(baseBounds, this.towerSelection.getSelectedTower())
         const baseSprite = new pixi.Sprite(baseTexture)
 
         this.containers.towers.addChild(baseSprite)

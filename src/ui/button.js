@@ -2,32 +2,50 @@ import { Rect, Vec2 } from "game/core/structs"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
 
+const DefaultOptions = {
+    hoverEnabled: true,
+    pressedEnabled: true,
+    onClick: null,
+}
+
 export class Button extends pixi.Container {
-    constructor(text) {
+    /**
+     * 
+     * @param {pixi.DisplayObject} displayObject 
+     * @param {DefaultOptions} options 
+     */
+    constructor(displayObject, options = {}) {
         super()
 
+        this.options = {
+            ...DefaultOptions,
+            ...options
+        }
+
         { // graphics
-            this.border = new pixi.Graphics()
-            this.sprite = new pixi.Sprite()
+            if (this.options.hoverEnabled) {
+                this.border = new pixi.Graphics()    
+                this.border.visible = false // hidden by default, not hovered
+                this.border.alpha = 0.3
+                this.addChild(this.border)
+            }
 
-            this.border.visible = false // hidden by default, not hovered
-            this.sprite.visible = false // hidden by default, not pressed
+            if (this.options.pressedEnabled) {
+                this.sprite = new pixi.Sprite()
+                this.sprite.visible = false // hidden by default, not pressed
+                this.sprite.alpha = 0.1
+                this.addChild(this.sprite)
+            }
 
-            this.border.alpha = 0.5
-            this.sprite.alpha = 0.1
-            
-            this.addChild(this.sprite)
-            this.addChild(this.border)
+            this.displayObject = null
 
-            this.text = null
-
-            if (text) {
-                this.setText(text)
+            if (displayObject) {
+                this.setDisplayObject(displayObject)
             }
         }
 
         { // events
-            this._onClick = null
+            this._onClick = options.onClick
             this.isPressed = false
             this.interactive = true
 
@@ -50,42 +68,50 @@ export class Button extends pixi.Container {
         }
     }
 
-    setText(text) {
-        if (this.text) {
-            this.removeChild(this.text)
+    setDisplayObject(displayObject, borderOffset = new Vec2(6, 6)) {
+        if (this.displayObject) {
+            this.removeChild(this.displayObject)
         }
 
-        this.text = text
-        this.addChild(this.text)
+        this.displayObject = displayObject
+        this.addChild(this.displayObject)
 
-        const { width, height } = this.text.getLocalBounds()
-        const offset = new Vec2(10, 6)
+        const { width, height } = this.displayObject.getLocalBounds()
         const bounds = new Rect(
             0, 0, 
-            width + offset.x * 2, 
-            height + offset.y * 2,
+            width + borderOffset.x * 2, 
+            height + borderOffset.y * 2,
         )
 
-        this.sprite.texture = utils.createRectTexture(bounds, 0xffffff)
+        if (this.options.pressedEnabled) {
+            this.sprite.texture = utils.createRectTexture(bounds, 0xffffff)
+        }
 
-        this.border.lineStyle(1, 0xffffff)
-        this.border.drawRect(bounds.x, bounds.y, bounds.w, bounds.h)
-        this.border.endFill()
+        if (this.options.hoverEnabled) {
+            this.border.lineStyle(1, 0xffffff)
+            this.border.drawRect(bounds.x, bounds.y, bounds.w, bounds.h)
+            this.border.endFill()
+        }
 
         this.pivot.x = Math.round(bounds.w / 2)
         this.pivot.y = Math.round(bounds.h / 2)
 
-        this.text.x += offset.x
-        this.text.y += offset.y
+        this.displayObject.x += borderOffset.x
+        this.displayObject.y += borderOffset.y
     }
 
     setHover(state) {
-        this.border.visible = state
+        if (this.options.hoverEnabled) {
+            this.border.visible = state
+        }
     }
 
     setPressed(state) {
         this.isPressed = state
-        this.sprite.visible = state
+
+        if (this.options.pressedEnabled) {
+            this.sprite.visible = state
+        }
     }
 
     handleClick() {
