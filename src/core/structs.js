@@ -19,6 +19,10 @@ export class Vec2 {
         }
     }
 
+    equals(other) {
+        return this.x === other.x && this.y === other.y
+    }
+
     add(other) {
         if (typeof other === "object") {
             return new Vec2(
@@ -34,6 +38,11 @@ export class Vec2 {
         }
     }
 
+    /**
+     * 
+     * @param {Vec2|number} other 
+     * @returns {Vec2}
+     */
     subtract(other) {
         if (typeof other === "object") {
             return new Vec2(
@@ -159,5 +168,31 @@ export class Rect {
             new Vec2(this.x, this.y),
             new Vec2(this.w, this.h),
         ]
+    }
+
+    /**
+     * 
+     * @param {Rect} other 
+     */
+    intersects(other) {
+        if (this.x + this.w  < other.x) return false
+        if (this.x > other.x + other.w) return false
+        if (this.y + this.h  < other.y) return false
+        if (this.y > other.y + other.h) return false
+
+        return true
+    }
+
+    /**
+     * 
+     * @param {Vec2} point 
+     */
+    isPointInside(point) {
+        if (point.x < this.x) return false
+        if (point.x > this.x + this.w) return false
+        if (point.y < this.y) return false
+        if (point.y > this.y + this.h) return false
+
+        return true
     }
 }

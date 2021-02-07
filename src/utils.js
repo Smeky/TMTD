@@ -3,13 +3,11 @@ import * as pixi from "pixi.js"
 
 export default {
     /**
-     * Creates a new positions that is limited to bounds
+     * Creates a new position that is limited to (does not exceed) the bounds
      * @param {Vec2} pos
      * @param {Rect} bounds
      * @returns {Vec2} bound position
      */
-    
-    // Todo: Replace x & y by pos, bounds by rect
     clampPosInBounds: function(pos, bounds) {
         let res = new Vec2(pos)
     

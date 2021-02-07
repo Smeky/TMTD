@@ -1,19 +1,26 @@
+import { Scene } from "game/scene"
+import { Entities } from "game/entity"
 import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
-import { Scene } from "game/scene"
-import { Vec2 } from "game/core/structs"
-import * as pixi from "pixi.js"
-import { ECS } from "game/entity/entities"
 import * as pf from "game/core/pathfinding"
+import { TowerSelection } from "game/core/towerSelection"
+import { Rect, Vec2 } from "game/core/structs"
+import * as pixi from "pixi.js"
+import utils from "game/utils"
+
+const TowerSize = 50
 
 export default class LevelScene extends Scene {
     constructor() {
         super("level")
+
+        this.sceneContainer.interactive = true
+        this.sceneContainer.on("mouseup", this.handleMouseUp)
         
         // Todo: Please, please, need a better solution
         // Setup layers so we can control zIndex better
         this.sceneContainer.sortableChildren = true
-        this.containers = ["grid", "entities", "healthbars"]
+        this.containers = ["grid", "entities", "ui"]
             .map((name, index) => {
                 const container = new pixi.Container()
                 
@@ -28,14 +35,18 @@ export default class LevelScene extends Scene {
             }, {})
 
         this.inputProxy = game.input.getProxy()
-        this.entities = new ECS()
 
+        this.entities = new Entities()
+        this.containers.entities.addChild(this.entities)
+
+        this.towerSelection = new TowerSelection()
+        this.containers.ui.addChild(this.towerSelection)
 
         this.started = false
         this.load()
             .then(this.start())
             
-        this.cdEntity = 0.4
+        this.cdEntity = 1
         this.cdEntityProgress = 0.0
     }
 
@@ -51,6 +62,9 @@ export default class LevelScene extends Scene {
         // Todo: Temporary - Hacky solution to center everything based on grid's size
         this.sceneContainer.pivot = this.grid.pivot
         this.grid.pivot.set(0, 0)
+
+        this.towerSelection.x = this.sceneContainer.pivot.x
+        this.towerSelection.y = this.sceneContainer.getLocalBounds().height + 50
 
         // Todo:vectors: fix into divide(Tile.size)
         const pathTiles = this.grid.getPathTiles()
@@ -68,29 +82,23 @@ export default class LevelScene extends Scene {
     }
 
     createEntity() {
-        const sprite = new pixi.Sprite.from("media/tile.png")
-        sprite.anchor.set(0.5, 0.5)
-        this.containers.entities.addChild(sprite)
-
         const components = {
             "transform": {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
-                object: sprite
+                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), 0xffffff))
             },
             "movement": {
-                speed: 200,
+                speed: 70,
                 destinations: this.path
             },
             "health": {
-                parent: this.containers.healthbars
+                maximum: 100
             }
         }
 
         const entity = this.entities.createEntity(components)
-        this.entities.initEntity(entity)
-
         entity.on("destReached", () => {
             this.entities.removeEntity(entity.id)
         })
@@ -109,5 +117,57 @@ export default class LevelScene extends Scene {
                 this.createEntity()
             }
         }
+    }
+
+    createTower(pos) {
+        const snapped = this.grid.snapPosToTile(pos)
+        const tiles = this.grid.getTilesByBounds(new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize))
+                               .filter(tile => !this.grid.isTileObstructed(tile))
+        
+        if (tiles.length < 4) {
+            console.warn("Can not build here", pos)
+            return
+        }
+        else {
+            // Todo: tiles should be immutable, this should be done via the grid
+            for (const tile of tiles) {
+                tile.isBlocked = true
+            }
+        }
+
+        const baseBounds = new Rect(0, 0, TowerSize, TowerSize)
+        const baseTexture = utils.createRectTexture(baseBounds, this.towerSelection.getSelectedTower())
+
+        // Todo: fix this when we fix grid indices
+        // Just find topleft tile.. 
+        const topleft = tiles.reduce((candidate, tile) => {
+            if (!candidate) {
+                candidate = tile
+            }
+            else {
+                if (tile.x < candidate.x || tile.y < candidate.y) {
+                    candidate = tile
+                }
+            }
+
+            return candidate
+        }, null)
+
+        const components = {
+            "transform": {
+                pos: topleft.pos.add(Tile.Size - TowerSize / 2)
+            },
+            "display": {
+                displayObject: new pixi.Sprite(baseTexture),
+                anchor: new Vec2(0, 0),
+            }
+        }
+
+        this.entities.createEntity(components)
+    }
+
+    handleMouseUp = (event) => {
+        const pos = new Vec2(event.data.getLocalPosition(this.sceneContainer))
+        this.createTower(pos)
     }
 }

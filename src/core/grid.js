@@ -1,4 +1,4 @@
-import { Vec2 } from "game/core/structs"
+import { Vec2, Rect } from "game/core/structs"
 import { Tile } from "game/core/tile"
 import { TilePalette } from "game/core/palette"
 import * as pixi from "pixi.js"
@@ -40,5 +40,24 @@ export class Grid extends pixi.Container {
 
     getAllGroundTiles() {
         return this.tiles.filter(tile => !tile.isPath)
+    }
+
+    getTileByPos(pos) {
+        return this.tiles.find((tile) => new Rect(tile.pos.x, tile.pos.y, Tile.Size, Tile.Size).isPointInside(pos))
+    }
+
+    getTilesByBounds(bounds){ 
+        return this.tiles.filter((tile) => new Rect(tile.pos.x, tile.pos.y, Tile.Size, Tile.Size).intersects(bounds))
+    }
+
+    isTileObstructed(tile) {
+        return tile.isBlocked || tile.isPath
+    }
+
+    snapPosToTile(pos) {
+        return new Vec2(
+            pos.x -= pos.x % Tile.Size,
+            pos.y -= pos.y % Tile.Size,
+        )
     }
 }
