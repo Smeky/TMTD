@@ -14,8 +14,14 @@ export class Vec2 {
             this.y = x.y
         }
         else {
-            this.x = x
-            this.y = y
+            if (arguments.length === 1) {
+                this.x = x
+                this.y = x
+            }
+            else {
+                this.x = x
+                this.y = y
+            }
         }
     }
 

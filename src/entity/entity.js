@@ -2,7 +2,13 @@ import Components from "./components"
 import { Container } from "pixi.js"
 
 export default class Entity extends Container {
-    constructor(id, entities) {
+    /**
+     * 
+     * @param {*} id 
+     * @param {Entities[]} entities 
+     * @param {String|String[]} [tag]
+     */
+    constructor(id, entities, tag) {
         super()
 
         this.sortableChildren = true
@@ -10,6 +16,7 @@ export default class Entity extends Container {
         this.id = id
         this.entities = entities
         this.components = []
+        this.tags = Array.isArray(tag) ? [...tag] : [tag]
     }
 
     close() {
@@ -44,5 +51,9 @@ export default class Entity extends Container {
         for (const component of this.components) {
             component.postUpdate()
         }
+    }
+
+    hasTag(tag) {
+        return this.tags.includes(tag)
     }
 }

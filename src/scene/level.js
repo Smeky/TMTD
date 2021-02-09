@@ -98,7 +98,7 @@ export default class LevelScene extends Scene {
             }
         }
 
-        const entity = this.entities.createEntity(components)
+        const entity = this.entities.createEntity(components, "enemy")
         entity.on("destReached", () => {
             this.entities.removeEntity(entity.id)
         })
@@ -160,6 +160,12 @@ export default class LevelScene extends Scene {
             "display": {
                 displayObject: new pixi.Sprite(baseTexture),
                 anchor: new Vec2(0, 0),
+            },
+            "tower": {
+                headDisplay: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 8, 25), 0xffff00)),
+                headPos: new Vec2(TowerSize / 2),
+                size: TowerSize,
+                range: 300,
             }
         }
 

@@ -65,31 +65,31 @@ export function findPath(config = {}) {
                 //look for corners, if there is a corner, path cannot go diagonally
                 {
                     if (i === -1 && j === -1) {
-                        if ((cells.findIndex(node => (node.x === newX + Precision && node.y === newY)) === -1 ||
-                            cells.findIndex(node => (node.x === newX && node.y === newY + Precision)) === -1)
+                        if ((cells.findIndex(node => (node.x === newX + 1 && node.y === newY)) === -1 ||
+                            cells.findIndex(node => (node.x === newX && node.y === newY + 1)) === -1)
                         ) {
                             continue
                         }
                     }
 
                     if (i === 1 && j === -1) {
-                        if ((cells.findIndex(node => (node.x === newX - Precision && node.y === newY)) === -1 ||
-                            cells.findIndex(node => (node.x === newX && node.y === newY + Precision)) === -1)
+                        if ((cells.findIndex(node => (node.x === newX - 1 && node.y === newY)) === -1 ||
+                            cells.findIndex(node => (node.x === newX && node.y === newY + 1)) === -1)
                         ) {
                             continue
                         }
                     }
 
                     if (i === -1 && j === 1) {
-                        if ((cells.findIndex(node => (node.x === newX && node.y === newY - Precision)) === -1 ||
-                            cells.findIndex(node => (node.x === newX + Precision && node.y === newY)) === -1)
+                        if ((cells.findIndex(node => (node.x === newX && node.y === newY - 1)) === -1 ||
+                            cells.findIndex(node => (node.x === newX + 1 && node.y === newY)) === -1)
                         ) {
                             continue
                         }
                     }
                     if (i === 1 && j === 1) {
-                        if ((cells.findIndex(node => (node.x === newX - Precision && node.y === newY)) === -1 ||
-                            cells.findIndex(node => (node.x === newX && node.y === newY - Precision)) === -1)
+                        if ((cells.findIndex(node => (node.x === newX - 1 && node.y === newY)) === -1 ||
+                            cells.findIndex(node => (node.x === newX && node.y === newY - 1)) === -1)
                         ) {
                             continue
                         }
