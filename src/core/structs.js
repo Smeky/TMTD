@@ -155,6 +155,19 @@ export class Rect {
         }
     }
 
+    /**
+     * Rounds all 4 points of the rectangle using Math.round()
+     * @returns {Rect} a new Rect() object
+     */
+    round() {
+        return new Rect(
+            Math.round(this.x),
+            Math.round(this.y),
+            Math.round(this.w),
+            Math.round(this.h),
+        )
+    }
+
     compare(other) {
         if (this.x !== other.x || this.y !== other.y) return false
 
@@ -169,11 +182,26 @@ export class Rect {
         return true
     }
 
+    center() {
+        return new Vec2(
+            this.x + this.w / 2,
+            this.y + this.h / 2,
+        )
+    }
+
     split() {
         return [
             new Vec2(this.x, this.y),
             new Vec2(this.w, this.h),
         ]
+    }
+
+    /**
+     * Returns the Rect as an array [x, y, w, h]
+     * @returns {number[]}
+     */
+    spread() {
+        return [this.x, this.y, this.w, this.h]
     }
 
     /**

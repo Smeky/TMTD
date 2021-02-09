@@ -71,6 +71,13 @@ export default class LevelScene extends Scene {
                                    .map(tile => new Vec2(tile.pos).divide(new Vec2(Tile.Size, Tile.Size)))
 
         this.path = pf.findPath({cells: pathTiles, start, end}).map(cell => cell.multiply(Tile.Size))
+
+        // this.path.forEach((pos) => 
+        //     game.debug.displayPoint(new Vec2(
+        //         pos.x + this.sceneContainer.pivot.x / 2,
+        //         pos.y + this.sceneContainer.pivot.y / 2 + 16, // no idea why +16
+        //     ))
+        // )
     }
 
     start() {
@@ -102,6 +109,9 @@ export default class LevelScene extends Scene {
         entity.on("destReached", () => {
             this.entities.removeEntity(entity.id)
         })
+
+        // const dd = game.debug.displayBounds(entity)
+        // setTimeout(() => dd.destroy(), 2000)
     }
 
     update(delta) {

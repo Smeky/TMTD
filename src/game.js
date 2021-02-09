@@ -1,5 +1,5 @@
 import * as pixi from "pixi.js"
-import Debugger from "game/debug"
+import { Debug } from "game/debug"
 import InputHandler from "game/core/input"
 import EventEmitter from "eventemitter3"
 import { Button } from "game/ui/button"
@@ -31,6 +31,7 @@ class Game extends EventEmitter {
         const width = window.innerWidth
         const height = window.innerHeight
 
+        this.input = new InputHandler()
         this.renderer = new pixi.Renderer({ 
             width: width, 
             height: height,
@@ -49,11 +50,11 @@ class Game extends EventEmitter {
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
         this.ticker.start()
 
-        this.input = new InputHandler()
-        this.debug = new Debugger()
-
         this.setupScene()
-
+        
+        this.debug = new Debug()
+        this.debug.pivot.x = -this.stage.pivot.x
+        this.debug.pivot.y = -this.stage.pivot.y
         this.stage.addChild(this.debug)
 
         this.firstUpdate = true
@@ -105,7 +106,11 @@ class Game extends EventEmitter {
         // We don't use delta, since we want option (B)
         //  A) pixi.Ticker.delta * velocity is "pixels per frame"
         //  B) pixi.Ticker.elapsedMS / 1000 * velocity is "pixels per second"
-        this.sceneHandler.update(this.ticker.elapsedMS / 1000)
+        const fixedDelta = this.ticker.elapsedMS / 1000
+        
+        this.sceneHandler.update(fixedDelta)
+        this.debug.update(fixedDelta)
+
         this.renderer.render(this.stage)
     }
 
