@@ -8,7 +8,7 @@ export class TowerSelection extends pixi.Container {
         super()
 
         this.selected = 0
-        this.towers = [0xff00ff, 0xffff00, 0x00ffff]
+        this.towers = [0x35352f]
 
         this.towers.forEach((color, index) => {
             const bounds = new Rect(0, 0, 50, 50)
