@@ -1,4 +1,4 @@
-import { Vec2 } from "game/core/structs"
+import { Rect, Vec2 } from "game/core/structs"
 import { Component } from "."
 
 export default class TowerComponent extends Component {
@@ -67,9 +67,17 @@ export default class TowerComponent extends Component {
 
         if (closest.entity) {
             this.target = closest.entity
-            this.target.on("close", () => this.target = null)
+            this.target.on("close", this.clearTarget)
 
             this.updateHeadDisplay()
+        }
+    }
+
+    clearTarget = () => {
+        this.target = null
+
+        if (this.debug) {
+            this.debug.destroy()
         }
     }
 
@@ -78,8 +86,19 @@ export default class TowerComponent extends Component {
             return
         }
 
-        const otherPos = this.target.getComponent("transform").pos
-        const angle = this.transform.pos.add(new Vec2(this.size)).angle(otherPos)
+        const targetPos = this.target.getComponent("transform").pos
+        const angle = this.transform.pos.add(new Vec2(this.size)).angle(targetPos)
         this.headDisplay.rotation = angle - Math.PI / 2
+
+        // if (!this.debug) {
+        //     this.debug = game.debug.displayLine(new Vec2(), new Vec2())
+        // }
+        // else {
+        //     const myBounds = new Rect(this.entity.getBounds()) // ugly, but no other choice atm
+        //     const tarBounds = new Rect(this.target.getBounds())
+
+        //     this.debug.from = myBounds.center()
+        //     this.debug.to = tarBounds.center()
+        // }
     }
 }

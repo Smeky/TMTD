@@ -1,76 +1,116 @@
 import * as pixi from "pixi.js"
-import { Vec2 } from "./core/structs"
+import { Vec2, Rect } from "./core/structs"
 
-export default class Debugger extends pixi.Container {
-    constructor() {
-        super()
 
-        game.ticker.add(this.updateDisplays)
-        
-        this.centerRuler = new pixi.Graphics()
-        this.centerRuler.lineStyle(1, 0xff0000)
-        this.centerRuler.moveTo(0, -window.innerHeight / 2 - 1)
-        this.centerRuler.lineTo(0,  window.innerHeight / 2 + 1)
-        this.centerRuler.moveTo(-window.innerWidth / 2 - 1, 0)
-        this.centerRuler.lineTo( window.innerWidth / 2 + 1, 0)
-        this.centerRuler.endFill()
-        this.centerRuler.visible = false
-
-        this.boundsGraphics = new pixi.Graphics()
-        this.displayedObjects = []
-
-        this.addChild(this.boundsGraphics)
-        this.addChild(this.centerRuler)
+export class DebugDisplay {
+    static Type = {
+        Point: 0,
+        Line: 1,
+        Bounds: 2,
     }
 
-    toggleCenterRuler() {
-        this.centerRuler.visible = !this.centerRuler.visible
+    constructor(type, object) {
+        this.type = type
+        this.object = object
+        this.shouldDestroy = false
     }
 
-    displayBounds(graphicsObject) {
-        this.displayedObjects.push(graphicsObject)
-        this.updateDisplays()
-    }
+    // Todo: check if es6 has dynamic alias
+    // Just an alias
+    get pos() { return this.object }
+    set pos(value) { this.object = value }
 
-    hideBounds(graphicsObject) {
-        // Todo: Had no idea by what compare equality of 2 graphics objects, find a better solution
-        const index = this.displayedObjects.findIndex(obj => obj._boundsID === graphicsObject._boundsID)
-        this.displayedObjects.splice(index, 1)
-        this.updateDisplays()
-    }
+    // Just an alias
+    get from() { return this.object.from }
+    set from(value) { this.object.from = value }
 
-    updateDisplays = () => {
-        this.boundsGraphics.clear()
-        this.boundsGraphics.lineStyle(1, 0xff0000)
+    // Just an alias
+    get to() { return this.object.to }
+    set to(value) { this.object.to = value }
 
-        for (const obj of this.displayedObjects) {
-            let {x, y, width, height} = obj.getBounds()
-            
-            // Todo: Update this to stage pivot
-            x += -window.innerWidth / 2
-            y += -window.innerHeight / 2
-
-            this.boundsGraphics.drawRect(x - 1, y - 1, width + 2, height + 2)
-        }
-
-        this.boundsGraphics.endFill()
-    }
-
-    // Todo: add some remove() for points 
-    drawPoint = (pos) => {
-        const cross = new pixi.Graphics()
-        const size = 10
-
-        cross.lineStyle(1, 0xff0000)
-        cross.moveTo(pos.x, pos.y - size)
-        cross.lineTo(pos.x, pos.y + size)
-        cross.moveTo(pos.x - size, pos.y)
-        cross.lineTo(pos.x + size, pos.y)
-        cross.endFill()
-
-        this.addChild(cross)
-
-        return cross
+    destroy() {
+        this.shouldDestroy = true
     }
 }
 
+export class Debug extends pixi.Container {
+    constructor() {
+        super()
+
+        this.pointSize = 8
+
+        this.displays = []
+        this.graphics = new pixi.Graphics()
+
+        this.addChild(this.graphics)
+    }
+
+    update(delta) {
+        this.graphics.clear()
+        this.graphics.lineStyle(1, 0xff0000)
+
+        // Todo: test --i
+        for (let i = this.displays.length - 1; i >= 0; i--) {
+            const display = this.displays[i]
+
+            if (display.shouldDestroy) {
+                this.displays.splice(i, 1)
+            }
+            else {
+                if (display.type === DebugDisplay.Type.Bounds) {
+                    const bounds = new Rect(display.object.getBounds())
+                    this.graphics.drawRect(...bounds.round().spread())
+                }
+                else if (display.type === DebugDisplay.Type.Point) {
+                    const pos = display.object
+
+                    this.graphics.moveTo(pos.x, pos.y - this.pointSize)
+                    this.graphics.lineTo(pos.x, pos.y + this.pointSize)
+                    this.graphics.moveTo(pos.x - this.pointSize, pos.y)
+                    this.graphics.lineTo(pos.x + this.pointSize, pos.y)
+                }
+                else if (display.type === DebugDisplay.Type.Line) {
+                    const from = display.object.from
+                    const to = display.object.to
+
+                    this.graphics.moveTo(from.x, from.y)
+                    this.graphics.lineTo(to.x, to.y)
+                }
+            }
+        }
+
+        this.graphics.endFill()
+    }
+
+    addDisplay(type, object) {
+        const display = new DebugDisplay(type, object)
+
+        this.displays.push(display)
+        return display
+    }
+
+    /**
+     * 
+     * @param {Vec2} pos 
+     */
+    displayPoint(pos) {
+        return this.addDisplay(DebugDisplay.Type.Point, new Vec2(pos))
+    }
+
+    /**
+     * 
+     * @param {Vec2} from source position
+     * @param {Vec2} to target position
+     */
+    displayLine(from, to) {
+        return this.addDisplay(DebugDisplay.Type.Line, {from, to})
+    }
+
+    /**
+     * 
+     * @param {pixi.DisplayObject} displayObject
+     */
+    displayBounds(displayObject) {
+        return this.addDisplay(DebugDisplay.Type.Bounds, displayObject)
+    }
+}
