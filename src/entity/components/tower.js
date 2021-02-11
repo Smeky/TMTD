@@ -1,5 +1,6 @@
 import { Rect, Vec2 } from "game/graphics"
 import { Component } from "."
+import { Shaders } from "game/graphics/shaders"
 
 export default class TowerComponent extends Component {
     static __Name = "tower"
@@ -17,6 +18,9 @@ export default class TowerComponent extends Component {
         this.headPos = options.headPos
         this.headDisplay = options.headDisplay
         this.entity.addChild(this.headDisplay)
+
+        this.laserShader = new Shaders()
+        this.entity.addChild(this.laserShader)
 
         this.transform = null
         this.target = null
@@ -44,6 +48,7 @@ export default class TowerComponent extends Component {
         }
 
         this.updateHeadDisplay()
+        this.createLaser()
     }
 
     findTarget() {
@@ -70,6 +75,7 @@ export default class TowerComponent extends Component {
             this.target.on("close", this.clearTarget)
 
             this.updateHeadDisplay()
+            this.createLaser()
         }
     }
 
@@ -100,5 +106,16 @@ export default class TowerComponent extends Component {
         //     this.debug.from = myBounds.center()
         //     this.debug.to = tarBounds.center()
         // }
+    }
+
+    createLaser(){
+        if (!this.target) {
+            return
+        }
+        
+        const targetPos = this.target.getComponent("transform").pos
+        const startPos = this.transform.pos
+
+        this.laserShader.laser(startPos, targetPos)
     }
 }
