@@ -1,5 +1,12 @@
 export { default as Scene } from "./scene"
 export { default as SceneHandler } from "./sceneHandler"
-export { default as LevelScene } from "./level"
-export { default as EditorScene } from "./editor"
-export { default as TomGroundScene} from "./tomground"
+
+import LevelScene from "./level"
+import EditorScene from "./editor"
+import TomGroundScene from "./tomground"
+
+export default {
+    [LevelScene.__Name]: LevelScene,
+    [EditorScene.__Name]: EditorScene,
+    [TomGroundScene.__Name]: TomGroundScene,
+}

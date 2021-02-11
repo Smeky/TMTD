@@ -11,8 +11,10 @@ import utils from "game/utils"
 const TowerSize = 50
 
 export default class LevelScene extends Scene {
+    static __Name = "level"
+
     constructor() {
-        super("level")
+        super()
 
         this.interactive = true
         this.on("mouseup", this.handleMouseUp)

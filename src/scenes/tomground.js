@@ -7,6 +7,8 @@ import {Entities} from "game/entity"
 import { Rect, Vec2 } from "game/graphics"
 
 export default class TomGroundScene extends Scene {
+    static __Name = "tomground"
+
     constructor() {
         super("tomground")
 

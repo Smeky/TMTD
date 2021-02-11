@@ -1,9 +1,11 @@
 import { Container } from "pixi.js"
 
 export default class Scene extends Container {
-    constructor(id) {
+    static __Name = null
+
+    constructor() {
         super()
-        this.id = id
+        this.name = this.constructor.__Name
     }
 
     update(delta) {}

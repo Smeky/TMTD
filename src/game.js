@@ -4,13 +4,7 @@ import InputHandler from "game/core/input"
 import EventEmitter from "eventemitter3"
 import { Button } from "game/ui/button"
 import { Camera } from "game/core/camera"
-
-import {
-    SceneHandler,
-    LevelScene, 
-    EditorScene, 
-    TomGroundScene
-} from "game/scenes"
+import { SceneHandler } from "game/scenes"
 import { Vec2 } from "game/graphics"
 
 pixi.utils.skipHello()
@@ -71,7 +65,7 @@ class Game extends EventEmitter {
         this.sceneHandler = new SceneHandler()
         this.camera.addChild(this.sceneHandler)
 
-        this.sceneHandler.setScene(LevelScene)
+        this.sceneHandler.setScene("level")
 
         // Buttons to switch between scenes 
         {
@@ -81,9 +75,9 @@ class Game extends EventEmitter {
             const editor    = new Button(new pixi.Text("Editor Scene", style))
             const tomground = new Button(new pixi.Text("Tom's Ground", style))
 
-            level.onClick(() => this.sceneHandler.setScene(LevelScene))
-            editor.onClick(() => this.sceneHandler.setScene(EditorScene))
-            tomground.onClick(() => this.sceneHandler.setScene(TomGroundScene))
+            level.onClick(() => this.sceneHandler.setScene("level"))
+            editor.onClick(() => this.sceneHandler.setScene("editor"))
+            tomground.onClick(() => this.sceneHandler.setScene("tomground"))
 
             const y = Math.round(-window.innerHeight / 2 + 30)
 

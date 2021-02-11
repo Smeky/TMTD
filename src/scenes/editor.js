@@ -8,6 +8,8 @@ import { Rect } from "game/graphics"
 import { Button } from "game/ui/button"
 
 export default class EditorScene extends Scene {
+    static __Name = "editor"
+
     constructor() {
         super("editor")
 

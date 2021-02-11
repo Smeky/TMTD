@@ -1,4 +1,5 @@
 import { Container } from "pixi.js"
+import Scenes from "game/scenes"
 
 export default class SceneHandler extends Container {
     constructor() {
@@ -6,13 +7,13 @@ export default class SceneHandler extends Container {
         this.scene = null
     }
 
-    setScene(Scene) {
+    setScene(name) {
         if (this.scene) {
             this.scene.close()
             this.removeChild(this.scene)
         }
 
-        this.scene = new Scene()
+        this.scene = new Scenes[name]()
         this.addChild(this.scene)
     }
 
