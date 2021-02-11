@@ -1,4 +1,4 @@
-import { Vec2 } from "game/core/structs"
+import { Vec2 } from "game/graphics"
 import { DisplayObject } from "pixi.js"
 import { Entity } from ".."
 import { Component } from "."

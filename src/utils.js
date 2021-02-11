@@ -1,4 +1,4 @@
-import { Vec2, Rect } from "game/core/structs"
+import { Vec2, Rect } from "game/graphics"
 import * as pixi from "pixi.js"
 
 export default {

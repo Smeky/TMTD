@@ -1,4 +1,4 @@
-import { Rect, Vec2 } from "game/core/structs"
+import { Rect, Vec2 } from "game/graphics"
 import { Component } from "."
 
 export default class TowerComponent extends Component {

@@ -10,7 +10,7 @@ import {
     EditorScene, 
     TomGroundScene
 } from "game/scene"
-import { Vec2 } from "./core/structs"
+import { Vec2 } from "game/graphics"
 
 pixi.utils.skipHello()
 

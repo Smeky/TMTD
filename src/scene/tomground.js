@@ -4,7 +4,7 @@ import * as pixi from "pixi.js"
 import utils from "game/utils"
 
 import {Entities} from "game/entity"
-import { Rect, Vec2 } from "game/core/structs"
+import { Rect, Vec2 } from "game/graphics"
 
 export default class TomGroundScene extends Scene {
     constructor() {

@@ -1,10 +1,10 @@
 import { Scene } from "game/scene"
 import { TilePalette } from "game/core/palette"
 import { Tile } from "game/core/tile"
-import { Vec2 } from "game/core/structs"
+import { Vec2 } from "game/graphics"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
-import { Rect } from "game/core/structs"
+import { Rect } from "game/graphics"
 import { Button } from "game/ui/button"
 
 export default class EditorScene extends Scene {

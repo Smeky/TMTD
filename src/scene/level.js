@@ -4,7 +4,7 @@ import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
 import * as pf from "game/core/pathfinding"
 import { TowerSelection } from "game/core/towerSelection"
-import { Rect, Vec2 } from "game/core/structs"
+import { Rect, Vec2 } from "game/graphics"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
 
