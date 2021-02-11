@@ -1,4 +1,4 @@
-import { Vec2 } from "./structs"
+import { Vec2 } from "game/graphics"
 
 // Export so it can be overwritten from outside
 export let Precision = 2

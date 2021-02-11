@@ -1,4 +1,4 @@
-import { Vec2, Rect } from "game/core/structs"
+import { Vec2, Rect } from "game/graphics"
 import { Tile } from "game/core/tile"
 import { TilePalette } from "game/core/palette"
 import * as pixi from "pixi.js"

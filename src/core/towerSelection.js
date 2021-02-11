@@ -1,7 +1,7 @@
 import * as pixi from "pixi.js"
 import { Button } from "game/ui/button"
 import utils from "game/utils"
-import { Rect } from "./structs"
+import { Rect } from "game/graphics"
 
 export class TowerSelection extends pixi.Container {
     constructor() { 

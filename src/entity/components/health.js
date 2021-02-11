@@ -1,4 +1,4 @@
-import { Rect } from "game/core/structs"
+import { Rect } from "game/graphics"
 import utils from "game/utils"
 import { DisplayObject, Sprite } from "pixi.js"
 import { Entity } from ".."

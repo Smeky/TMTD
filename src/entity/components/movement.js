@@ -1,4 +1,4 @@
-import { Vec2 } from "game/core/structs"
+import { Vec2 } from "game/graphics"
 import { Component } from "."
 
 export default class MovementComponent extends Component {

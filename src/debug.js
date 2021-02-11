@@ -1,5 +1,5 @@
 import * as pixi from "pixi.js"
-import { Vec2, Rect } from "./core/structs"
+import { Vec2, Rect } from "game/graphics"
 
 
 export class DebugDisplay {
