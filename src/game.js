@@ -3,13 +3,14 @@ import { Debug } from "game/debug"
 import InputHandler from "game/core/input"
 import EventEmitter from "eventemitter3"
 import { Button } from "game/ui/button"
+import { Camera } from "game/core/camera"
 
 import {
     SceneHandler,
     LevelScene, 
     EditorScene, 
     TomGroundScene
-} from "game/scene"
+} from "game/scenes"
 import { Vec2 } from "game/graphics"
 
 pixi.utils.skipHello()
@@ -28,6 +29,13 @@ class Game extends EventEmitter {
     }
 
     init() {
+        this.firstUpdate = true
+
+        this.setupGraphics()
+        this.setupScene()
+    }
+
+    setupGraphics() {
         const width = window.innerWidth
         const height = window.innerHeight
 
@@ -43,26 +51,26 @@ class Game extends EventEmitter {
         this.stage.pivot.y = Math.round(-height / 2)
 
         window.addEventListener("resize", this.handleResize)
-
         document.body.appendChild(this.renderer.view)
+
+        this.camera = new Camera()
+        this.stage.addChild(this.camera)
 
         this.ticker = new pixi.Ticker()
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
         this.ticker.start()
 
-        this.setupScene()
-        
         this.debug = new Debug()
         this.debug.pivot.x = -this.stage.pivot.x
         this.debug.pivot.y = -this.stage.pivot.y
-        this.stage.addChild(this.debug)
-
-        this.firstUpdate = true
+        this.camera.addChild(this.debug)
     }
 
     setupScene() {
         // Scene init should be last
         this.sceneHandler = new SceneHandler()
+        this.camera.addChild(this.sceneHandler)
+
         this.sceneHandler.setScene(LevelScene)
 
         // Buttons to switch between scenes 

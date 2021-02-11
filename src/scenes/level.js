@@ -1,4 +1,4 @@
-import { Scene } from "game/scene"
+import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
@@ -14,17 +14,17 @@ export default class LevelScene extends Scene {
     constructor() {
         super("level")
 
-        this.sceneContainer.interactive = true
-        this.sceneContainer.on("mouseup", this.handleMouseUp)
+        this.interactive = true
+        this.on("mouseup", this.handleMouseUp)
         
         // Todo: Please, please, need a better solution
         // Setup layers so we can control zIndex better
-        this.sceneContainer.sortableChildren = true
+        this.sortableChildren = true
         this.containers = ["grid", "entities", "ui"]
             .map((name, index) => {
                 const container = new pixi.Container()
                 
-                this.sceneContainer.addChild(container)
+                this.addChild(container)
                 container.zIndex = index
 
                 return [name, container]
@@ -60,11 +60,11 @@ export default class LevelScene extends Scene {
         const end = new Vec2(14, 11)
 
         // Todo: Temporary - Hacky solution to center everything based on grid's size
-        this.sceneContainer.pivot = this.grid.pivot
+        this.pivot = this.grid.pivot
         this.grid.pivot.set(0, 0)
 
-        this.towerSelection.x = this.sceneContainer.pivot.x
-        this.towerSelection.y = this.sceneContainer.getLocalBounds().height + 50
+        this.towerSelection.x = this.pivot.x
+        this.towerSelection.y = this.getLocalBounds().height + 50
 
         // Todo:vectors: fix into divide(Tile.size)
         const pathTiles = this.grid.getPathTiles()
@@ -74,8 +74,8 @@ export default class LevelScene extends Scene {
 
         // this.path.forEach((pos) => 
         //     game.debug.displayPoint(new Vec2(
-        //         pos.x + this.sceneContainer.pivot.x / 2,
-        //         pos.y + this.sceneContainer.pivot.y / 2 + 16, // no idea why +16
+        //         pos.x + this.pivot.x / 2,
+        //         pos.y + this.pivot.y / 2 + 16, // no idea why +16
         //     ))
         // )
     }
@@ -183,7 +183,7 @@ export default class LevelScene extends Scene {
     }
 
     handleMouseUp = (event) => {
-        const pos = new Vec2(event.data.getLocalPosition(this.sceneContainer))
+        const pos = new Vec2(event.data.getLocalPosition(this))
         this.createTower(pos)
     }
 }

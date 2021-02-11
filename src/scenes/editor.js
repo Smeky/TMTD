@@ -1,4 +1,4 @@
-import { Scene } from "game/scene"
+import { Scene } from "game/scenes"
 import { TilePalette } from "game/core/palette"
 import { Tile } from "game/core/tile"
 import { Vec2 } from "game/graphics"
@@ -14,9 +14,9 @@ export default class EditorScene extends Scene {
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("mousemove", this.handleMouseMove)
 
-        this.sceneContainer.interactive = true
-        this.sceneContainer.on("mousedown", this.togglePainting)
-        this.sceneContainer.on("mouseup", this.togglePainting)
+        this.interactive = true
+        this.on("mousedown", this.togglePainting)
+        this.on("mouseup", this.togglePainting)
 
         this.isPainting = false
 
@@ -41,10 +41,10 @@ export default class EditorScene extends Scene {
             utils.strToClipboard(JSON.stringify(this.exportGrid(), null, 2))
         })
         
-        this.sceneContainer.addChild(this.tilesContainer)
-        this.sceneContainer.addChild(this.preview)
-        this.sceneContainer.addChild(this.palette)
-        this.sceneContainer.addChild(button)
+        this.addChild(this.tilesContainer)
+        this.addChild(this.preview)
+        this.addChild(this.palette)
+        this.addChild(button)
     }
 
     close() {

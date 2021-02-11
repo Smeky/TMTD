@@ -12,7 +12,7 @@ export default class TomGroundScene extends Scene {
 
         this.grid = new Grid()
         this.grid.loadFromFile("dev.json")
-        this.sceneContainer.addChild(this.grid)
+        this.addChild(this.grid)
 
         game.on("windowResized", event => console.log("resize", event.after))
 
@@ -20,7 +20,7 @@ export default class TomGroundScene extends Scene {
         this.setupBlueprintBg()
 
         this.entities = new Entities()
-        this.sceneContainer.addChild(this.entities)
+        this.addChild(this.entities)
 
         this.createEntity()
     }
@@ -56,8 +56,8 @@ export default class TomGroundScene extends Scene {
             new pixi.Graphics(),
         ]
 
-        this.sceneContainer.addChild(this.bp[0])
-        this.sceneContainer.addChild(this.bp[1])
+        this.addChild(this.bp[0])
+        this.addChild(this.bp[1])
 
         this.bp[0].alpha = 0.25
         this.bp[0].lineStyle(1, 0xffffff)
