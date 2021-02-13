@@ -13,6 +13,7 @@ export default class HealthComponent extends Component {
      * @param {object} options 
      * @param {number} options.maximum   maximum amount of health 
      * @param {number} [options.current] [optional] current amount of health
+     * @param {number} [options.parent] [optional] parent for the displayObject. Otherwise falls under Entity
      */
     constructor(entity, options) {
         super(entity) 
@@ -20,9 +21,10 @@ export default class HealthComponent extends Component {
         this.transform = null
         this.maximum = options.maximum || 0
         this.current = options.current || this.maximum
+        this.parent = options.parent || this.entity
         
         this.sprite = new Sprite(utils.createRectTexture(new Rect(0, 0, 20, 4), 0xff0000))
-        this.entity.addChild(this.sprite)
+        this.parent.addChild(this.sprite)
     }
 
     setup() {
@@ -41,7 +43,7 @@ export default class HealthComponent extends Component {
     }
 
     close() {
-        this.entity.removeChild(this.sprite)
+        this.parent.removeChild(this.sprite)
     }
 
     update(delta) {

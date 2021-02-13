@@ -35,4 +35,8 @@ export class Layers extends Container {
 
         return layer
     }
+
+    getLayer(level) {
+        return this.ensureLayer(level)
+    }
 }

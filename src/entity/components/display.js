@@ -11,6 +11,7 @@ export default class DisplayComponent extends Component {
      * @param {Entity} entity 
      * @param {object} options 
      * @param {DisplayObject} [options.displayObject] [optional] the display objec that will represent the entity
+     * @param {Container} [options.parent] [optional] parent for the displayObject. Otherwise falls under Entity
      * @param {Vec2} [options.anchor] [optional] anchor of the display object
      */
     constructor(entity, options) {
@@ -18,6 +19,7 @@ export default class DisplayComponent extends Component {
 
         this.transform = null
         this.displayObject = options.displayObject || null
+        this.parent = options.parent || this.entity
         this.anchor = options.anchor || new Vec2(0.5, 0.5)
 
         if (this.displayObject) {
@@ -30,7 +32,7 @@ export default class DisplayComponent extends Component {
                 this.displayObject.pivot.y = Math.round(this.anchor.y * height)
             }
 
-            this.entity.addChild(this.displayObject)
+            this.parent.addChild(this.displayObject)
         }
     }
 
@@ -41,7 +43,7 @@ export default class DisplayComponent extends Component {
 
     close() {
         if (this.displayObject) {
-            this.entity.removeChild(this.displayObject)
+            this.parent.removeChild(this.displayObject)
         }
     }
 
