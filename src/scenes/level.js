@@ -45,7 +45,7 @@ export default class LevelScene extends Scene {
             .then(this.start())
             
         this.cdEntity = 1
-        this.cdEntityProgress = 0.0
+        this.cdEntityProgress = this.cdEntity - 0.1
     }
 
     async load() {
@@ -86,6 +86,21 @@ export default class LevelScene extends Scene {
         this.camera.close()
     }
 
+    update(delta) {
+        if (!this.started) return
+
+        this.entities.update(delta)
+
+        if (this.entities.count() < 70) {
+            this.cdEntityProgress += delta
+            if (this.cdEntityProgress >= this.cdEntity) {
+                this.cdEntityProgress %= this.cdEntity
+    
+                this.createEntity()
+            }
+        }
+    }
+
     createEntity() {
         const components = {
             "transform": {
@@ -108,25 +123,15 @@ export default class LevelScene extends Scene {
         const entity = this.entities.createEntity(components, "enemy")
         entity.on("destReached", () => {
             this.entities.removeEntity(entity.id)
+            // remove health
+        })
+        entity.on("noHealth", () => {
+            this.entities.removeEntity(entity.id)
+            // add points
         })
 
         // const dd = game.debug.displayBounds(entity)
         // setTimeout(() => dd.destroy(), 2000)
-    }
-
-    update(delta) {
-        if (!this.started) return
-
-        this.entities.update(delta)
-
-        if (this.entities.count() < 70) {
-            this.cdEntityProgress += delta
-            if (this.cdEntityProgress >= this.cdEntity) {
-                this.cdEntityProgress %= this.cdEntity
-    
-                this.createEntity()
-            }
-        }
     }
 
     createTower(pos) {
@@ -178,6 +183,10 @@ export default class LevelScene extends Scene {
                 parent: this.cameraLayers.getLayer(15),
                 size: TowerSize,
                 range: 300,
+                attack: {
+                    damage: 1,
+                    rate: 0.1,
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 import { Vec2 } from "game/graphics"
 import { Shaders } from "game/graphics/shaders"
+import { Cooldown } from "game/core/cooldown"
 import { DisplayObject } from "pixi.js"
 import { Component } from "."
 
@@ -15,6 +16,9 @@ export default class TowerComponent extends Component {
      * @param {Container}     options.parent
      * @param {Vec2}          options.size
      * @param {number}        options.range
+     * @param {object}        options.attack
+     * @param {number}        options.attack.damage
+     * @param {number}        options.attack.rate
      */
     constructor(entity, options) {
         super(entity) 
@@ -31,6 +35,10 @@ export default class TowerComponent extends Component {
 
         this.transform = null
         this.target = null
+
+        this.damage = options.attack.damage
+        this.cooldown = new Cooldown(options.attack.rate || 1.0)
+        this.cooldown.onTrigger = this.handleAttack
     }
 
     setup() {
@@ -57,6 +65,13 @@ export default class TowerComponent extends Component {
     update(delta) {
         if (!this.target) {
             this.findTarget()
+        }
+
+        if (this.cooldown.update(delta) && this.target) {
+            this.cooldown.reset()
+
+            const health = this.target.getComponent("health")
+            health.reduce(this.damage)
         }
 
         this.updateHeadDisplay()
