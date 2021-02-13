@@ -13,15 +13,15 @@ class Game extends EventEmitter {
     constructor() {
         super()
     }
-
+    
     get width() {
         return this.renderer.view.width
     }
-
+    
     get height() {
         return this.renderer.view.height
     }
-
+    
     init() {
         this.firstUpdate = true
 

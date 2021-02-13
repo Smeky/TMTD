@@ -1,6 +1,6 @@
-import { Container } from "pixi.js"
+import { Layers } from "game/graphics/layers"
 
-export default class Scene extends Container {
+export default class Scene extends Layers {
     static __Name = null
 
     constructor() {

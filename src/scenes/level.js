@@ -18,31 +18,12 @@ export default class LevelScene extends Scene {
 
         this.interactive = true
         this.on("mouseup", this.handleMouseUp)
-        
-        // Todo: Please, please, need a better solution
-        // Setup layers so we can control zIndex better
-        this.sortableChildren = true
-        this.containers = ["grid", "entities", "ui"]
-            .map((name, index) => {
-                const container = new pixi.Container()
-                
-                this.addChild(container)
-                container.zIndex = index
-
-                return [name, container]
-            })
-            .reduce((acc, [name, container]) => {
-                acc[name] = container
-                return acc 
-            }, {})
-
-        this.inputProxy = game.input.getProxy()
 
         this.entities = new Entities()
-        this.containers.entities.addChild(this.entities)
-
         this.towerSelection = new TowerSelection()
-        this.containers.ui.addChild(this.towerSelection)
+
+        this.addChild(this.entities, 15)
+        this.addChild(this.towerSelection, 20)
 
         this.started = false
         this.load()
@@ -54,7 +35,7 @@ export default class LevelScene extends Scene {
 
     async load() {
         this.grid = new Grid()
-        this.containers.grid.addChild(this.grid)
+        this.addChild(this.grid, 10)
 
         await this.grid.loadFromFile("dev.json")
 
@@ -87,7 +68,7 @@ export default class LevelScene extends Scene {
     }
 
     close() {
-        this.inputProxy.close()
+
     }
 
     createEntity() {
@@ -185,6 +166,7 @@ export default class LevelScene extends Scene {
     }
 
     handleMouseUp = (event) => {
+        console.log("test level")
         const pos = new Vec2(event.data.getLocalPosition(this))
         this.createTower(pos)
     }
