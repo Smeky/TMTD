@@ -3,7 +3,6 @@ import { Debug } from "game/debug"
 import InputHandler from "game/core/input"
 import EventEmitter from "eventemitter3"
 import { Button } from "game/ui/button"
-import { Camera } from "game/core/camera"
 import { SceneHandler } from "game/scenes"
 import { Vec2 } from "game/graphics"
 
@@ -13,26 +12,26 @@ class Game extends EventEmitter {
     constructor() {
         super()
     }
-
+    
     get width() {
         return this.renderer.view.width
     }
-
+    
     get height() {
         return this.renderer.view.height
     }
-
+    
     init() {
         this.firstUpdate = true
 
         this.setupGraphics()
-        this.setupCamera()
-        this.setupScene()
 
         this.debug = new Debug()
         this.debug.pivot.x = -this.stage.pivot.x
         this.debug.pivot.y = -this.stage.pivot.y
-        this.camera.addChild(this.debug)
+        this.stage.addChild(this.debug)
+        
+        this.setupScene()
     }
 
     setupGraphics() {
@@ -58,19 +57,10 @@ class Game extends EventEmitter {
         this.ticker.start()
     }
 
-    setupCamera() {
-        this.camera = new Camera({
-            zoomEnabled: true,
-            dragEnabled: true,
-        })
-
-        this.stage.addChild(this.camera)
-    }
-
     setupScene() {
         // Scene init should be last
         this.sceneHandler = new SceneHandler()
-        this.camera.addChild(this.sceneHandler)
+        this.stage.addChild(this.sceneHandler)
 
         this.sceneHandler.setScene("level")
 

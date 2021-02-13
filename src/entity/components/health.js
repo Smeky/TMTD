@@ -13,6 +13,7 @@ export default class HealthComponent extends Component {
      * @param {object} options 
      * @param {number} options.maximum   maximum amount of health 
      * @param {number} [options.current] [optional] current amount of health
+     * @param {number} [options.parent] [optional] parent for the displayObject. Otherwise falls under Entity
      */
     constructor(entity, options) {
         super(entity) 
@@ -20,9 +21,11 @@ export default class HealthComponent extends Component {
         this.transform = null
         this.maximum = options.maximum || 0
         this.current = options.current || this.maximum
+        this.parent = options.parent || this.entity
         
+        this.maxWidth = 0
         this.sprite = new Sprite(utils.createRectTexture(new Rect(0, 0, 20, 4), 0xff0000))
-        this.entity.addChild(this.sprite)
+        this.parent.addChild(this.sprite)
     }
 
     setup() {
@@ -32,26 +35,46 @@ export default class HealthComponent extends Component {
         if (display) {
             const {width, height} = display.displayObject.getLocalBounds()
             
-            this.sprite.pivot.x = this.sprite.getLocalBounds().width / 2
-            this.sprite.pivot.y = height / 2 + 10
             this.sprite.width = width + width / 2.5
+            this.sprite.pivot.y = height / 2 + 10
+
+            this.maxWidth = this.sprite.width
         }
 
-        this.updatePosition()
+        this.updateBar()
     }
 
     close() {
-        this.entity.removeChild(this.sprite)
+        this.parent.removeChild(this.sprite)
     }
 
     update(delta) {
-        this.updatePosition()
+        this.updateBar()
     }
 
-    updatePosition() {
+    updateBar() {
+        this.sprite.width = this.maxWidth * (this.current / this.maximum)
+
         if (this.transform) {
-            this.sprite.x = this.transform.pos.x
+            this.sprite.x = this.transform.pos.x - this.maxWidth / 2
             this.sprite.y = this.transform.pos.y
+        }
+    }
+
+    reduce(value) {
+        this.current -= value
+        
+        if (this.current < 0) {
+            this.current = 0
+            this.entity.emit("noHealth")
+        }
+    }
+
+    add(value) {
+        this.current += value
+
+        if (this.current >= this.maximum) {
+            this.currente = this.maximum
         }
     }
 }
