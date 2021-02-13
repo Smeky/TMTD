@@ -2,9 +2,11 @@ import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
+import { Camera } from "game/core/camera"
 import * as pf from "game/core/pathfinding"
 import { TowerSelection } from "game/core/towerSelection"
 import { Rect, Vec2 } from "game/graphics"
+import { Layers } from "game/graphics/layers"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
 
@@ -18,31 +20,25 @@ export default class LevelScene extends Scene {
 
         this.interactive = true
         this.on("mouseup", this.handleMouseUp)
-        
-        // Todo: Please, please, need a better solution
-        // Setup layers so we can control zIndex better
-        this.sortableChildren = true
-        this.containers = ["grid", "entities", "ui"]
-            .map((name, index) => {
-                const container = new pixi.Container()
-                
-                this.addChild(container)
-                container.zIndex = index
 
-                return [name, container]
+        {   // Setup camera
+            this.cameraLayers = new Layers()
+            this.camera = new Camera({
+                zoomEnabled: true,
+                dragEnabled: true,
+                grabDebug: true,
             })
-            .reduce((acc, [name, container]) => {
-                acc[name] = container
-                return acc 
-            }, {})
-
-        this.inputProxy = game.input.getProxy()
+                    
+            this.addChild(this.camera, 10)
+            this.camera.addChild(this.cameraLayers)
+        }
+        
+        // Part of UI, goes to Scene layers
+        this.towerSelection = new TowerSelection()
+        this.addChild(this.towerSelection, 20)
 
         this.entities = new Entities()
-        this.containers.entities.addChild(this.entities)
-
-        this.towerSelection = new TowerSelection()
-        this.containers.ui.addChild(this.towerSelection)
+        this.cameraLayers.addChild(this.entities, 15)
 
         this.started = false
         this.load()
@@ -54,7 +50,7 @@ export default class LevelScene extends Scene {
 
     async load() {
         this.grid = new Grid()
-        this.containers.grid.addChild(this.grid)
+        this.cameraLayers.addChild(this.grid, 10)
 
         await this.grid.loadFromFile("dev.json")
 
@@ -87,7 +83,7 @@ export default class LevelScene extends Scene {
     }
 
     close() {
-        this.inputProxy.close()
+        this.camera.close()
     }
 
     createEntity() {
@@ -96,14 +92,16 @@ export default class LevelScene extends Scene {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
-                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), 0xffffff))
+                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), 0xffffff)),
+                parent: this.cameraLayers.getLayer(10),
             },
             "movement": {
                 speed: 70,
-                destinations: this.path
+                destinations: this.path,
             },
             "health": {
-                maximum: 100
+                maximum: 100,
+                parent: this.cameraLayers.getLayer(50),
             }
         }
 
@@ -171,11 +169,13 @@ export default class LevelScene extends Scene {
             },
             "display": {
                 displayObject: new pixi.Sprite(baseTexture),
+                parent: this.cameraLayers.getLayer(10),
                 anchor: new Vec2(0, 0),
             },
             "tower": {
                 headDisplay: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 8, 25), 0xffff00)),
                 headPos: new Vec2(TowerSize / 2),
+                parent: this.cameraLayers.getLayer(15),
                 size: TowerSize,
                 range: 300,
             }
@@ -185,6 +185,7 @@ export default class LevelScene extends Scene {
     }
 
     handleMouseUp = (event) => {
+        console.log("test level")
         const pos = new Vec2(event.data.getLocalPosition(this))
         this.createTower(pos)
     }

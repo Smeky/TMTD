@@ -1,6 +1,7 @@
-import { Rect, Vec2 } from "game/graphics"
-import { Component } from "."
+import { Vec2 } from "game/graphics"
 import { Shaders } from "game/graphics/shaders"
+import { DisplayObject } from "pixi.js"
+import { Component } from "."
 
 export default class TowerComponent extends Component {
     static __Name = "tower"
@@ -8,19 +9,25 @@ export default class TowerComponent extends Component {
     /**
      * 
      * @param {Entity} entity 
-     * @param {object} options 
+     * @param {object} options
+     * @param {DisplayObject} options.headDisplay 
+     * @param {Vec2}          options.headPos
+     * @param {Container}     options.parent
+     * @param {Vec2}          options.size
+     * @param {number}        options.range
      */
     constructor(entity, options) {
         super(entity) 
 
         this.size = options.size || 0
         this.range = options.range || 0
+        this.parent = options.parent || this.entity
         this.headPos = options.headPos
         this.headDisplay = options.headDisplay
-        this.entity.addChild(this.headDisplay)
-
+        
         this.laserShader = new Shaders()
-        this.entity.addChild(this.laserShader)
+        this.parent.addChild(this.headDisplay)
+        this.parent.addChild(this.laserShader)
 
         this.transform = null
         this.target = null
@@ -40,6 +47,11 @@ export default class TowerComponent extends Component {
 
         this.headDisplay.x = this.transform.pos.x + this.headPos.x
         this.headDisplay.y = this.transform.pos.y + this.headPos.y
+    }
+
+    close() {
+        this.parent.removeChild(this.headDisplay)
+        this.parent.removeChild(this.laserShader)
     }
 
     update(delta) {
