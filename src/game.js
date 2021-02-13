@@ -26,7 +26,13 @@ class Game extends EventEmitter {
         this.firstUpdate = true
 
         this.setupGraphics()
+        this.setupCamera()
         this.setupScene()
+
+        this.debug = new Debug()
+        this.debug.pivot.x = -this.stage.pivot.x
+        this.debug.pivot.y = -this.stage.pivot.y
+        this.camera.addChild(this.debug)
     }
 
     setupGraphics() {
@@ -47,17 +53,18 @@ class Game extends EventEmitter {
         window.addEventListener("resize", this.handleResize)
         document.body.appendChild(this.renderer.view)
 
-        this.camera = new Camera()
-        this.stage.addChild(this.camera)
-
         this.ticker = new pixi.Ticker()
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
         this.ticker.start()
+    }
 
-        this.debug = new Debug()
-        this.debug.pivot.x = -this.stage.pivot.x
-        this.debug.pivot.y = -this.stage.pivot.y
-        this.camera.addChild(this.debug)
+    setupCamera() {
+        this.camera = new Camera({
+            zoomEnabled: true,
+            dragEnabled: true,
+        })
+
+        this.stage.addChild(this.camera)
     }
 
     setupScene() {

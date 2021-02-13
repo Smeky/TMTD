@@ -96,6 +96,12 @@ export default {
         return Math.abs(first - second)
     },
 
+    round: function(number, decimals = 1) {
+        // https://stackoverflow.com/a/11832950
+        const scalar = 10 * decimals // is scalar the right name?
+        return Math.round((number + Number.EPSILON) * scalar) / scalar
+    }
+
     // Todo: Just an idea:
     // animate: function(opts = {
     //     target,
