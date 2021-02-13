@@ -48,7 +48,6 @@ export default class TowerComponent extends Component {
         }
 
         this.updateHeadDisplay()
-        this.createLaser()
     }
 
     findTarget() {
@@ -75,7 +74,6 @@ export default class TowerComponent extends Component {
             this.target.on("close", this.clearTarget)
 
             this.updateHeadDisplay()
-            this.createLaser()
         }
     }
 
@@ -93,8 +91,20 @@ export default class TowerComponent extends Component {
         }
 
         const targetPos = this.target.getComponent("transform").pos
-        const angle = this.transform.pos.add(new Vec2(this.size)).angle(targetPos)
+        const angle = new Vec2(
+            this.transform.pos.x + this.size / 2,
+            this.transform.pos.y + this.size / 2,
+        ).angle(targetPos)
+        
         this.headDisplay.rotation = angle - Math.PI / 2
+
+        const radius = this.headDisplay.height - this.headDisplay.pivot.y
+        const fromPos = new Vec2(
+            this.headDisplay.x + Math.cos(angle) * radius,
+            this.headDisplay.y + Math.sin(angle) * radius,
+        )
+        
+        this.laserShader.laser(fromPos, targetPos)
 
         // if (!this.debug) {
         //     this.debug = game.debug.displayLine(new Vec2(), new Vec2())
@@ -106,16 +116,5 @@ export default class TowerComponent extends Component {
         //     this.debug.from = myBounds.center()
         //     this.debug.to = tarBounds.center()
         // }
-    }
-
-    createLaser(){
-        if (!this.target) {
-            return
-        }
-        
-        const targetPos = this.target.getComponent("transform").pos
-        const startPos = this.transform.pos
-
-        this.laserShader.laser(startPos, targetPos)
     }
 }
