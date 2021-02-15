@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "eventemitter3": "^4.0.7",
+        "pixi-filters": "^3.2.2",
         "pixi.js": "^5.3.7"
     },
     "devDependencies": {
