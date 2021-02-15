@@ -182,9 +182,9 @@ export default class LevelScene extends Scene {
                 headPos: new Vec2(TowerSize / 2),
                 parent: this.cameraLayers.getLayer(15),
                 size: TowerSize,
-                range: 300,
+                range: 150,
                 attack: {
-                    damage: 1,
+                    damage: 2,
                     rate: 0.1,
                 }
             }
@@ -194,7 +194,6 @@ export default class LevelScene extends Scene {
     }
 
     handleMouseUp = (event) => {
-        console.log("test level")
         const pos = new Vec2(event.data.getLocalPosition(this))
         this.createTower(pos)
     }

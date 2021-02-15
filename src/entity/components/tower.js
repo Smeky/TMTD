@@ -1,7 +1,6 @@
 import { Vec2 } from "game/graphics"
-import { Shaders } from "game/graphics/shaders"
 import { Cooldown } from "game/core/cooldown"
-import { DisplayObject } from "pixi.js"
+import { DisplayObject, Sprite } from "pixi.js"
 import { Component } from "."
 
 export default class TowerComponent extends Component {
@@ -29,9 +28,15 @@ export default class TowerComponent extends Component {
         this.headPos = options.headPos
         this.headDisplay = options.headDisplay
         
-        this.laserShader = new Shaders()
+        // Todo:shader: When we get our filters running, this can be replaced
+        //              (there's a bug with this, the first laser places has incorrect pivot.x)
+        this.laser = new Sprite.from("media/laser_body.png")
+        this.laser.tint = 0xff1111
+        this.laser.scale.x = 0.5
+        this.laser.visible = false
+
         this.parent.addChild(this.headDisplay)
-        this.parent.addChild(this.laserShader)
+        this.parent.addChild(this.laser)
 
         this.transform = null
         this.target = null
@@ -53,13 +58,15 @@ export default class TowerComponent extends Component {
         this.headDisplay.pivot.x = Math.round(width / 2)
         this.headDisplay.pivot.y = Math.round(height / 4)
 
+        this.laser.pivot.x = Math.round(this.laser.width / (2 * this.laser.scale.x))
+
         this.headDisplay.x = this.transform.pos.x + this.headPos.x
         this.headDisplay.y = this.transform.pos.y + this.headPos.y
     }
 
     close() {
         this.parent.removeChild(this.headDisplay)
-        this.parent.removeChild(this.laserShader)
+        this.parent.removeChild(this.laser)
     }
 
     update(delta) {
@@ -100,12 +107,14 @@ export default class TowerComponent extends Component {
             this.target = closest.entity
             this.target.on("close", this.clearTarget)
 
+            this.laser.visible = true
             this.updateHeadDisplay()
         }
     }
 
     clearTarget = () => {
         this.target = null
+        this.laser.visible = false
 
         if (this.debug) {
             this.debug.destroy()
@@ -130,8 +139,11 @@ export default class TowerComponent extends Component {
             this.headDisplay.x + Math.cos(angle) * radius,
             this.headDisplay.y + Math.sin(angle) * radius,
         )
-        
-        this.laserShader.laser(fromPos, targetPos)
+
+        this.laser.x = fromPos.x
+        this.laser.y = fromPos.y
+        this.laser.height = fromPos.distance(targetPos)
+        this.laser.rotation = this.headDisplay.rotation
 
         // if (!this.debug) {
         //     this.debug = game.debug.displayLine(new Vec2(), new Vec2())
