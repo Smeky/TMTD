@@ -28,11 +28,11 @@ export default class LevelScene extends Scene {
                 dragEnabled: true,
                 grabDebug: true,
             })
-                    
+
             this.addChild(this.camera, 10)
             this.camera.addChild(this.cameraLayers)
         }
-        
+
         // Part of UI, goes to Scene layers
         this.towerSelection = new TowerSelection()
         this.addChild(this.towerSelection, 20)
@@ -43,9 +43,20 @@ export default class LevelScene extends Scene {
         this.started = false
         this.load()
             .then(this.start())
-            
+
         this.cdEntity = 1
         this.cdEntityProgress = this.cdEntity - 0.1
+
+        this.enemyMeta = {
+            entities: 0,
+            levelRaise: 10,
+            difficulty: 1,
+            difficultyMax: 100,
+            maxHp: 100,
+            maxArmor: 0,
+            color: 0
+        }
+        this.enemyDifficultyColors = [0x57EC16, 0x16D2EC, 0xE2EC16, 0xE216EC, 0x585212, 0x000000]
     }
 
     async load() {
@@ -66,9 +77,9 @@ export default class LevelScene extends Scene {
 
         // Todo:vectors: fix into divide(Tile.size)
         const pathTiles = this.grid.getPathTiles()
-                                   .map(tile => new Vec2(tile.pos).divide(new Vec2(Tile.Size, Tile.Size)))
+            .map(tile => new Vec2(tile.pos).divide(new Vec2(Tile.Size, Tile.Size)))
 
-        this.path = pf.findPath({cells: pathTiles, start, end}).map(cell => cell.multiply(Tile.Size))
+        this.path = pf.findPath({ cells: pathTiles, start, end }).map(cell => cell.multiply(Tile.Size))
 
         // this.path.forEach((pos) => 
         //     game.debug.displayPoint(new Vec2(
@@ -95,19 +106,36 @@ export default class LevelScene extends Scene {
             this.cdEntityProgress += delta
             if (this.cdEntityProgress >= this.cdEntity) {
                 this.cdEntityProgress %= this.cdEntity
-    
+
                 this.createEntity()
+                this.enemyMeta.entities++
+                const { entities, levelRaise, difficulty, difficultyMax } = this.enemyMeta
+                if (entities % (levelRaise * difficulty) === 0 && difficulty < difficultyMax) {
+                    this.increaseDifficulty()
+                }
             }
         }
     }
 
+    increaseDifficulty() {
+
+        this.enemyMeta.difficulty++
+        this.enemyMeta.color = this.enemyMeta.color < 5 ? ++this.enemyMeta.color : this.enemyMeta.color
+
+        if (Math.random() > 0.5) {
+            this.enemyMeta.maxHp += 100
+        } else {
+            this.enemyMeta.maxArmor += 0.1
+        }
+    }
     createEntity() {
         const components = {
             "transform": {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
-                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), 0xffffff)),
+                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16),
+                    this.enemyDifficultyColors[this.enemyMeta.color])),
                 parent: this.cameraLayers.getLayer(10),
             },
             "movement": {
@@ -115,7 +143,8 @@ export default class LevelScene extends Scene {
                 destinations: this.path,
             },
             "health": {
-                maximum: 100,
+                maximum: this.enemyMeta.maxHp,
+                armor: this.enemyMeta.maxArmor,
                 parent: this.cameraLayers.getLayer(50),
             }
         }
@@ -137,8 +166,8 @@ export default class LevelScene extends Scene {
     createTower(pos) {
         const snapped = this.grid.snapPosToTile(pos)
         const tiles = this.grid.getTilesByBounds(new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize))
-                               .filter(tile => !this.grid.isTileObstructed(tile))
-        
+            .filter(tile => !this.grid.isTileObstructed(tile))
+
         if (tiles.length < 4) {
             console.warn("Can not build here", pos)
             return
