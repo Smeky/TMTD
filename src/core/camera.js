@@ -126,6 +126,6 @@ export class Camera extends Container {
     }
 
     correctMousePos(pos) {
-        return pos.subtract(this.position)
+        return this.toLocal(pos)
     }
 }
