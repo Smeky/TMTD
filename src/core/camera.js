@@ -1,4 +1,5 @@
-import { Container } from "pixi.js"
+import { Rect, Vec2 } from "game/graphics"
+import { Container, Sprite } from "pixi.js"
 import utils from "game/utils"
 
 /**
@@ -11,19 +12,26 @@ export class Camera extends Container {
     /**
      * 
      * @param {object} options 
-     * @param {boolean} options.zoomEnabled enable wheel events for zoom in and out
-     * @param {boolean} options.dragEnabled enable camera movement by pointer dragging
-     * @param {boolean} options.grabDebug whether game debug should be affected by camera
+     * @param {boolean} [options.zoomEnabled] [optional] enable wheel events for zoom in and out
+     * @param {boolean} [options.dragEnabled] [optional] enable camera movement by pointer dragging
+     * @param {boolean} [options.grabDebug] [optional] whether game debug should be affected by camera
      */
     constructor(options = {}) {
         super()
 
         this.options = {
+            size: new Vec2(0, 0),
             zoomEnabled: false,
             dragEnabled: false,
             grabDebug: false,
             ...options,
         }
+
+        this.background = new Sprite(utils.createRectTexture(new Rect(0, 0, options.size.x, options.size.y)))
+        this.background.alpha = 0
+        this.background.interactive = true
+        this.background.pivot.copyFrom(this.pivot)
+        this.once("added", () => this.parent.addChildAt(this.background, 0))
 
         this.hasMoved = false
         this.isDragging = false
@@ -34,6 +42,10 @@ export class Camera extends Container {
         }
 
         if (this.options.dragEnabled) {
+            this.background.on("pointerdown", this.onDragStart)
+            this.background.on("pointerup", this.onDragEnd)
+            this.background.on("pointerupoutside", this.onDragEnd)
+            this.background.on("pointermove", this.onDragMove)
             this.on("pointerdown", this.onDragStart)
             this.on("pointerup", this.onDragEnd)
             this.on("pointerupoutside", this.onDragEnd)
@@ -84,19 +96,32 @@ export class Camera extends Container {
 
             this.x += event.data.originalEvent.movementX
             this.y += event.data.originalEvent.movementY
+
+            event.stopPropagation()
         }
     }
 
+    moveTo(pos) {
+        this.x = pos.x
+        this.y = pos.y
+    }
+
     /**
-     * Can be either negative or positive (zoom IN and OUT)
-     * @param {number} delta // Consider 1 as base value, not required though
+     * Zooms the camera in or out
+     * @param {number} value // any positive (zoom in) or negative (zoom out) number
      */
     zoom(value) {
-        // Todo: test if event.deltaY on wheel is different in other browsers
-        const zoomSpeed = 10 // just to name it ;)
-        const delta = (value / 100) * this.scale.x * zoomSpeed
+        const delta = - Math.sign(value) / 10  // +/- 0.1
+        const change = delta * this.scale.x
+        const scale = Math.max((this.scale.x + change), 0.1)
 
-        this.scale.x = utils.round(this.scale.x - delta, 1)
-        this.scale.y = utils.round(this.scale.y - delta, 1)
+        const bounds = this.getBounds()
+        const mousePos = new Vec2(game.renderer.plugins.interaction.mouse.global)
+
+        this.x -= ((mousePos.x - bounds.x) / bounds.width) * (bounds.width * delta)
+        this.y -= ((mousePos.y - bounds.y) / bounds.height) * (bounds.height * delta)
+
+        this.scale.x = scale
+        this.scale.y = scale
     }
 }

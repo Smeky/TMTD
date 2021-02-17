@@ -27,11 +27,9 @@ class Game extends EventEmitter {
         this.setupGraphics()
 
         this.debug = new Debug()
-        this.debug.pivot.x = -this.stage.pivot.x
-        this.debug.pivot.y = -this.stage.pivot.y
-        this.stage.addChild(this.debug)
         
         this.setupScene()
+        this.stage.addChild(this.debug)
     }
 
     setupGraphics() {
@@ -46,8 +44,6 @@ class Game extends EventEmitter {
         })
 
         this.stage = new pixi.Container()
-        this.stage.pivot.x = Math.round(-width / 2)
-        this.stage.pivot.y = Math.round(-height / 2)
 
         window.addEventListener("resize", this.handleResize)
         document.body.appendChild(this.renderer.view)
@@ -76,13 +72,13 @@ class Game extends EventEmitter {
             editor.onClick(() => this.sceneHandler.setScene("editor"))
             tomground.onClick(() => this.sceneHandler.setScene("tomground"))
 
-            const y = Math.round(-window.innerHeight / 2 + 30)
+            level.position.x = Math.round(this.width / 2 - 120)
+            editor.position.x = Math.round(this.width / 2)
+            tomground.position.x = Math.round(this.width / 2 + 130)
 
-            level.position.x = -150
-            level.position.y = y
-            editor.position.y = y
-            tomground.position.x = 150
-            tomground.position.y = y
+            level.position.y = 40
+            editor.position.y = 40
+            tomground.position.y = 40
             
             this.stage.addChild(level)
             this.stage.addChild(editor)
