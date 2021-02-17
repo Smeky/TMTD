@@ -205,6 +205,6 @@ export default class LevelScene extends Scene {
 
     handleMouseUp = (event) => {
         const pos = new Vec2(event.data.getLocalPosition(this))
-        this.createTower(pos)
+        this.createTower(this.camera.correctMousePos(pos))
     }
 }

@@ -124,4 +124,8 @@ export class Camera extends Container {
         this.scale.x = scale
         this.scale.y = scale
     }
+
+    correctMousePos(pos) {
+        return pos.subtract(this.position)
+    }
 }
