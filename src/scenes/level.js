@@ -24,9 +24,9 @@ export default class LevelScene extends Scene {
         {   // Setup camera
             this.cameraLayers = new Layers()
             this.camera = new Camera({
+                size: new Vec2(game.width, game.height),
                 zoomEnabled: true,
                 dragEnabled: true,
-                grabDebug: true,
             })
 
             this.addChild(this.camera, 10)
@@ -62,8 +62,18 @@ export default class LevelScene extends Scene {
     async load() {
         this.grid = new Grid()
         this.cameraLayers.addChild(this.grid, 10)
-
+        
         await this.grid.loadFromFile("dev.json")
+
+        {   // position camera
+            const size = this.grid.sizeInPixels()
+            const centered = new Vec2(
+                (game.width - size.x) / 2,
+                (game.height - size.y) / 2,
+            )
+
+            this.camera.moveTo(centered.round())
+        }
 
         const start = new Vec2(3, 2)
         const end = new Vec2(14, 11)
@@ -72,8 +82,8 @@ export default class LevelScene extends Scene {
         this.pivot = this.grid.pivot
         this.grid.pivot.set(0, 0)
 
-        this.towerSelection.x = this.pivot.x
-        this.towerSelection.y = this.getLocalBounds().height + 50
+        this.towerSelection.x = Math.round(game.width / 2)
+        this.towerSelection.y = game.height - 50
 
         // Todo:vectors: fix into divide(Tile.size)
         const pathTiles = this.grid.getPathTiles()
@@ -224,6 +234,6 @@ export default class LevelScene extends Scene {
 
     handleMouseUp = (event) => {
         const pos = new Vec2(event.data.getLocalPosition(this))
-        this.createTower(pos)
+        this.createTower(this.camera.correctMousePos(pos))
     }
 }

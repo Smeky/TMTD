@@ -123,4 +123,11 @@ export default class Vec2 {
             func(this.y),
         )
     }
+
+    round() {
+        return new Vec2(
+            Math.round(this.x),
+            Math.round(this.y),
+        )
+    }
 }
