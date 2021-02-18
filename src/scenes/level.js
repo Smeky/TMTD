@@ -3,6 +3,7 @@ import { Entities } from "game/entity"
 import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
 import { Camera } from "game/core/camera"
+import { BuildMode } from "game/core/buildmode"
 import * as pf from "game/core/pathfinding"
 import { TowerSelection } from "game/core/towerSelection"
 import { Rect, Vec2 } from "game/graphics"
@@ -17,6 +18,9 @@ export default class LevelScene extends Scene {
 
     constructor() {
         super()
+
+        this.inputProxy = game.input.getProxy()
+        this.inputProxy.on("keyup", this.handleKeyUp)
 
         this.interactive = true
         this.on("mouseup", this.handleMouseUp)
@@ -33,9 +37,19 @@ export default class LevelScene extends Scene {
             this.camera.addChild(this.cameraLayers)
         }
 
+        this.grid = new Grid()
+        this.cameraLayers.addChild(this.grid, 10)
+
+        this.buildMode = new BuildMode({
+            grid: this.grid,
+            cameraLayers: this.cameraLayers,
+        })
+
+        this.addChild(this.buildMode, 50)
+
         // Part of UI, goes to Scene layers
         this.towerSelection = new TowerSelection()
-        this.addChild(this.towerSelection, 20)
+        this.addChild(this.towerSelection, 70)
 
         this.entities = new Entities()
         this.cameraLayers.addChild(this.entities, 15)
@@ -58,9 +72,6 @@ export default class LevelScene extends Scene {
     }
 
     async load() {
-        this.grid = new Grid()
-        this.cameraLayers.addChild(this.grid, 10)
-        
         await this.grid.loadFromFile("dev.json")
 
         {   // position camera
@@ -121,18 +132,17 @@ export default class LevelScene extends Scene {
         if (!this.started) return
 
         this.entities.update(delta)
+        this.buildMode.update(delta)
 
-        if (this.entities.count() < 70) {
-            this.cdEntityProgress += delta
-            if (this.cdEntityProgress >= this.cdEntity) {
-                this.cdEntityProgress %= this.cdEntity
+        this.cdEntityProgress += delta
+        if (this.cdEntityProgress >= this.cdEntity) {
+            this.cdEntityProgress %= this.cdEntity
 
-                this.createEntity()
-                this.enemyMeta.entities++
-                const { entities, levelRaise } = this.enemyMeta
-                if (entities % levelRaise === 0) {
-                    this.increaseDifficulty()
-                }
+            this.createEntity()
+            this.enemyMeta.entities++
+
+            if (this.enemyMeta.entities % this.enemyMeta.levelRaise === 0) {
+                this.increaseDifficulty()
             }
         }
     }
@@ -244,5 +254,11 @@ export default class LevelScene extends Scene {
     handleMouseUp = (event) => {
         const pos = new Vec2(event.data.getLocalPosition(this))
         this.createTower(this.camera.correctMousePos(pos))
+    }
+
+    handleKeyUp = (event) => {
+        if (event.key === "b") {
+            this.buildMode.toggle()
+        }
     }
 }
