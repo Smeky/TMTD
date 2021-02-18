@@ -63,13 +63,21 @@ export default class HealthComponent extends Component {
         }
     }
 
+    /**
+     * 
+     * @param {number} value reduce the health by
+     * @returns {boolean} returns true if new health <= 0, false otherwise
+     */
     reduce(value) {
         this.current -= value * (1 - this.armor)
         
         if (this.current < 0) {
             this.current = 0
             this.entity.emit("noHealth")
+            return true
         }
+
+        return false
     }
 
     add(value) {

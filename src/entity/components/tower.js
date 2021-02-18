@@ -1,9 +1,9 @@
+import utils from "game/utils"
 import { Vec2, Rect } from "game/graphics"
 import { Cooldown } from "game/core/cooldown"
 import { DisplayObject, Sprite, BLEND_MODES } from "pixi.js"
+import { AdvancedBloomFilter } from "pixi-filters"
 import { Component } from "."
-import utils from "game/utils"
-import * as Filters from "pixi-filters"
 
 export default class TowerComponent extends Component {
     static __Name = "tower"
@@ -38,7 +38,7 @@ export default class TowerComponent extends Component {
         this.laser.visible = false
         this.laser.blendMode = BLEND_MODES.ADD
 
-        const bloom = new Filters.AdvancedBloomFilter({
+        const bloom = new AdvancedBloomFilter({
             threshold: 0,
             bloomScale: 2,
             brightness: 2,
@@ -91,7 +91,10 @@ export default class TowerComponent extends Component {
             this.cooldown.reset()
 
             const health = this.target.getComponent("health")
-            health.reduce(this.damage)
+
+            if (health.reduce(this.damage)) {
+                this.damage *= 1.07
+            }
         }
 
         this.updateHeadDisplay()

@@ -42,7 +42,7 @@ export default class LevelScene extends Scene {
 
         this.started = false
         this.load()
-            .then(this.start())
+            .then(() => this.start())
 
         this.cdEntity = 1
         this.cdEntityProgress = this.cdEntity - 0.1
@@ -51,12 +51,10 @@ export default class LevelScene extends Scene {
             entities: 0,
             levelRaise: 10,
             difficulty: 1,
-            difficultyMax: 100,
             maxHp: 100,
             maxArmor: 0,
-            color: 0
+            color: 0xffffff
         }
-        this.enemyDifficultyColors = [0x57EC16, 0x16D2EC, 0xE2EC16, 0xE216EC, 0x585212, 0x000000]
     }
 
     async load() {
@@ -101,6 +99,18 @@ export default class LevelScene extends Scene {
 
     start() {
         this.started = true
+
+        // Place some towers so we don't have to do it ourselfs every reload
+        const _ = [
+            new Vec2(160, 64),
+            new Vec2(160, 160),
+            new Vec2(32, 160),
+            new Vec2(320, 128),
+            new Vec2(288, 32),
+            new Vec2(128, 256),
+            new Vec2(288, 256),
+            new Vec2(416, 224),
+        ].forEach(pos => this.createTower(pos))
     }
 
     close() {
@@ -119,8 +129,8 @@ export default class LevelScene extends Scene {
 
                 this.createEntity()
                 this.enemyMeta.entities++
-                const { entities, levelRaise, difficulty, difficultyMax } = this.enemyMeta
-                if (entities % (levelRaise * difficulty) === 0 && difficulty < difficultyMax) {
+                const { entities, levelRaise } = this.enemyMeta
+                if (entities % levelRaise === 0) {
                     this.increaseDifficulty()
                 }
             }
@@ -128,15 +138,15 @@ export default class LevelScene extends Scene {
     }
 
     increaseDifficulty() {
-
         this.enemyMeta.difficulty++
-        this.enemyMeta.color = this.enemyMeta.color < 5 ? ++this.enemyMeta.color : this.enemyMeta.color
+        this.enemyMeta.color *= 0.95
 
-        if (Math.random() > 0.5) {
-            this.enemyMeta.maxHp += 100
-        } else {
-            this.enemyMeta.maxArmor += 0.1
+        if (this.enemyMeta.color < 0x000000) {
+            this.enemyMeta.color = 0x000000
         }
+
+        this.enemyMeta.maxHp *= 1.2
+        this.enemyMeta.maxArmor *= (1 - this.enemyMeta.maxArmor) * 1.2
     }
     createEntity() {
         const components = {
@@ -144,8 +154,7 @@ export default class LevelScene extends Scene {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
-                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16),
-                    this.enemyDifficultyColors[this.enemyMeta.color])),
+                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
                 parent: this.cameraLayers.getLayer(10),
             },
             "movement": {
@@ -223,8 +232,8 @@ export default class LevelScene extends Scene {
                 size: TowerSize,
                 range: 150,
                 attack: {
-                    damage: 2,
-                    rate: 0.1,
+                    damage: 1,
+                    rate: 0.05,
                 }
             }
         }
