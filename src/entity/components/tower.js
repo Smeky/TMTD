@@ -10,33 +10,74 @@ export default class TowerComponent extends Component {
 
     /**
      * 
-     * @param {Entity} entity 
-     * @param {object} options
-     * @param {DisplayObject} options.headDisplay 
-     * @param {Vec2}          options.headPos
-     * @param {Container}     options.parent
-     * @param {Vec2}          options.size
-     * @param {number}        options.range
-     * @param {object}        options.attack
-     * @param {number}        options.attack.damage
-     * @param {number}        options.attack.rate
+     * @param {Entity}        entity 
+     * @param {object}        options
+     * @param {object}        options.data
+     * @param {DisplayObject} [options.parent] Parent for head part of the tower. Usually a layer above entities. Defaults to this.entity
      */
     constructor(entity, options) {
         super(entity) 
 
-        this.size = options.size || 0
-        this.range = options.range || 0
+        this.data = options.data
         this.parent = options.parent || this.entity
-        this.headPos = options.headPos
-        this.headDisplay = options.headDisplay
+
+        this.transform = null
+        this.target = null
+
+        this.setupHeadDisplay()
+        this.setupLaserDisplay()
+
+        {   // Setup damage
+            const { rate, damage } = this.data.head.attack
+
+            this.damage = damage
+            this.cooldown = new Cooldown(rate || 1.0)
+            this.cooldown.onTrigger = this.handleAttack
+        }
+    }
+
+    setup() {
+        const display = this.entity.getComponent("display")
+        this.transform = this.entity.getComponent("transform")
+
+        // Todo: We need something.. prettier
+        if (!this.transform) {
+            throw "Requires Transform component"
+        }
+        if (!display) {
+            throw "Requires Display component"
+        }
+
         
+        const { size } = this.data
+        const { texture } = this.data.base
+        
+        display.setDisplayObject(new Sprite(texture))
+        
+        const posOnTower = this.data.head.pos.multiply(size)
+        this.headSprite.x = this.transform.pos.x + posOnTower.x
+        this.headSprite.y = this.transform.pos.y + posOnTower.y
+        
+        this.laserSprite.pivot.x = Math.round(this.laserSprite.width / (2 * this.laserSprite.scale.x))
+    }
+
+    setupHeadDisplay() {
+        const { texture, pivot } = this.data.head
+
+        this.headSprite = new Sprite(texture)
+        this.headSprite.pivot.copyFrom(pivot)
+        
+        this.parent.addChild(this.headSprite)
+    }
+
+    setupLaserDisplay() {
         // Todo:shader: When we get our filters running, this can be replaced
         //              (there's a bug with this, the first laser places has incorrect pivot.x)
-        this.laser = new Sprite(utils.createRectTexture(new Rect(0, 0, 4, 1), 0xffffff))
-        this.laser.tint = 0xff1800
-        this.laser.scale.x = 0.5
-        this.laser.visible = false
-        this.laser.blendMode = BLEND_MODES.ADD
+        this.laserSprite = new Sprite(utils.createRectTexture(new Rect(0, 0, 4, 1), 0xffffff))
+        this.laserSprite.tint = 0xff1800
+        this.laserSprite.scale.x = 0.5
+        this.laserSprite.visible = false
+        this.laserSprite.blendMode = BLEND_MODES.ADD
 
         const bloom = new AdvancedBloomFilter({
             threshold: 0,
@@ -46,40 +87,14 @@ export default class TowerComponent extends Component {
         })
 
         bloom.padding = 10 // otherwise the filter is cut off at texture edge
-        this.laser.filters = [bloom]
+        this.laserSprite.filters = [bloom]
 
-        this.parent.addChild(this.headDisplay)
-        this.parent.addChild(this.laser)
-
-        this.transform = null
-        this.target = null
-
-        this.damage = options.attack.damage
-        this.cooldown = new Cooldown(options.attack.rate || 1.0)
-        this.cooldown.onTrigger = this.handleAttack
-    }
-
-    setup() {
-        this.transform = this.entity.getComponent("transform")
-
-        if (!this.transform) {
-            throw "Requires Transform component"
-        }
-
-        const { width, height } = this.headDisplay.getLocalBounds()
-
-        this.headDisplay.pivot.x = Math.round(width / 2)
-        this.headDisplay.pivot.y = Math.round(height / 4)
-
-        this.laser.pivot.x = Math.round(this.laser.width / (2 * this.laser.scale.x))
-
-        this.headDisplay.x = this.transform.pos.x + this.headPos.x
-        this.headDisplay.y = this.transform.pos.y + this.headPos.y
+        this.parent.addChild(this.laserSprite)
     }
 
     close() {
-        this.parent.removeChild(this.headDisplay)
-        this.parent.removeChild(this.laser)
+        this.parent.removeChild(this.headSprite)
+        this.parent.removeChild(this.laserSprite)
     }
 
     update(delta) {
@@ -101,7 +116,9 @@ export default class TowerComponent extends Component {
     }
 
     findTarget() {
-        const entities = this.entity.entities.getEntitiesInRadius(this.transform.pos, this.range, "enemy")
+        const { range } = this.data.head.attack
+
+        const entities = this.entity.entities.getEntitiesInRadius(this.transform.pos, range, "enemy")
         const closest = entities.reduce((winner, entity) => {
             const distance = this.transform.pos.distance(entity.getComponent("transform").pos)
 
@@ -123,14 +140,14 @@ export default class TowerComponent extends Component {
             this.target = closest.entity
             this.target.on("close", this.clearTarget)
 
-            this.laser.visible = true
+            this.laserSprite.visible = true
             this.updateHeadDisplay()
         }
     }
 
     clearTarget = () => {
         this.target = null
-        this.laser.visible = false
+        this.laserSprite.visible = false
 
         if (this.debug) {
             this.debug.destroy()
@@ -143,23 +160,24 @@ export default class TowerComponent extends Component {
         }
 
         const targetPos = this.target.getComponent("transform").pos
+
         const angle = new Vec2(
-            this.transform.pos.x + this.size / 2,
-            this.transform.pos.y + this.size / 2,
+            this.transform.pos.x + this.data.size.x / 2,
+            this.transform.pos.y + this.data.size.y / 2,
         ).angle(targetPos)
         
-        this.headDisplay.rotation = angle - Math.PI / 2
+        this.headSprite.rotation = angle - Math.PI / 2
 
-        const radius = this.headDisplay.height - this.headDisplay.pivot.y
+        const radius = this.headSprite.height - this.headSprite.pivot.y
         const fromPos = new Vec2(
-            this.headDisplay.x + Math.cos(angle) * radius,
-            this.headDisplay.y + Math.sin(angle) * radius,
+            this.headSprite.x + Math.cos(angle) * radius,
+            this.headSprite.y + Math.sin(angle) * radius,
         )
 
-        this.laser.x = fromPos.x
-        this.laser.y = fromPos.y
-        this.laser.height = fromPos.distance(targetPos)
-        this.laser.rotation = this.headDisplay.rotation
+        this.laserSprite.x = fromPos.x
+        this.laserSprite.y = fromPos.y
+        this.laserSprite.height = fromPos.distance(targetPos)
+        this.laserSprite.rotation = this.headSprite.rotation
 
         // if (!this.debug) {
         //     this.debug = game.debug.displayLine(new Vec2(), new Vec2())

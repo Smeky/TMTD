@@ -126,6 +126,6 @@ export class Camera extends Container {
     }
 
     correctMousePos(pos) {
-        return this.toLocal(pos)
+        return new Vec2(this.toLocal(pos))
     }
 }
