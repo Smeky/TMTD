@@ -13,58 +13,35 @@ import utils from "game/utils"
 
 const TowerSize = 50
 
+// Todo: this should be defined somewhere else. Not sure where atm
+async function createTowerList() {
+    return [
+        {
+            id: 1,
+            name: "The Ancient One",
+            size: new Vec2(TowerSize),
+            base: {
+                texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
+            },
+            head: {
+                texture: utils.createRectTexture(new Rect(0, 0, 8, 25), 0xffff00),
+                pos: new Vec2(0.5), // relative to center
+                pivot: new Vec2(4, 25 / 4),
+                attack: {
+                    range: 150,
+                    damage: 1,
+                    rate: 0.05,
+                }
+            }
+        }
+    ]
+}
+
 export default class LevelScene extends Scene {
     static __Name = "level"
 
     constructor() {
         super()
-
-        this.inputProxy = game.input.getProxy()
-        this.inputProxy.on("keyup", this.handleKeyUp)
-
-        this.towers = this.setupTowerList()
-
-        {   // Setup camera
-            this.cameraLayers = new Layers()
-            this.camera = new Camera({
-                size: new Vec2(game.width, game.height),
-                zoomEnabled: true,
-                dragEnabled: true,
-            })
-
-            this.addChild(this.camera, 10)
-            this.camera.addChild(this.cameraLayers)
-        }
-
-        this.grid = new Grid()
-        this.cameraLayers.addChild(this.grid, 10)
-
-        this.buildMode = new BuildMode({
-            grid: this.grid,
-            camera: this.camera,
-            cameraLayers: this.cameraLayers,
-        })
-
-        this.addChild(this.buildMode, 50)
-
-        // Part of UI, goes to Scene layers
-        this.towerSelection = new TowerSelection(this.towers)
-        this.towerSelection.on("towerSelected", tower => {
-            this.buildMode.setSelectedTower(tower)
-            this.buildMode.toggle()
-        })
-        this.towerSelection.on("towerUnselected", () => {
-            this.buildMode.toggle()
-        })
-
-        this.addChild(this.towerSelection, 70)
-
-        this.entities = new Entities()
-        this.cameraLayers.addChild(this.entities, 15)
-
-        this.started = false
-        this.load()
-            .then(() => this.start())
 
         this.cdEntity = 1
         this.cdEntityProgress = this.cdEntity - 0.1
@@ -77,80 +54,106 @@ export default class LevelScene extends Scene {
             maxArmor: 0,
             color: 0xffffff
         }
-
-        game.on("buildTower", this.handleBuildTower)
-    }
-
-    // Todo: this should be defined somewhere else. Not sure where atm
-    setupTowerList() {
-        return [
-            {
-                id: 1,
-                name: "The Ancient One",
-                size: new Vec2(TowerSize),
-                base: {
-                    texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
-                },
-                head: {
-                    texture: utils.createRectTexture(new Rect(0, 0, 8, 25), 0xffff00),
-                    pos: new Vec2(0.5), // relative to center
-                    pivot: new Vec2(4, 25 / 4),
-                    attack: {
-                        range: 150,
-                        damage: 1,
-                        rate: 0.05,
-                    }
-                }
-            }
-        ]
     }
 
     async load() {
+        this.grid = new Grid()
+        
         await this.grid.loadFromFile("dev.json")
-
-        {   // position camera
-            const size = this.grid.sizeInPixels()
-            const centered = new Vec2(
-                (game.width - size.x) / 2,
-                (game.height - size.y) / 2,
-            )
-
-            this.camera.moveTo(centered.round())
-        }
-
-        const start = new Vec2(3, 2)
-        const end = new Vec2(14, 11)
-
-        // Todo: Temporary - Hacky solution to center everything based on grid's size
-        this.pivot = this.grid.pivot
-        this.grid.pivot.set(0, 0)
-
-        this.towerSelection.x = Math.round(game.width / 2)
-        this.towerSelection.y = game.height - 50
-
-        // Todo:vectors: fix into divide(Tile.size)
-        const pathTiles = this.grid.getPathTiles()
-            .map(tile => new Vec2(tile.pos).divide(new Vec2(Tile.Size, Tile.Size)))
-
-        this.path = pf.findPath({ cells: pathTiles, start, end }).map(cell => cell.multiply(Tile.Size))
+        return await createTowerList()
     }
 
-    start() {
-        this.started = true
+    setup(towers) {
+        this.towers = towers
 
-        // Place some towers so we don't have to do it ourselfs every reload
-        this.towerSelection.selectTower(0)
-        const _ = [
-            new Vec2(160, 64),
-            new Vec2(160, 160),
-            new Vec2(32, 160),
-            new Vec2(320, 128),
-            new Vec2(288, 32),
-            new Vec2(128, 256),
-            new Vec2(288, 256),
-            new Vec2(416, 224),
-        ].forEach(pos => this.buildTower(this.towers[0], pos))
-        this.towerSelection.selectTower(0)
+        this.setupCamera()
+        this.setupGameLogic()
+        this.setupLayers()
+        this.setupEvents()
+    }
+
+    setupCamera() {
+        this.cameraLayers = new Layers()
+        this.camera = new Camera({
+            size: new Vec2(game.width, game.height),
+            zoomEnabled: true,
+            dragEnabled: true,
+        })
+        
+        this.camera.addChild(this.cameraLayers)
+
+        const gridSize = this.grid.sizeInPixels()
+        const centered = new Vec2(
+            (game.width - gridSize.x) / 2,
+            (game.height - gridSize.y) / 2,
+        )
+
+        this.camera.moveTo(centered.round())
+    }
+
+    setupGameLogic() {
+        this.towerSelection = new TowerSelection(this.towers)
+        this.entities = new Entities()
+
+        this.buildMode = new BuildMode({
+            grid: this.grid,
+            camera: this.camera,
+            cameraLayers: this.cameraLayers,
+        })
+        
+        this.towerSelection.x = Math.round(game.width / 2)
+        this.towerSelection.y = game.height - 50
+        this.towerSelection.on("towerSelected", tower => {
+            this.buildMode.setSelectedTower(tower)
+            this.buildMode.toggle()
+        })
+        this.towerSelection.on("towerUnselected", () => {
+            this.buildMode.toggle()
+        })
+        
+        {   // Put down some towers right away
+            const placements = [
+                new Vec2(160, 64),
+                new Vec2(160, 160),
+                new Vec2(32, 160),
+                new Vec2(320, 128),
+                new Vec2(288, 32),
+                new Vec2(128, 256),
+                new Vec2(288, 256),
+                new Vec2(416, 224),
+            ]
+
+            for (const pos of placements) {
+                this.buildTower(this.towers[0], pos)
+            }
+        }
+
+        {   // Calculate path
+            const pathTiles = this.grid.getPathTiles()
+                .map(tile => new Vec2(tile.pos).divide(Tile.Size))
+    
+            const start = new Vec2(3, 2)
+            const end = new Vec2(14, 11)
+    
+            this.path = pf.findPath({ cells: pathTiles, start, end })
+                .map(cell => cell.multiply(Tile.Size))
+        }
+    }
+
+    setupLayers() {
+        this.addChild(this.camera, 10)
+        this.addChild(this.buildMode, 50)
+        this.addChild(this.towerSelection, 70)
+
+        this.cameraLayers.addChild(this.grid, 10)
+        this.cameraLayers.addChild(this.entities, 15)
+    }
+
+    setupEvents() {
+        this.inputProxy = game.input.getProxy()
+        this.inputProxy.on("keyup", this.handleKeyUp)
+
+        game.on("buildTower", this.handleBuildTower)
     }
 
     close() {
@@ -199,7 +202,7 @@ export default class LevelScene extends Scene {
             },
             "display": {
                 displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
-                parent: this.cameraLayers.getLayer(10),
+                parent: this.cameraLayers.getLayer(20),
             },
             "movement": {
                 speed: 70,
@@ -243,12 +246,12 @@ export default class LevelScene extends Scene {
                 pos: topLeft.pos.add(Tile.Size - TowerSize / 2)
             },
             "display": {
-                parent: this.cameraLayers.getLayer(10),
+                parent: this.cameraLayers.getLayer(20),
                 anchor: new Vec2(0, 0),
             },
             "tower": {
                 data: tower,
-                parent: this.cameraLayers.getLayer(15),
+                parent: this.cameraLayers.getLayer(25),
             }
         }
 

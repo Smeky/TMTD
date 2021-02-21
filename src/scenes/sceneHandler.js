@@ -15,6 +15,12 @@ export default class SceneHandler extends Container {
 
         this.scene = new Scenes[name]()
         this.addChild(this.scene)
+
+        this.scene.load()
+                  .then((loadData) => {
+                        this.scene.setup(loadData)
+                        this.scene.started = true
+                  })
     }
 
     update(delta) {
