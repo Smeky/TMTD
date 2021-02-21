@@ -20,6 +20,10 @@ class Game extends EventEmitter {
     get height() {
         return this.renderer.view.height
     }
+
+    get scene() {
+        return this.sceneHandler.scene
+    }
     
     init() {
         this.firstUpdate = true
@@ -58,32 +62,26 @@ class Game extends EventEmitter {
         this.sceneHandler = new SceneHandler()
         this.stage.addChild(this.sceneHandler)
 
-        this.sceneHandler.setScene("level")
+        {   // Buttons to switch between scenes 
+            const style = { fill: "#ffffff", fontSize: 18 }
+            const scenes = [
+                { id: "level", label: "Level Scene" },
+                { id: "editor", label: "Editor Scene" },
+            ]
 
-        // Buttons to switch between scenes 
-        {
-            const style = {fill: "#ffffff", fontSize: 18}
-
-            const level     = new Button(new pixi.Text("Level Scene",  style))
-            const editor    = new Button(new pixi.Text("Editor Scene", style))
-            const tomground = new Button(new pixi.Text("Tom's Ground", style))
-
-            level.onClick(() => this.sceneHandler.setScene("level"))
-            editor.onClick(() => this.sceneHandler.setScene("editor"))
-            tomground.onClick(() => this.sceneHandler.setScene("tomground"))
-
-            level.position.x = Math.round(this.width / 2 - 120)
-            editor.position.x = Math.round(this.width / 2)
-            tomground.position.x = Math.round(this.width / 2 + 130)
-
-            level.position.y = 40
-            editor.position.y = 40
-            tomground.position.y = 40
-            
-            this.stage.addChild(level)
-            this.stage.addChild(editor)
-            this.stage.addChild(tomground)
+            scenes.forEach((scene, index) => {
+                const button = new Button(new pixi.Text(scene.label,  style))
+    
+                button.onClick(() => this.sceneHandler.setScene(scene.id))
+                button.pivot.set(0, 0)
+                button.x = 20
+                button.y = 20 + index * 35
+    
+                this.stage.addChild(button)
+            })
         }
+
+        this.sceneHandler.setScene("level")
     }
     
     run() {

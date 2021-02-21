@@ -1,8 +1,7 @@
-import { Rect, Vec2 } from "game/graphics"
-import { Tile } from "game/core/tile"
-import { Container, Graphics, Sprite } from "pixi.js"
 import utils from "game/utils"
-import { AdjustmentFilter, AdvancedBloomFilter } from "pixi-filters"
+import { Tile } from "game/core/tile"
+import { Rect, Vec2 } from "game/graphics"
+import { Container, Graphics, Sprite } from "pixi.js"
 
 export class BuildMode extends Container {
     /**

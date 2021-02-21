@@ -48,12 +48,11 @@ export default class TowerComponent extends Component {
             throw "Requires Display component"
         }
 
-        
         const { size } = this.data
         const { texture } = this.data.base
         
         display.setDisplayObject(new Sprite(texture))
-        
+
         const posOnTower = this.data.head.pos.multiply(size)
         this.headSprite.x = this.transform.pos.x + posOnTower.x
         this.headSprite.y = this.transform.pos.y + posOnTower.y
