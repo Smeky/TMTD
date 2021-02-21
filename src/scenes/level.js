@@ -3,6 +3,7 @@ import { Entities } from "game/entity"
 import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
 import { Camera } from "game/core/camera"
+import { BuildMode } from "game/core/buildmode"
 import * as pf from "game/core/pathfinding"
 import { TowerSelection } from "game/core/towerSelection"
 import { Rect, Vec2 } from "game/graphics"
@@ -18,8 +19,10 @@ export default class LevelScene extends Scene {
     constructor() {
         super()
 
-        this.interactive = true
-        this.on("mouseup", this.handleMouseUp)
+        this.inputProxy = game.input.getProxy()
+        this.inputProxy.on("keyup", this.handleKeyUp)
+
+        this.towers = this.setupTowerList()
 
         {   // Setup camera
             this.cameraLayers = new Layers()
@@ -33,9 +36,28 @@ export default class LevelScene extends Scene {
             this.camera.addChild(this.cameraLayers)
         }
 
+        this.grid = new Grid()
+        this.cameraLayers.addChild(this.grid, 10)
+
+        this.buildMode = new BuildMode({
+            grid: this.grid,
+            camera: this.camera,
+            cameraLayers: this.cameraLayers,
+        })
+
+        this.addChild(this.buildMode, 50)
+
         // Part of UI, goes to Scene layers
-        this.towerSelection = new TowerSelection()
-        this.addChild(this.towerSelection, 20)
+        this.towerSelection = new TowerSelection(this.towers)
+        this.towerSelection.on("towerSelected", tower => {
+            this.buildMode.setSelectedTower(tower)
+            this.buildMode.toggle()
+        })
+        this.towerSelection.on("towerUnselected", () => {
+            this.buildMode.toggle()
+        })
+
+        this.addChild(this.towerSelection, 70)
 
         this.entities = new Entities()
         this.cameraLayers.addChild(this.entities, 15)
@@ -55,12 +77,35 @@ export default class LevelScene extends Scene {
             maxArmor: 0,
             color: 0xffffff
         }
+
+        game.on("buildTower", this.handleBuildTower)
+    }
+
+    // Todo: this should be defined somewhere else. Not sure where atm
+    setupTowerList() {
+        return [
+            {
+                id: 1,
+                name: "The Ancient One",
+                size: new Vec2(TowerSize),
+                base: {
+                    texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
+                },
+                head: {
+                    texture: utils.createRectTexture(new Rect(0, 0, 8, 25), 0xffff00),
+                    pos: new Vec2(0.5), // relative to center
+                    pivot: new Vec2(4, 25 / 4),
+                    attack: {
+                        range: 150,
+                        damage: 1,
+                        rate: 0.05,
+                    }
+                }
+            }
+        ]
     }
 
     async load() {
-        this.grid = new Grid()
-        this.cameraLayers.addChild(this.grid, 10)
-        
         await this.grid.loadFromFile("dev.json")
 
         {   // position camera
@@ -88,19 +133,13 @@ export default class LevelScene extends Scene {
             .map(tile => new Vec2(tile.pos).divide(new Vec2(Tile.Size, Tile.Size)))
 
         this.path = pf.findPath({ cells: pathTiles, start, end }).map(cell => cell.multiply(Tile.Size))
-
-        // this.path.forEach((pos) => 
-        //     game.debug.displayPoint(new Vec2(
-        //         pos.x + this.pivot.x / 2,
-        //         pos.y + this.pivot.y / 2 + 16, // no idea why +16
-        //     ))
-        // )
     }
 
     start() {
         this.started = true
 
         // Place some towers so we don't have to do it ourselfs every reload
+        this.towerSelection.selectTower(0)
         const _ = [
             new Vec2(160, 64),
             new Vec2(160, 160),
@@ -110,29 +149,33 @@ export default class LevelScene extends Scene {
             new Vec2(128, 256),
             new Vec2(288, 256),
             new Vec2(416, 224),
-        ].forEach(pos => this.createTower(pos))
+        ].forEach(pos => this.buildTower(this.towers[0], pos))
+        this.towerSelection.selectTower(0)
     }
 
     close() {
         this.camera.close()
+        this.buildMode.close()
+        this.inputProxy.close()
+
+        game.removeListener("buildTower", this.handleBuildTower)
     }
 
     update(delta) {
         if (!this.started) return
 
         this.entities.update(delta)
+        this.buildMode.update(delta)
 
-        if (this.entities.count() < 70) {
-            this.cdEntityProgress += delta
-            if (this.cdEntityProgress >= this.cdEntity) {
-                this.cdEntityProgress %= this.cdEntity
+        this.cdEntityProgress += delta
+        if (this.cdEntityProgress >= this.cdEntity) {
+            this.cdEntityProgress %= this.cdEntity
 
-                this.createEntity()
-                this.enemyMeta.entities++
-                const { entities, levelRaise } = this.enemyMeta
-                if (entities % levelRaise === 0) {
-                    this.increaseDifficulty()
-                }
+            this.createEnemy()
+            this.enemyMeta.entities++
+
+            if (this.enemyMeta.entities % this.enemyMeta.levelRaise === 0) {
+                this.increaseDifficulty()
             }
         }
     }
@@ -148,7 +191,8 @@ export default class LevelScene extends Scene {
         this.enemyMeta.maxHp *= 1.2
         this.enemyMeta.maxArmor *= (1 - this.enemyMeta.maxArmor) * 1.2
     }
-    createEntity() {
+
+    createEnemy() {
         const components = {
             "transform": {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
@@ -177,72 +221,59 @@ export default class LevelScene extends Scene {
             this.entities.removeEntity(entity.id)
             // add points
         })
-
-        // const dd = game.debug.displayBounds(entity)
-        // setTimeout(() => dd.destroy(), 2000)
     }
 
-    createTower(pos) {
+    buildTower(tower, pos) {
         const snapped = this.grid.snapPosToTile(pos)
-        const tiles = this.grid.getTilesByBounds(new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize))
-            .filter(tile => !this.grid.isTileObstructed(tile))
+        const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
+
+        const tiles = this.grid.getTilesByBounds(bounds)
+                               .filter(tile => !this.grid.isTileObstructed(tile))
 
         if (tiles.length < 4) {
             console.warn("Can not build here", pos)
             return
         }
-        else {
-            // Todo: tiles should be immutable, this should be done via the grid
-            for (const tile of tiles) {
-                tile.isBlocked = true
-            }
-        }
 
-        const baseBounds = new Rect(0, 0, TowerSize, TowerSize)
-        const baseTexture = utils.createRectTexture(baseBounds, this.towerSelection.getSelectedTower())
-
-        // Todo: fix this when we fix grid indices
-        // Just find topleft tile.. 
-        const topleft = tiles.reduce((candidate, tile) => {
-            if (!candidate) {
-                candidate = tile
-            }
-            else {
-                if (tile.x < candidate.x || tile.y < candidate.y) {
-                    candidate = tile
-                }
-            }
-
-            return candidate
-        }, null)
+        this.grid.setTilesBlocked(tiles, true)
+        const topLeft = this.grid.getTopLeftTile(tiles)
 
         const components = {
             "transform": {
-                pos: topleft.pos.add(Tile.Size - TowerSize / 2)
+                pos: topLeft.pos.add(Tile.Size - TowerSize / 2)
             },
             "display": {
-                displayObject: new pixi.Sprite(baseTexture),
                 parent: this.cameraLayers.getLayer(10),
                 anchor: new Vec2(0, 0),
             },
             "tower": {
-                headDisplay: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 8, 25), 0xffff00)),
-                headPos: new Vec2(TowerSize / 2),
+                data: tower,
                 parent: this.cameraLayers.getLayer(15),
-                size: TowerSize,
-                range: 150,
-                attack: {
-                    damage: 1,
-                    rate: 0.05,
-                }
             }
         }
 
-        this.entities.createEntity(components)
+        try {
+            this.entities.createEntity(components)
+        }
+        catch (e) {
+            return console.error(e)
+        }
+
+        game.emit("towerBuilt")
     }
 
-    handleMouseUp = (event) => {
-        const pos = new Vec2(event.data.getLocalPosition(this))
-        this.createTower(this.camera.correctMousePos(pos))
+    handleBuildTower = (pos) => {
+        this.buildTower(this.towerSelection.getSelectedTower(), pos)
+    }
+
+    handleKeyUp = (event) => {
+        if (event.key === "1") {
+            this.towerSelection.selectTower(0)
+        }
+        else if (event.key === "Escape") {
+            if (this.buildMode.enabled) {
+                this.towerSelection.clearSelection()
+            }
+        }
     }
 }

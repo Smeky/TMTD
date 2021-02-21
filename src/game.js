@@ -40,7 +40,7 @@ class Game extends EventEmitter {
         this.renderer = new pixi.Renderer({ 
             width: width, 
             height: height,
-            backgroundColor: 0x1c2433 
+            backgroundColor: 0x1c2433,
         })
 
         this.stage = new pixi.Container()

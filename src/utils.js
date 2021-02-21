@@ -100,6 +100,28 @@ export default {
         // https://stackoverflow.com/a/11832950
         const scalar = 10 * decimals // is scalar the right name?
         return Math.round((number + Number.EPSILON) * scalar) / scalar
+    },
+
+    /**
+     * Creates a container of sprites that yield a visual display
+     * of the tower.
+     * @param {object} tower        Tower data // Todo: give tower data a type and use it here
+     * @param {number} [headAngle]  [optional] Angle of the head sprite   
+     */
+    // Todo: move me, plase!
+    createTowerDisplay: function(tower, headAngle = 0) {
+        const container = new pixi.Container()
+        const baseSprite = new pixi.Sprite(tower.base.texture)
+        const headSprite = new pixi.Sprite(tower.head.texture)
+
+        headSprite.position.copyFrom(tower.head.pos.multiply(tower.size))
+        headSprite.pivot.copyFrom(tower.head.pivot)
+        headSprite.rotation = headAngle
+
+        container.addChild(baseSprite)
+        container.addChild(headSprite)
+
+        return container
     }
 
     // Todo: Just an idea:

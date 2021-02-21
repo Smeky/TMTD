@@ -18,21 +18,13 @@ export default class DisplayComponent extends Component {
         super(entity) 
 
         this.transform = null
-        this.displayObject = options.displayObject || null
+        this.displayObject = null
+
         this.parent = options.parent || this.entity
         this.anchor = options.anchor || new Vec2(0.5, 0.5)
 
-        if (this.displayObject) {
-            if (this.displayObject.hasOwnProperty("anchor")) {
-                this.displayObject.anchor.set(this.anchor.x, this.anchor.y)
-            }
-            else {
-                const { width, height } = this.displayObject.getLocalBounds()
-                this.displayObject.pivot.x = Math.round(this.anchor.x * width)
-                this.displayObject.pivot.y = Math.round(this.anchor.y * height)
-            }
-
-            this.parent.addChild(this.displayObject)
+        if (options.displayObject) {
+            this.setDisplayObject(options.displayObject)
         }
     }
 
@@ -56,5 +48,20 @@ export default class DisplayComponent extends Component {
             this.displayObject.x = this.transform.pos.x
             this.displayObject.y = this.transform.pos.y
         }
+    }
+
+    setDisplayObject(obj) {
+        this.displayObject = obj
+
+        if (this.displayObject.hasOwnProperty("anchor")) {
+            this.displayObject.anchor.set(this.anchor.x, this.anchor.y)
+        }
+        else {
+            const { width, height } = this.displayObject.getLocalBounds()
+            this.displayObject.pivot.x = Math.round(this.anchor.x * width)
+            this.displayObject.pivot.y = Math.round(this.anchor.y * height)
+        }
+
+        this.parent.addChild(this.displayObject)
     }
 }

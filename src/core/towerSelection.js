@@ -4,16 +4,15 @@ import utils from "game/utils"
 import { Rect } from "game/graphics"
 
 export class TowerSelection extends pixi.Container {
-    constructor() { 
+    constructor(towers) { 
         super()
 
-        this.selected = 0
-        this.towers = [0x35352f]
+        this.selected = -1
 
-        this.towers.forEach((color, index) => {
-            const bounds = new Rect(0, 0, 50, 50)
-            const sprite = new pixi.Sprite(utils.createRectTexture(bounds, color))
-            const button = new Button(sprite, {
+        this.towers = towers
+        this.towers.forEach((tower, index) => {
+            const display = utils.createTowerDisplay(tower, Math.PI * 0.9)
+            const button = new Button(display, {
                 onClick: () => this.selectTower(index)
             })
 
@@ -29,10 +28,19 @@ export class TowerSelection extends pixi.Container {
 
     selectTower(index) {
         if (this.selected === index) {
-            return
+            this.emit("towerUnselected", this.getSelectedTower())
+            this.selected = -1
         }
-        
-        this.selected = index
+        else {
+            this.selected = index
+            this.emit("towerSelected", this.getSelectedTower())
+        }
+    }
+
+    clearSelection() {
+        if (this.selected >= 0) {
+            this.selectTower(this.selected)
+        }
     }
 
     getSelectedTower() {

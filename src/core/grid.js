@@ -17,8 +17,6 @@ export class Grid extends pixi.Container {
         const palette = new TilePalette(file.meta.paletteFile)
         
         this.size = new Vec2(file.meta.width, file.meta.height)
-        // this.pivot.x = this.size.x * Tile.Size / 2
-        // this.pivot.y = this.size.y * Tile.Size / 2
 
         for (const tileData of file.tiles) {
             palette.selectTile(tileData.index)
@@ -63,5 +61,27 @@ export class Grid extends pixi.Container {
 
     sizeInPixels() {
         return this.size.multiply(new Vec2(Tile.Size, Tile.Size))   
+    }
+
+    setTilesBlocked(tiles, state) {
+        for (const tile of tiles) {
+            tile.isBlocked = state
+        }
+    }
+
+    getTopLeftTile(tiles) {
+        // Todo: fix this when we fix grid indices
+        return tiles.reduce((candidate, tile) => {
+            if (!candidate) {
+                candidate = tile
+            }
+            else {
+                if (tile.x < candidate.x || tile.y < candidate.y) {
+                    candidate = tile
+                }
+            }
+
+            return candidate
+        }, null)
     }
 }
