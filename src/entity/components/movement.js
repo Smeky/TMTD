@@ -2,8 +2,6 @@ import { Vec2 } from "game/graphics"
 import { Component } from "."
 
 export default class MovementComponent extends Component {
-    static __Name = "movement"
-
     /**
      * 
      * @param {Entity} entity 

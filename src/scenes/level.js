@@ -202,7 +202,6 @@ export default class LevelScene extends Scene {
             },
             "display": {
                 displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
-                parent: this.cameraLayers.getLayer(20),
             },
             "movement": {
                 speed: 70,
@@ -246,12 +245,13 @@ export default class LevelScene extends Scene {
                 pos: topLeft.pos.add(Tile.Size - TowerSize / 2)
             },
             "display": {
-                parent: this.cameraLayers.getLayer(20),
                 anchor: new Vec2(0, 0),
             },
             "tower": {
                 data: tower,
-                parent: this.cameraLayers.getLayer(25),
+            },
+            "laser": {
+                layer: this.cameraLayers.getLayer(20),
             }
         }
 

@@ -4,8 +4,6 @@ import { Entity } from ".."
 import { Component } from "."
 
 export default class DisplayComponent extends Component {
-    static __Name = "display"
-
     /**
      * 
      * @param {Entity} entity 
