@@ -1,10 +1,8 @@
 
 export default class Component {
-    static __Name = null
-
     constructor(entity) {
         this.entity = entity
-        this.name = this.constructor.__Name
+        this.name = null
     }
 
     setup(options) {}
@@ -12,4 +10,6 @@ export default class Component {
 
     update(delta) {}
     postUpdate() {}
+
+    setName(name) { this.name = name }
 }

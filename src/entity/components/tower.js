@@ -4,8 +4,6 @@ import { DisplayObject, Sprite } from "pixi.js"
 import { Component } from "."
 
 export default class TowerComponent extends Component {
-    static __Name = "tower"
-
     /**
      * 
      * @param {Entity}        entity 

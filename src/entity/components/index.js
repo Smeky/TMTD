@@ -7,10 +7,10 @@ import TowerComponent from "./tower"
 import LaserComponent from "./laser"
 
 export default {
-    [TransformComponent.__Name]: TransformComponent,
-    [DisplayComponent.__Name]: DisplayComponent,
-    [MovementComponent.__Name]: MovementComponent,
-    [HealthComponent.__Name]: HealthComponent,
-    [TowerComponent.__Name]: TowerComponent,
-    [LaserComponent.__Name]: LaserComponent,
+    "transform": TransformComponent,
+    "display":   DisplayComponent,
+    "movement":  MovementComponent,
+    "health":    HealthComponent,
+    "tower":     TowerComponent,
+    "laser":     LaserComponent,
 }

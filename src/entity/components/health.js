@@ -1,12 +1,10 @@
-import { Rect } from "game/graphics"
 import utils from "game/utils"
-import { DisplayObject, Sprite } from "pixi.js"
+import { Rect } from "game/graphics"
+import { Sprite } from "pixi.js"
 import { Entity } from ".."
 import { Component } from "."
 
 export default class HealthComponent extends Component {
-    static __Name = "health"
-
     /**
      * 
      * @param {Entity} entity 

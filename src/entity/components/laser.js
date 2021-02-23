@@ -1,12 +1,10 @@
-import { Rect } from "game/graphics"
 import utils from "game/utils"
+import { Rect } from "game/graphics"
 import { AdvancedBloomFilter } from "pixi-filters"
 import { BLEND_MODES, Sprite } from "pixi.js"
 import { Component } from "."
 
 export default class LaserComponent extends Component {
-    static __Name = "laser"
-
     /**
      * 
      * @param {Entity}        entity 

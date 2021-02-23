@@ -26,7 +26,14 @@ export default class Entity extends Container {
     }
     
     addComponent(name, options) {
-        this.components.push(new Components[name](this, options))
+        const Component = Components[name]
+
+        if (!Component) {
+            throw `Invalid component name "${name}"`
+        }
+
+        const len = this.components.push(new Component(this, options))
+        this.components[len - 1].setName(name)
     }
 
     removeComponent(name) {
