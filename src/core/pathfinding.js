@@ -30,7 +30,7 @@ function splitCells(cells) {
  * @param {Vec2}   config.start
  * @param {Vec2}   config.end
  */
-export function findPath(config = {}) {
+export default function findPath(config = {}) {
     const start = config.start.multiply(Precision)
     const end = config.end.multiply(Precision)
     

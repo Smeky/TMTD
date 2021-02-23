@@ -8,15 +8,12 @@ export class BuildMode extends Container {
      * 
      * @param {object}  options 
      * @param {Grid}    options.grid
-     * @param {Layers}  options.cameraLayers
      */
     constructor(options) {
         super()
 
         this.options = {
             grid: null,
-            camera: null,
-            cameraLayers: null, // Todo:architecture: We need to solve this passing down.. it's weird
             ...options
         }
 
@@ -34,8 +31,8 @@ export class BuildMode extends Container {
         this.buildTiles.mask = this.mask
         this.buildTiles.visible = false
 
-        this.options.cameraLayers.addChild(this.buildTiles, 50)
-        this.options.cameraLayers.addChild(this.mask, 50)
+        this.options.camera.addChild(this.buildTiles, 50)
+        this.options.camera.addChild(this.mask, 50)
 
         game.on("towerBuilt", this.updateBuildTiles)
     }
@@ -62,7 +59,7 @@ export class BuildMode extends Container {
         this.highlight.pivot.x = this.highlight.width / 2
         this.highlight.pivot.y = this.highlight.height / 2
 
-        this.options.cameraLayers.addChild(this.highlight, 51)
+        this.options.camera.addChild(this.highlight, 51)
     }
 
     toggle() {

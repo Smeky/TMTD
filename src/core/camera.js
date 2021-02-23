@@ -1,6 +1,7 @@
-import { Rect, Vec2 } from "game/graphics"
-import { Container, Sprite } from "pixi.js"
 import utils from "game/utils"
+import { Rect, Vec2 } from "game/graphics"
+import { Layers } from "game/graphics/layers"
+import { Sprite } from "pixi.js"
 
 /**
  * - Perhaps camera could serve as a bridge between games and layers. Keeping track,
@@ -8,7 +9,7 @@ import utils from "game/utils"
  * 
  */
 
-export class Camera extends Container {
+export class Camera extends Layers {
     /**
      * 
      * @param {object} options 
