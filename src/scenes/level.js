@@ -1,15 +1,14 @@
+import utils from "game/utils"
 import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
+import { Rect, Vec2 } from "game/graphics"
 import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
 import { Camera } from "game/core/camera"
 import { BuildMode } from "game/core/buildmode"
-import * as pf from "game/core/pathfinding"
 import { TowerSelection } from "game/core/towerSelection"
-import { Rect, Vec2 } from "game/graphics"
-import { Layers } from "game/graphics/layers"
+import findPath from "game/core/pathfinding"
 import * as pixi from "pixi.js"
-import utils from "game/utils"
 
 const TowerSize = 50
 
@@ -73,14 +72,11 @@ export default class LevelScene extends Scene {
     }
 
     setupCamera() {
-        this.cameraLayers = new Layers()
         this.camera = new Camera({
             size: new Vec2(game.width, game.height),
             zoomEnabled: true,
             dragEnabled: true,
         })
-        
-        this.camera.addChild(this.cameraLayers)
 
         const gridSize = this.grid.sizeInPixels()
         const centered = new Vec2(
@@ -98,7 +94,6 @@ export default class LevelScene extends Scene {
         this.buildMode = new BuildMode({
             grid: this.grid,
             camera: this.camera,
-            cameraLayers: this.cameraLayers,
         })
         
         this.towerSelection.x = Math.round(game.width / 2)
@@ -135,7 +130,7 @@ export default class LevelScene extends Scene {
             const start = new Vec2(3, 2)
             const end = new Vec2(14, 11)
     
-            this.path = pf.findPath({ cells: pathTiles, start, end })
+            this.path = findPath({ cells: pathTiles, start, end })
                 .map(cell => cell.multiply(Tile.Size))
         }
     }
@@ -145,8 +140,8 @@ export default class LevelScene extends Scene {
         this.addChild(this.buildMode, 50)
         this.addChild(this.towerSelection, 70)
 
-        this.cameraLayers.addChild(this.grid, 10)
-        this.cameraLayers.addChild(this.entities, 15)
+        this.camera.addChild(this.grid, 10)
+        this.camera.addChild(this.entities, 15)
     }
 
     setupEvents() {
@@ -210,7 +205,7 @@ export default class LevelScene extends Scene {
             "health": {
                 maximum: this.enemyMeta.maxHp,
                 armor: this.enemyMeta.maxArmor,
-                parent: this.cameraLayers.getLayer(50),
+                parent: this.camera.getLayer(50),
             }
         }
 
@@ -251,7 +246,7 @@ export default class LevelScene extends Scene {
                 data: tower,
             },
             "laser": {
-                layer: this.cameraLayers.getLayer(20),
+                layer: this.camera.getLayer(20),
             }
         }
 
