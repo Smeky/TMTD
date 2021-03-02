@@ -56,8 +56,7 @@ export class BuildMode extends Container {
 
         this.highlight = utils.createTowerDisplay(this.selectedTower)
         this.highlight.alpha = 0.8
-        this.highlight.pivot.x = this.highlight.width / 2
-        this.highlight.pivot.y = this.highlight.height / 2
+        this.highlight.pivot.copyFrom(this.selectedTower.size.divide(2))
 
         this.options.camera.addChild(this.highlight, 51)
     }

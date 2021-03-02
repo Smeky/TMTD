@@ -112,6 +112,7 @@ export class Camera extends Layers {
      * @param {number} value // any positive (zoom in) or negative (zoom out) number
      */
     zoom(value) {
+        const before = new Vec2(this.scale)
         const delta = - Math.sign(value) / 10  // +/- 0.1
         const change = delta * this.scale.x
         const scale = Math.max((this.scale.x + change), 0.1)
@@ -124,6 +125,8 @@ export class Camera extends Layers {
 
         this.scale.x = scale
         this.scale.y = scale
+
+        this.emit("zoom", this, before.subtract(this.scale))
     }
 
     correctMousePos(pos) {

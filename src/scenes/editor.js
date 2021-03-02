@@ -5,7 +5,7 @@ import { Vec2 } from "game/graphics"
 import * as pixi from "pixi.js"
 import utils from "game/utils"
 import { Rect } from "game/graphics"
-import { Button } from "game/ui/button"
+import { Button } from "game/ui"
 
 export default class EditorScene extends Scene {
     static __Name = "editor"
@@ -39,9 +39,7 @@ export default class EditorScene extends Scene {
         const style = {fill: "#ffffff", fontSize: 18}
         const button = new Button(new pixi.Text("Copy to clipboard", style))
         button.y = Math.round(-window.innerHeight / 2 + 70)
-        button.onClick(() => {
-            utils.strToClipboard(JSON.stringify(this.exportGrid(), null, 2))
-        })
+        button.on("click", () => utils.strToClipboard(JSON.stringify(this.exportGrid(), null, 2)))
         
         this.addChild(this.tilesContainer)
         this.addChild(this.preview)

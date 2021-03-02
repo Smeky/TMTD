@@ -1,17 +1,17 @@
-import { Rect, Vec2 } from "game/graphics"
-import * as pixi from "pixi.js"
 import utils from "game/utils"
+import { Rect, Vec2 } from "game/graphics"
+import { DisplayObject, Graphics, Sprite } from "pixi.js"
+import { ButtonBase } from "."
 
 const DefaultOptions = {
     hoverEnabled: true,
     pressedEnabled: true,
-    onClick: null,
 }
 
-export class Button extends pixi.Container {
+export default class Button extends ButtonBase {
     /**
      * 
-     * @param {pixi.DisplayObject} displayObject 
+     * @param {DisplayObject} displayObject 
      * @param {DefaultOptions} options 
      */
     constructor(displayObject, options = {}) {
@@ -24,14 +24,14 @@ export class Button extends pixi.Container {
 
         { // graphics
             if (this.options.hoverEnabled) {
-                this.border = new pixi.Graphics()    
+                this.border = new Graphics()
                 this.border.visible = false // hidden by default, not hovered
                 this.border.alpha = 0.3
                 this.addChild(this.border)
             }
 
             if (this.options.pressedEnabled) {
-                this.sprite = new pixi.Sprite()
+                this.sprite = new Sprite()
                 this.sprite.visible = false // hidden by default, not pressed
                 this.sprite.alpha = 0.1
                 this.addChild(this.sprite)
@@ -42,29 +42,6 @@ export class Button extends pixi.Container {
             if (displayObject) {
                 this.setDisplayObject(displayObject)
             }
-        }
-
-        { // events
-            this._onClick = options.onClick
-            this.isPressed = false
-            this.interactive = true
-
-            this.on("mouseover", () => this.setHover(true))
-            this.on("mouseout", () => this.setHover(false))
-            this.on("mouseupoutside", () => {this.setPressed(false)})
-            this.on("mousedown", (event) => {
-                this.setPressed(true)
-                event.stopPropagation()
-
-            })
-            this.on("mouseup", (event) => {
-                if (this.isPressed) {
-                    this.handleClick()
-                    event.stopPropagation()
-                }
-
-                this.setPressed(false)
-            })
         }
     }
 
@@ -100,27 +77,27 @@ export class Button extends pixi.Container {
         this.displayObject.y += borderOffset.y
     }
 
-    setHover(state) {
-        if (this.options.hoverEnabled) {
-            this.border.visible = state
-        }
-    }
-
-    setPressed(state) {
-        this.isPressed = state
-
+    onMouseDown() {
         if (this.options.pressedEnabled) {
-            this.sprite.visible = state
+            this.sprite.visible = true
         }
     }
 
-    handleClick() {
-        if (this._onClick) {
-            this._onClick()
+    onMouseUp() {
+        if (this.options.pressedEnabled) {
+            this.sprite.visible = false
         }
     }
 
-    onClick(callback) {
-        this._onClick = callback
+    onMouseOver() {
+        if (this.options.hoverEnabled) {
+            this.border.visible = true
+        }
+    }
+
+    onMouseOut() {
+        if (this.options.hoverEnabled) {
+            this.border.visible = false
+        }
     }
 }

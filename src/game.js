@@ -1,10 +1,10 @@
-import * as pixi from "pixi.js"
-import { Debug } from "game/debug"
 import InputHandler from "game/core/input"
 import EventEmitter from "eventemitter3"
-import { Button } from "game/ui/button"
+import { Debug } from "game/debug"
 import { SceneHandler } from "game/scenes"
 import { Vec2 } from "game/graphics"
+import { Button } from "game/ui"
+import * as pixi from "pixi.js"
 
 pixi.utils.skipHello()
 
@@ -72,7 +72,7 @@ class Game extends EventEmitter {
             scenes.forEach((scene, index) => {
                 const button = new Button(new pixi.Text(scene.label,  style))
     
-                button.onClick(() => this.sceneHandler.setScene(scene.id))
+                button.on("click", () => this.sceneHandler.setScene(scene.id))
                 button.pivot.set(0, 0)
                 button.x = 20
                 button.y = 20 + index * 35
