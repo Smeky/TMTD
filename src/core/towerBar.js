@@ -1,9 +1,8 @@
-import * as pixi from "pixi.js"
-import { Button } from "game/ui/button"
 import utils from "game/utils"
-import { Rect } from "game/graphics"
+import { Button } from "game/ui"
+import * as pixi from "pixi.js"
 
-export class TowerSelection extends pixi.Container {
+export class TowerBar extends pixi.Container {
     constructor(towers) { 
         super()
 
@@ -12,11 +11,10 @@ export class TowerSelection extends pixi.Container {
         this.towers = towers
         this.towers.forEach((tower, index) => {
             const display = utils.createTowerDisplay(tower, Math.PI * 0.9)
-            const button = new Button(display, {
-                onClick: () => this.selectTower(index)
-            })
-
+            const button = new Button(display)
+            
             button.x = 60 * index
+            button.on("click", () => this.selectTower(index))
 
             this.addChild(button)
         })

@@ -23,6 +23,20 @@ export default class Vec2 {
         }
     }
 
+    copyFrom(other) {
+        this.x = other.x
+        this.y = other.y
+
+        return this
+    }
+
+    copyTo(other) {
+        other.x = this.x
+        other.y = this.y
+
+        return other
+    }
+
     equals(other) {
         return this.x === other.x && this.y === other.y
     }

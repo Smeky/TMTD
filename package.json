@@ -11,6 +11,7 @@
         "start": "webpack serve --config config/webpack-dev.js"
     },
     "dependencies": {
+        "@pixi/graphics-extras": "^5.3.8",
         "eventemitter3": "^4.0.7",
         "pixi-filters": "^3.2.2",
         "pixi.js": "^5.3.7"

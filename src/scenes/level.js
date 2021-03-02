@@ -1,3 +1,4 @@
+import findPath from "game/core/pathfinding"
 import utils from "game/utils"
 import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
@@ -6,9 +7,10 @@ import { Grid } from "game/core/grid"
 import { Tile } from "game/core/tile"
 import { Camera } from "game/core/camera"
 import { BuildMode } from "game/core/buildmode"
-import { TowerSelection } from "game/core/towerSelection"
-import findPath from "game/core/pathfinding"
-import * as pixi from "pixi.js"
+import { TowerBar } from "game/core/towerBar"
+import { EntitySelection } from "game/core/entitySelection"
+import { Sprite } from "pixi.js"
+import { TowerOptions } from "game/ui"
 
 const TowerSize = 50
 
@@ -23,9 +25,9 @@ async function createTowerList() {
                 texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
             },
             head: {
-                texture: utils.createRectTexture(new Rect(0, 0, 8, 25), 0xffff00),
+                texture: utils.createRectTexture(new Rect(0, 0, 8, 35), 0xffff00),
                 pos: new Vec2(0.5), // relative to center
-                pivot: new Vec2(4, 25 / 4),
+                pivot: new Vec2(4, 6),
                 attack: {
                     range: 150,
                     damage: 1,
@@ -69,6 +71,12 @@ export default class LevelScene extends Scene {
         this.setupGameLogic()
         this.setupLayers()
         this.setupEvents()
+
+        this.setupTowerSelection()
+
+        // tmp
+        const entity = this.entities.children[this.entities.children.length - 5]
+        this.handleTowerClicked(entity)
     }
 
     setupCamera() {
@@ -88,7 +96,7 @@ export default class LevelScene extends Scene {
     }
 
     setupGameLogic() {
-        this.towerSelection = new TowerSelection(this.towers)
+        this.towerBar = new TowerBar(this.towers)
         this.entities = new Entities()
 
         this.buildMode = new BuildMode({
@@ -96,13 +104,13 @@ export default class LevelScene extends Scene {
             camera: this.camera,
         })
         
-        this.towerSelection.x = Math.round(game.width / 2)
-        this.towerSelection.y = game.height - 50
-        this.towerSelection.on("towerSelected", tower => {
+        this.towerBar.x = Math.round(game.width / 2)
+        this.towerBar.y = game.height - 50
+        this.towerBar.on("towerSelected", tower => {
             this.buildMode.setSelectedTower(tower)
             this.buildMode.toggle()
         })
-        this.towerSelection.on("towerUnselected", () => {
+        this.towerBar.on("towerUnselected", () => {
             this.buildMode.toggle()
         })
         
@@ -138,7 +146,7 @@ export default class LevelScene extends Scene {
     setupLayers() {
         this.addChild(this.camera, 10)
         this.addChild(this.buildMode, 50)
-        this.addChild(this.towerSelection, 70)
+        this.addChild(this.towerBar, 70)
 
         this.camera.addChild(this.grid, 10)
         this.camera.addChild(this.entities, 15)
@@ -149,6 +157,17 @@ export default class LevelScene extends Scene {
         this.inputProxy.on("keyup", this.handleKeyUp)
 
         game.on("buildTower", this.handleBuildTower)
+    }
+
+    setupTowerSelection() {
+        this.entitySelection = new EntitySelection()
+
+        this.towerOptions = new TowerOptions()
+        this.towerOptions.on("click", this.handleTowerSelectClick)
+        this.towerOptions.visible = false
+
+        this.camera.addChild(this.entitySelection, 18)
+        this.camera.addChild(this.towerOptions, 55)
     }
 
     close() {
@@ -196,7 +215,7 @@ export default class LevelScene extends Scene {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
-                displayObject: new pixi.Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
+                displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
             },
             "movement": {
                 speed: 70,
@@ -251,7 +270,9 @@ export default class LevelScene extends Scene {
         }
 
         try {
-            this.entities.createEntity(components)
+            const entity = this.entities.createEntity(components)
+            entity.interactive = true
+            entity.on("click", () => this.handleTowerClicked(entity))
         }
         catch (e) {
             return console.error(e)
@@ -261,17 +282,42 @@ export default class LevelScene extends Scene {
     }
 
     handleBuildTower = (pos) => {
-        this.buildTower(this.towerSelection.getSelectedTower(), pos)
+        this.buildTower(this.towerBar.getSelectedTower(), pos)
     }
 
     handleKeyUp = (event) => {
         if (event.key === "1") {
-            this.towerSelection.selectTower(0)
+            this.towerBar.selectTower(0)
         }
         else if (event.key === "Escape") {
             if (this.buildMode.enabled) {
-                this.towerSelection.clearSelection()
+                this.towerBar.clearSelection()
             }
+        }
+    }
+
+    handleTowerClicked = (entity) => {
+        this.entitySelection.selectEntity(entity)
+
+        const isSelected = this.entitySelection.hasSelected()
+        this.towerOptions.visible = isSelected
+        
+        if (isSelected) {
+            const cmpTranform = entity.getComponent("transform")
+            const cmpTower = entity.getComponent("tower")
+
+            const center = cmpTranform.pos.add(cmpTower.data.size.divide(2))
+            this.towerOptions.setCenter(center)
+        }
+    }
+
+    handleTowerSelectClick = (id) => {
+        if (id === "remove") {
+
+        }
+
+        if (id === "upgrade") {
+
         }
     }
 }
