@@ -155,6 +155,4 @@ export default class TowerOptions extends Container {
     setCenter(center) {
         this.position.copyFrom(center)
     }
-
-    set
 }

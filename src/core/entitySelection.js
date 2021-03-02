@@ -1,4 +1,4 @@
-import { GlowFilter, OutlineFilter } from "pixi-filters";
+import { GlowFilter } from "pixi-filters";
 import { Container } from "pixi.js";
 
 export class EntitySelection extends Container {
@@ -34,6 +34,11 @@ export class EntitySelection extends Container {
 
     removeEntityEffect(entity) {
         entity.filters = []
+    }
+
+    clearSelection() {
+        this.removeEntityEffect(this.selected)
+        this.selected = null
     }
 
     hasSelected() {

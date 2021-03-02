@@ -281,6 +281,16 @@ export default class LevelScene extends Scene {
         game.emit("towerBuilt")
     }
 
+    removeTower(entity) {
+        const pos = entity.getComponent("transform").pos
+        const snapped = this.grid.snapPosToTile(pos)
+        const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
+        const tiles = this.grid.getTilesByBounds(bounds)
+
+        this.grid.setTilesBlocked(tiles, false)
+        this.entities.removeEntity(entity.id)
+    }
+
     handleBuildTower = (pos) => {
         this.buildTower(this.towerBar.getSelectedTower(), pos)
     }
@@ -292,6 +302,11 @@ export default class LevelScene extends Scene {
         else if (event.key === "Escape") {
             if (this.buildMode.enabled) {
                 this.towerBar.clearSelection()
+            }
+
+            if (this.entitySelection.hasSelected()) {
+                this.entitySelection.clearSelection()
+                this.towerOptions.visible = false
             }
         }
     }
@@ -313,11 +328,13 @@ export default class LevelScene extends Scene {
 
     handleTowerSelectClick = (id) => {
         if (id === "remove") {
-
+            this.removeTower(this.entitySelection.selected)
+            this.towerOptions.visible = false
+            this.entitySelection.clearSelection()
         }
-
+        
         if (id === "upgrade") {
-
+            
         }
     }
 }
