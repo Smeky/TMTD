@@ -90,7 +90,7 @@ class OptionsButton extends ButtonBase {
             this.icon.y -= 1
         }
 
-        if (!this.isHover) {
+        if (this.iconGlowFilter && !this.isHover) {
             this.iconGlowFilter.bloomScale = 1
         }
     }
