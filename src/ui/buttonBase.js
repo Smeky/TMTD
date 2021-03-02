@@ -5,6 +5,7 @@ export default class ButtonBase extends Container {
         super()
 
         this.isPressed = false
+        this.isHover = false
         this.interactive = true
 
         this.on("pointerdown", this.handleMouseDown)
@@ -35,10 +36,12 @@ export default class ButtonBase extends Container {
     }
     
     handleMouseOver = () => {
+        this.isHover = true
         this.onMouseOver()
     }
     
     handleMouseOut = () => {
+        this.isHover = false
         this.onMouseOut()
     }
 

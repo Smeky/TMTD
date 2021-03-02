@@ -62,14 +62,12 @@ class OptionsButton extends ButtonBase {
     onMouseOver() {
         if (this.iconGlowFilter) {
             this.iconGlowFilter.bloomScale = 2
-            // this.iconGlowFilter.brightness = 2
         }
     }
 
     onMouseOut() {
-        if (this.iconGlowFilter) {
+        if (this.iconGlowFilter && !this.isPressed) {
             this.iconGlowFilter.bloomScale = 1
-            // this.iconGlowFilter.brightness = 1
         }
     }
 
@@ -90,6 +88,10 @@ class OptionsButton extends ButtonBase {
         if (this.icon) {
             this.icon.x -= 1
             this.icon.y -= 1
+        }
+
+        if (!this.isHover) {
+            this.iconGlowFilter.bloomScale = 1
         }
     }
 
