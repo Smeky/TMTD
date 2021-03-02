@@ -9,6 +9,9 @@ import * as pixi from "pixi.js"
 pixi.utils.skipHello()
 
 class Game extends EventEmitter {
+    FPS = 60
+    SPF = 1 / this.FPS
+
     constructor() {
         super()
     }
@@ -27,6 +30,7 @@ class Game extends EventEmitter {
     
     init() {
         this.firstUpdate = true
+        this.deltaBuffer = 0
 
         this.setupGraphics()
 
@@ -45,6 +49,7 @@ class Game extends EventEmitter {
             width: width, 
             height: height,
             backgroundColor: 0x1c2433,
+            antialias: true
         })
 
         this.stage = new pixi.Container()
@@ -90,7 +95,7 @@ class Game extends EventEmitter {
     }
 
 
-    update = (delta) => {
+    update = () => {
         if (this.firstUpdate) {
             this.firstUpdate = false
             return
@@ -99,11 +104,16 @@ class Game extends EventEmitter {
         // We don't use delta, since we want option (B)
         //  A) pixi.Ticker.delta * velocity is "pixels per frame"
         //  B) pixi.Ticker.elapsedMS / 1000 * velocity is "pixels per second"
-        const fixedDelta = this.ticker.elapsedMS / 1000
-        
-        this.sceneHandler.update(fixedDelta)
-        this.debug.update(fixedDelta)
+        let delta = this.ticker.elapsedMS / 1000 + this.deltaBuffer
 
+        while (delta > 0) {
+            delta -= this.SPF
+
+            this.sceneHandler.update(this.SPF)
+            this.debug.update(this.SPF)
+        }
+
+        this.deltaBuffer = delta
         this.renderer.render(this.stage)
     }
 
