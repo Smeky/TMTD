@@ -73,10 +73,6 @@ export default class LevelScene extends Scene {
         this.setupEvents()
 
         this.setupTowerSelection()
-
-        // tmp
-        const entity = this.entities.children[this.entities.children.length - 5]
-        this.handleTowerClicked(entity)
     }
 
     setupCamera() {
@@ -291,6 +287,11 @@ export default class LevelScene extends Scene {
         this.entities.removeEntity(entity.id)
     }
 
+    upgradeTower(entity) {
+        const cmpTower = entity.getComponent("tower")
+        cmpTower.damage += 1
+    }
+
     handleBuildTower = (pos) => {
         this.buildTower(this.towerBar.getSelectedTower(), pos)
     }
@@ -334,7 +335,7 @@ export default class LevelScene extends Scene {
         }
         
         if (id === "upgrade") {
-            
+            this.upgradeTower(this.entitySelection.selected)
         }
     }
 }
