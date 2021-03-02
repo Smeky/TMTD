@@ -80,7 +80,7 @@ export default class TowerComponent extends Component {
             const health = this.target.getComponent("health")
 
             if (health.reduce(this.damage)) {
-                this.damage *= 1.075
+                this.clearTarget()
             }
         }
 
