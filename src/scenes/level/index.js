@@ -1,16 +1,20 @@
-import findPath from "game/core/pathfinding"
+import {
+    findPath,
+    Grid,
+    Tile,
+    Camera,
+} from "game/core"
+
 import utils from "game/utils"
 import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Rect, Vec2 } from "game/graphics"
-import { Grid } from "game/core/grid"
-import { Tile } from "game/core/tile"
-import { Camera } from "game/core/camera"
-import { BuildMode } from "game/core/buildmode"
-import { TowerBar } from "game/core/towerBar"
-import { EntitySelection } from "game/core/entitySelection"
 import { Sprite } from "pixi.js"
-import { TowerOptions } from "game/ui"
+
+import BuildMode from "./buildmode"
+import EntitySelection from "./entitySelection"
+import TowerBar from "./towerBar"
+import TowerOptions from "./towerOptions"
 
 const TowerSize = 50
 

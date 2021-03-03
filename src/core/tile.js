@@ -1,5 +1,5 @@
 
-export class Tile {
+export default class Tile {
     static Size = 32
 
     constructor(pos, sprite) {

@@ -1,9 +1,8 @@
 import { Vec2, Rect } from "game/graphics"
-import { Tile } from "game/core/tile"
-import { TilePalette } from "game/core/palette"
-import * as pixi from "pixi.js"
+import { Tile, TilePalette } from "game/core"
+import { Container, Sprite } from "pixi.js"
 
-export class Grid extends pixi.Container {
+export default class Grid extends Container {
     constructor() {
         super()
 
@@ -21,7 +20,7 @@ export class Grid extends pixi.Container {
         for (const tileData of file.tiles) {
             palette.selectTile(tileData.index)
 
-            const sprite = new pixi.Sprite(palette.getSelectedTileTexture())
+            const sprite = new Sprite(palette.getSelectedTileTexture())
             const pos = new Vec2(tileData.x, tileData.y).multiply(new Vec2(Tile.Size, Tile.Size))
 
             const tile = new Tile(pos, sprite)

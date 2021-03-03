@@ -1,4 +1,4 @@
-import InputHandler from "game/core/input"
+import { InputHandler } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneHandler } from "game/scenes"
@@ -8,7 +8,7 @@ import * as pixi from "pixi.js"
 
 pixi.utils.skipHello()
 
-class Game extends EventEmitter {
+export default class Game extends EventEmitter {
     FPS = 60
     SPF = 1 / this.FPS
 
@@ -131,5 +131,3 @@ class Game extends EventEmitter {
         this.emit("windowResized", forward)
     }
 }
-
-export default Game

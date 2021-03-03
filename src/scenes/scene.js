@@ -1,4 +1,4 @@
-import { Layers } from "game/graphics/layers"
+import { Layers } from "game/graphics"
 
 export default class Scene extends Layers {
     static __Name = null

@@ -1,15 +1,15 @@
-import * as pixi from "pixi.js"
-import {Tile} from "game/core/tile"
+import { Tile } from "game/core"
+import { Container, Graphics, Rectangle, Sprite, Texture } from "pixi.js"
 
-export class TilePalette extends pixi.Container {
+export default class TilePalette extends Container {
     constructor(filename, opts = {visible: false}) {
         super()
 
         this.visible = opts.visible
         this.onSelected = null
         this.filename = filename
-        this.atlas = new pixi.Texture.from(filename)
-        this.tiles = new pixi.Container()
+        this.atlas = new Texture.from(filename)
+        this.tiles = new Container()
 
         // Todo: replace nums with atlas.w/h when we have texture loading at start
         const w = Math.ceil(96 / Tile.Size)
@@ -19,8 +19,8 @@ export class TilePalette extends pixi.Container {
         // Setup palette tiles
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
-                const clip = new pixi.Rectangle(x * Tile.Size, y * Tile.Size, Tile.Size, Tile.Size)
-                const sprite = new pixi.Sprite(new pixi.Texture(this.atlas, clip))
+                const clip = new Rectangle(x * Tile.Size, y * Tile.Size, Tile.Size, Tile.Size)
+                const sprite = new Sprite(new Texture(this.atlas, clip))
                 
                 if (this.visible) {
                     sprite.scale.set(2, 2)
@@ -40,7 +40,7 @@ export class TilePalette extends pixi.Container {
         }
 
         this.selection = {
-            graphics: new pixi.Graphics(),
+            graphics: new Graphics(),
             selected: -1,
             hover: -1,
         }

@@ -1,7 +1,7 @@
 import { GlowFilter } from "pixi-filters";
 import { Container } from "pixi.js";
 
-export class EntitySelection extends Container {
+export default class EntitySelection extends Container {
     constructor() {
         super()
 

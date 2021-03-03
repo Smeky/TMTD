@@ -1,11 +1,10 @@
-import { Scene } from "game/scenes"
-import { TilePalette } from "game/core/palette"
-import { Tile } from "game/core/tile"
-import { Vec2 } from "game/graphics"
-import * as pixi from "pixi.js"
 import utils from "game/utils"
+import { Scene } from "game/scenes"
+import { Tile, TilePalette } from "game/core"
+import { Vec2 } from "game/graphics"
 import { Rect } from "game/graphics"
 import { Button } from "game/ui"
+import { Container, Sprite, Text } from "pixi.js"
 
 export default class EditorScene extends Scene {
     static __Name = "editor"
@@ -23,7 +22,7 @@ export default class EditorScene extends Scene {
         this.isPainting = false
 
         this.defaultPreviewAlpha = 0.5
-        this.preview = new pixi.Sprite()
+        this.preview = new Sprite()
         this.preview.alpha = this.defaultPreviewAlpha
 
         this.palette = new TilePalette("media/tileset.png", {visible: true})
@@ -34,10 +33,10 @@ export default class EditorScene extends Scene {
         }
 
         this.tiles = []
-        this.tilesContainer = new pixi.Container()
+        this.tilesContainer = new Container()
         
         const style = {fill: "#ffffff", fontSize: 18}
-        const button = new Button(new pixi.Text("Copy to clipboard", style))
+        const button = new Button(new Text("Copy to clipboard", style))
         button.y = Math.round(-window.innerHeight / 2 + 70)
         button.on("click", () => utils.strToClipboard(JSON.stringify(this.exportGrid(), null, 2)))
         
@@ -55,7 +54,7 @@ export default class EditorScene extends Scene {
         let tile = this.tiles.find(tile => tile.x === clampedPos.x && tile.y === clampedPos.y)
 
         if (!tile) {
-            tile = new pixi.Sprite(this.palette.getSelectedTileTexture())
+            tile = new Sprite(this.palette.getSelectedTileTexture())
             tile.x = clampedPos.x
             tile.y = clampedPos.y
             tile.textureIndex = this.palette.getSelectedTileTextureIndex()

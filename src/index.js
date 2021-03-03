@@ -1,6 +1,6 @@
-import "game/style.scss"
+import "./style.scss"
 
-import Game from "game/game"
+import Game from "./game"
 import * as pixi from "pixi.js"
 import '@pixi/graphics-extras';
 

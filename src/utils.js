@@ -1,5 +1,5 @@
 import { Vec2, Rect } from "game/graphics"
-import * as pixi from "pixi.js"
+import { Container, Graphics, Sprite, Texture } from "pixi.js"
 
 export default {
     /**
@@ -61,17 +61,17 @@ export default {
         const {width, height} = displayObject.getLocalBounds()
         const pixels = game.renderer.extract.pixels(displayObject)
 
-        return pixi.Texture.fromBuffer(pixels, width, height)
+        return Texture.fromBuffer(pixels, width, height)
     },
 
     /**
      * Creates a new Sprite instance of rectangular shape
      * @param {Rect} bounds Bounds of the rectangle
      * @param {number} color Hexadecimal color
-     * @returns {pixi.Sprite} new PIXI Sprite instance
+     * @returns {Sprite} new PIXI Sprite instance
      */
     createRectTexture(bounds, color) {
-        const g = new pixi.Graphics()
+        const g = new Graphics()
         g.beginFill(color)
         g.drawRect(bounds.x, bounds.y, bounds.w, bounds.h)
         g.endFill()
@@ -110,9 +110,9 @@ export default {
      */
     // Todo: move me, plase!
     createTowerDisplay: function(tower, headAngle = 0) {
-        const container = new pixi.Container()
-        const baseSprite = new pixi.Sprite(tower.base.texture)
-        const headSprite = new pixi.Sprite(tower.head.texture)
+        const container = new Container()
+        const baseSprite = new Sprite(tower.base.texture)
+        const headSprite = new Sprite(tower.head.texture)
 
         headSprite.position.copyFrom(tower.head.pos.multiply(tower.size))
         headSprite.pivot.copyFrom(tower.head.pivot)

@@ -1,5 +1,5 @@
 import { Vec2 } from "game/graphics"
-import { Cooldown } from "game/core/cooldown"
+import { Cooldown } from "game/core"
 import { DisplayObject, Sprite } from "pixi.js"
 import { Component } from "."
 

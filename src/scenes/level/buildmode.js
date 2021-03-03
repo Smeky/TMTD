@@ -1,9 +1,9 @@
 import utils from "game/utils"
-import { Tile } from "game/core/tile"
+import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Container, Graphics, Sprite } from "pixi.js"
 
-export class BuildMode extends Container {
+export default class BuildMode extends Container {
     /**
      * 
      * @param {object}  options 

@@ -1,6 +1,5 @@
 
-
-export class Cooldown {
+export default class Cooldown {
     constructor(total, progress = 0.0) {
         this.total = total
         this.progress = progress

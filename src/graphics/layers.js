@@ -7,7 +7,7 @@ class Layer extends Container {
     }
 }
 
-export class Layers extends Container {
+export default class Layers extends Container {
     constructor() {
         super()
     }

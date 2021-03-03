@@ -1,8 +1,8 @@
 import utils from "game/utils"
 import { Button } from "game/ui"
-import * as pixi from "pixi.js"
+import { Container } from "pixi.js"
 
-export class TowerBar extends pixi.Container {
+export default class TowerBar extends Container {
     constructor(towers) { 
         super()
 

@@ -1,6 +1,5 @@
-import * as pixi from "pixi.js"
+import { Container, Graphics, DisplayObject } from "pixi.js"
 import { Vec2, Rect } from "game/graphics"
-
 
 export class DebugDisplay {
     static Type = {
@@ -33,14 +32,14 @@ export class DebugDisplay {
     }
 }
 
-export class Debug extends pixi.Container {
+export class Debug extends Container {
     constructor() {
         super()
 
         this.pointSize = 8
 
         this.displays = []
-        this.graphics = new pixi.Graphics()
+        this.graphics = new Graphics()
 
         this.addChild(this.graphics)
     }
@@ -49,7 +48,6 @@ export class Debug extends pixi.Container {
         this.graphics.clear()
         this.graphics.lineStyle(1, 0xff0000)
 
-        // Todo: test --i
         for (let i = this.displays.length - 1; i >= 0; i--) {
             const display = this.displays[i]
 
@@ -108,7 +106,7 @@ export class Debug extends pixi.Container {
 
     /**
      * 
-     * @param {pixi.DisplayObject} displayObject
+     * @param {DisplayObject} displayObject
      */
     displayBounds(displayObject) {
         return this.addDisplay(DebugDisplay.Type.Bounds, displayObject)

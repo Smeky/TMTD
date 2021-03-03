@@ -1,6 +1,6 @@
 import utils from "game/utils"
 import { Rect, Vec2 } from "game/graphics"
-import { Layers } from "game/graphics/layers"
+import { Layers } from "game/graphics"
 import { Sprite } from "pixi.js"
 
 /**
@@ -9,7 +9,7 @@ import { Sprite } from "pixi.js"
  * 
  */
 
-export class Camera extends Layers {
+export default class Camera extends Layers {
     /**
      * 
      * @param {object} options 
