@@ -201,8 +201,8 @@ export default class LevelScene extends Scene {
             this.enemyMeta.color = 0x000000
         }
 
-        this.enemyMeta.maxHp *= 1.2
-        this.enemyMeta.maxArmor *= (1 - this.enemyMeta.maxArmor) * 1.2
+        this.enemyMeta.maxHp *= 1.1
+        this.enemyMeta.maxArmor *= (1 - this.enemyMeta.maxArmor) * 1.1
     }
 
     createEnemy() {
