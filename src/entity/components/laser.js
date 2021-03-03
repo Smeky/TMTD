@@ -9,12 +9,14 @@ export default class LaserComponent extends Component {
      * 
      * @param {Entity}        entity 
      * @param {object}        options
+     * @param {number}        [options.color]   color of the laser texture
      */
     constructor(entity, options) {
         super(entity)
         
         this.options = {
             layer: null,
+            color: 0xff1800,
             ...options,
         }
     }
@@ -27,7 +29,7 @@ export default class LaserComponent extends Component {
         this.sprite = new Sprite(utils.createRectTexture(new Rect(0, 0, 4, 1), 0xffffff))
         this.sprite.scale.x = 0.5
         this.sprite.pivot.x = Math.round(this.sprite.width / (2 * this.sprite.scale.x))
-        this.sprite.tint = 0xff1800
+        this.sprite.tint = this.options.color
         this.sprite.visible = false
         this.sprite.blendMode = BLEND_MODES.ADD
 

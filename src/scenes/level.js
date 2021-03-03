@@ -44,7 +44,7 @@ export default class LevelScene extends Scene {
     constructor() {
         super()
 
-        this.cdEntity = 1
+        this.cdEntity = 0.6
         this.cdEntityProgress = this.cdEntity - 0.1
 
         this.enemyMeta = {
@@ -53,7 +53,9 @@ export default class LevelScene extends Scene {
             difficulty: 1,
             maxHp: 100,
             maxArmor: 0,
-            color: 0xffffff
+            baseSpeed: 100,
+            speed: 100,
+            color: 0xffffff,
         }
     }
 
@@ -203,6 +205,7 @@ export default class LevelScene extends Scene {
 
         this.enemyMeta.maxHp *= 1.1
         this.enemyMeta.maxArmor *= (1 - this.enemyMeta.maxArmor) * 1.1
+        this.enemyMeta.speed = this.enemyMeta.baseSpeed * (Math.random() + 0.5)
     }
 
     createEnemy() {
@@ -214,7 +217,7 @@ export default class LevelScene extends Scene {
                 displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
             },
             "movement": {
-                speed: 70,
+                speed: this.enemyMeta.speed,
                 destinations: this.path,
             },
             "health": {
@@ -289,7 +292,10 @@ export default class LevelScene extends Scene {
 
     upgradeTower(entity) {
         const cmpTower = entity.getComponent("tower")
+        const cmpLaser = entity.getComponent("laser")
+
         cmpTower.damage += 1
+        cmpLaser.sprite.tint += 0x000308    // Todo: we need something better to modify the color
     }
 
     handleBuildTower = (pos) => {
