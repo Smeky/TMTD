@@ -2,7 +2,6 @@ import "./style.scss"
 
 import Game from "./game"
 import * as pixi from "pixi.js"
-import '@pixi/graphics-extras';
 
 const game = new Game()
 

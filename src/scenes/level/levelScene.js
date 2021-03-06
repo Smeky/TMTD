@@ -70,9 +70,7 @@ export default class LevelScene extends Scene {
 
         this.setupTowerSelection()
 
-        for (let i = 0; i < 10; i++) {
-            this.increaseDifficulty()
-        }
+        this.handleTowerClicked(this.entities.children[0])
     }
 
     setupCamera() {
