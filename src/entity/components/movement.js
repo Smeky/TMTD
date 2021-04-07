@@ -36,7 +36,7 @@ export default class MovementComponent extends Component {
             this.transform.pos = new Vec2(this.destinations.shift())
 
             if (this.destinations.length === 0) {
-                this.entity.emit("destReached")
+                this.entity.emit("entity_movement_finished")
             }
         }
         else {

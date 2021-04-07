@@ -120,7 +120,7 @@ export default class Game extends EventEmitter {
     handleResize = (event) => {
         const {view} = this.renderer
 
-        const forward = {
+        const meta = {
             before: new Vec2(view.width, view.height),
             after: new Vec2(event.target.innerWidth, event.target.innerHeight)
         }
@@ -128,6 +128,6 @@ export default class Game extends EventEmitter {
         view.width = event.target.innerWidth
         view.height = event.target.innerHeight
 
-        this.emit("windowResized", forward)
+        this.emit("window_resized", meta)
     }
 }

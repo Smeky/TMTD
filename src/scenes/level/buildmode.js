@@ -34,12 +34,12 @@ export default class BuildMode extends Container {
         this.options.camera.addChild(this.buildTiles, 50)
         this.options.camera.addChild(this.mask, 50)
 
-        game.on("towerBuilt", this.updateBuildTiles)
+        game.on("tower_built", this.updateBuildTiles)
     }
 
     close() {
         this.inputProxy.close()
-        game.removeListener("towerBuilt", this.updateBuildTiles)
+        game.removeListener("tower_built", this.updateBuildTiles)
     }
 
     update(delta) {
@@ -121,7 +121,7 @@ export default class BuildMode extends Container {
 
     handleMouseUp = (event) => {
         const { x, y, pivot } = this.highlight
-        game.emit("buildTower", new Vec2(x - pivot.x, y - pivot.y))
+        game.emit("buildmode_click", new Vec2(x - pivot.x, y - pivot.y))
     }
 
     handleMouseMove = (event) => {

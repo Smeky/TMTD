@@ -100,13 +100,6 @@ export default class LevelScene extends Scene {
         
         this.towerBar.x = Math.round(game.width / 2)
         this.towerBar.y = game.height - 50
-        this.towerBar.on("towerSelected", tower => {
-            this.buildMode.setSelectedTower(tower)
-            this.buildMode.toggle()
-        })
-        this.towerBar.on("towerUnselected", () => {
-            this.buildMode.toggle()
-        })
         
         {   // Put down some towers right away
             const placements = [
@@ -150,7 +143,15 @@ export default class LevelScene extends Scene {
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.handleKeyUp)
 
-        game.on("buildTower", this.handleBuildTower)
+        game.on("buildmode_click", this.handleBuildTower)
+
+        game.on("tower_selected", tower => {
+            this.buildMode.setSelectedTower(tower)
+            this.buildMode.toggle()
+        })
+        game.on("tower_unselected", () => {
+            this.buildMode.toggle()
+        })
     }
 
     setupTowerSelection() {
@@ -169,7 +170,7 @@ export default class LevelScene extends Scene {
         this.buildMode.close()
         this.inputProxy.close()
 
-        game.removeListener("buildTower", this.handleBuildTower)
+        game.removeListener("buildmode_click", this.handleBuildTower)
     }
 
     update(delta) {
@@ -224,11 +225,11 @@ export default class LevelScene extends Scene {
         }
 
         const entity = this.entities.createEntity(components, "enemy")
-        entity.on("destReached", () => {
+        entity.on("entity_movement_finished", () => {
             this.entities.removeEntity(entity.id)
             // remove health
         })
-        entity.on("noHealth", () => {
+        entity.on("entity_health_zero", () => {
             this.entities.removeEntity(entity.id)
             // add points
         })
@@ -273,7 +274,7 @@ export default class LevelScene extends Scene {
             return console.error(e)
         }
 
-        game.emit("towerBuilt")
+        game.emit("tower_built")
     }
 
     removeTower(entity) {

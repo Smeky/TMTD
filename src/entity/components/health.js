@@ -71,7 +71,7 @@ export default class HealthComponent extends Component {
         
         if (this.current < 0) {
             this.current = 0
-            this.entity.emit("noHealth")
+            this.entity.emit("entity_health_zero")
             return true
         }
 

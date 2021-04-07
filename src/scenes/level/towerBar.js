@@ -26,12 +26,12 @@ export default class TowerBar extends Container {
 
     selectTower(index) {
         if (this.selected === index) {
-            this.emit("towerUnselected", this.getSelectedTower())
             this.selected = -1
+            game.emit("tower_unselected")
         }
         else {
             this.selected = index
-            this.emit("towerSelected", this.getSelectedTower())
+            game.emit("tower_selected", this.getSelectedTower())
         }
     }
 
