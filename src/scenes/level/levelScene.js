@@ -3,9 +3,11 @@ import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Rect, Vec2 } from "game/graphics"
 import { findPath, Grid, Tile, Camera } from "game/core"
-import { BuildMode, EntitySelection, TowerBar, TowerOptions } from "."
+import { EntitySelection, TowerOptions } from "."
 
 import EnemyWaves from "./handlers/enemyWaves"
+import BuildMode from "./handlers/buildmode"
+import TowerBar from "./handlers/towerbar"
 
 const TowerSize = 50
 
@@ -44,21 +46,24 @@ export default class LevelScene extends Scene {
         this.grid = new Grid()
         
         await this.grid.loadFromFile("dev.json")
-        return await createTowerList()
+        return await createTowerList() // Todo: remove this logic from IScene
     }
 
     setup(towers) {
         this.towers = towers
         
+        this.setupCamera()
+
         // Todo: move this logic upstairs (IScene)
         this.handlers = []
         this.handlers.push(new EnemyWaves(this))
+        this.handlers.push(new BuildMode(this))
+        this.handlers.push(new TowerBar(this, this.towers))
 
         for (const handler of this.handlers) {
             handler.init()
         }
 
-        this.setupCamera()
         this.setupGameLogic()
         this.setupLayers()
         this.setupEvents()
@@ -85,16 +90,8 @@ export default class LevelScene extends Scene {
     }
 
     setupGameLogic() {
-        this.towerBar = new TowerBar(this.towers)
         this.entities = new Entities()
-
-        this.buildMode = new BuildMode({
-            grid: this.grid,
-            camera: this.camera,
-        })
         
-        this.towerBar.x = Math.round(game.width / 2)
-        this.towerBar.y = game.height - 50
         
         {   // Put down some towers right away
             const placements = [
@@ -127,8 +124,7 @@ export default class LevelScene extends Scene {
 
     setupLayers() {
         this.addChild(this.camera, 10)
-        this.addChild(this.buildMode, 50)
-        this.addChild(this.towerBar, 70)
+        
 
         this.camera.addChild(this.grid, 10)
         this.camera.addChild(this.entities, 15)
@@ -138,15 +134,8 @@ export default class LevelScene extends Scene {
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.handleKeyUp)
 
-        game.on("buildmode_click", this.handleBuildTower)
+        game.on("build_tower", this.handleBuildTower)
 
-        game.on("tower_selected", tower => {
-            this.buildMode.setSelectedTower(tower)
-            this.buildMode.toggle()
-        })
-        game.on("tower_unselected", () => {
-            this.buildMode.toggle()
-        })
     }
 
     setupTowerSelection() {
@@ -162,17 +151,20 @@ export default class LevelScene extends Scene {
 
     close() {
         this.camera.close()
-        this.buildMode.close()
+        // this.buildMode.close()
         this.inputProxy.close()
 
-        game.removeListener("buildmode_click", this.handleBuildTower)
+        for (const handler of this.handlers) {
+            handler.close()
+        }
+
+        game.removeListener("build_tower", this.handleBuildTower)
     }
 
     update(delta) {
         if (!this.started) return
 
         this.entities.update(delta)
-        this.buildMode.update(delta)
 
         for (const handler of this.handlers) {
             handler.update(delta)
@@ -239,18 +231,16 @@ export default class LevelScene extends Scene {
         cmpLaser.sprite.tint += 0x000308    // Todo: we need something better to modify the color
     }
 
-    handleBuildTower = (pos) => {
-        this.buildTower(this.towerBar.getSelectedTower(), pos)
+    handleBuildTower = ({ pos, tower }) => {
+        this.buildTower(tower, pos)
     }
 
     handleKeyUp = (event) => {
         if (event.key === "1") {
-            this.towerBar.selectTower(0)
+            game.emit("select_tower", 0)
         }
         else if (event.key === "Escape") {
-            if (this.buildMode.enabled) {
-                this.towerBar.clearSelection()
-            }
+            game.emit("unselect_tower")
 
             if (this.entitySelection.hasSelected()) {
                 this.entitySelection.clearSelection()
