@@ -2,7 +2,7 @@ import utils from "game/utils"
 import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Rect, Vec2 } from "game/graphics"
-import { findPath, Grid, Tile, Camera } from "game/core"
+import { findPath, Grid, Tile } from "game/core"
 
 import EnemyWaves from "./handlers/enemy_waves"
 import BuildMode from "./handlers/buildmode"
@@ -52,9 +52,8 @@ export default class LevelScene extends Scene {
 
     setup(towers) {
         this.towers = towers
+        this.entities = new Entities()
         
-        this.setupCamera()
-
         // Todo: move this logic upstairs (IScene)
         this.handlers = [
             new EnemyWaves(this),
@@ -67,34 +66,25 @@ export default class LevelScene extends Scene {
         for (const handler of this.handlers) {
             handler.init()
         }
-
-        this.entities = new Entities()
         
-        this.addChild(this.camera, 10)
-
-        this.camera.addChild(this.grid, 10)
-        this.camera.addChild(this.entities, 15)
+        game.camera.addChild(this.grid, 10)
+        game.camera.addChild(this.entities, 15)
         
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.handleKeyUp)
 
         this.setupLevel()
+        this.positionCamera()
     }
 
-    setupCamera() {
-        this.camera = new Camera({
-            size: new Vec2(game.width, game.height),
-            zoomEnabled: true,
-            dragEnabled: true,
-        })
-
+    positionCamera() {
         const gridSize = this.grid.sizeInPixels()
         const centered = new Vec2(
             (game.width - gridSize.x) / 2,
             (game.height - gridSize.y) / 2,
         )
 
-        this.camera.moveTo(centered.round())
+        game.camera.moveTo(centered.round())
     }
 
     setupLevel() {
@@ -126,7 +116,7 @@ export default class LevelScene extends Scene {
     }
 
     close() {
-        this.camera.close()
+        game.camera.close()
         this.inputProxy.close()
 
         for (const handler of this.handlers) {

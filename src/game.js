@@ -1,4 +1,4 @@
-import { InputHandler } from "game/core"
+import { Camera, InputHandler } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneHandler } from "game/scenes"
@@ -32,15 +32,26 @@ export default class Game extends EventEmitter {
         this.firstUpdate = true
         this.deltaBuffer = 0
 
-        this.setupGraphics()
+        this.setupRenderer()
 
         this.debug = new Debug()
+        this.camera = new Camera({
+            size: new Vec2(game.width, game.height),
+            zoomEnabled: true,
+            dragEnabled: true,
+        })
+
+        this.stage.addChild(this.camera)
         
         this.setupScene()
         this.stage.addChild(this.debug)
+
+        this.ticker = new pixi.Ticker()
+        this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
+        this.ticker.start()
     }
 
-    setupGraphics() {
+    setupRenderer() {
         const width = window.innerWidth
         const height = window.innerHeight
 
@@ -56,10 +67,6 @@ export default class Game extends EventEmitter {
 
         window.addEventListener("resize", this.handleResize)
         document.body.appendChild(this.renderer.view)
-
-        this.ticker = new pixi.Ticker()
-        this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
-        this.ticker.start()
     }
 
     setupScene() {

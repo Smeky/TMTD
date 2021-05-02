@@ -46,7 +46,7 @@ export default class TowerManager extends IHandler {
                 data: tower,
             },
             "laser": {
-                layer: this.scene.camera.getLayer(20),
+                layer: game.camera.getLayer(20),
             }
         }
 

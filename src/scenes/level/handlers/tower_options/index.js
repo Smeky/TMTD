@@ -12,8 +12,8 @@ export default class TowerOptions extends IHandler {
         this.container = new Container()
         this.container.visible = false
 
-        this.scene.camera.addChild(this.entitySelection, 18)
-        this.scene.camera.addChild(this.container, 55)
+        game.camera.addChild(this.entitySelection, 18)
+        game.camera.addChild(this.container, 55)
 
         const size = new Vec2(50)
         const buttons = [
