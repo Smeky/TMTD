@@ -8,8 +8,9 @@ import EnemyWaves from "./handlers/enemyWaves"
 import BuildMode from "./handlers/buildmode"
 import TowerBar from "./handlers/towerbar"
 import TowerOptions from "./handlers/towerOptions"
+import TowerManager from "./handlers/towerManager"
 
-const TowerSize = 50
+const TowerSize = 50    // Todo: get rid of me, please
 
 // Todo: this should be defined somewhere else. Not sure where atm
 async function createTowerList() {
@@ -60,6 +61,7 @@ export default class LevelScene extends Scene {
             new BuildMode(this),
             new TowerBar(this, this.towers),
             new TowerOptions(this),
+            new TowerManager(this),
         ]
 
         for (const handler of this.handlers) {
@@ -104,7 +106,7 @@ export default class LevelScene extends Scene {
             ]
 
             for (const pos of placements) {
-                this.buildTower(this.towers[0], pos)
+                game.emit("build_tower", { pos, tower: this.towers[0] })
             }
         }
 
@@ -122,7 +124,6 @@ export default class LevelScene extends Scene {
 
     setupLayers() {
         this.addChild(this.camera, 10)
-        
 
         this.camera.addChild(this.grid, 10)
         this.camera.addChild(this.entities, 15)
@@ -131,9 +132,6 @@ export default class LevelScene extends Scene {
     setupEvents() {
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.handleKeyUp)
-
-        game.on("build_tower", this.handleBuildTower)
-
     }
 
     close() {
@@ -143,8 +141,6 @@ export default class LevelScene extends Scene {
         for (const handler of this.handlers) {
             handler.close()
         }
-
-        game.removeListener("build_tower", this.handleBuildTower)
     }
 
     update(delta) {
@@ -155,68 +151,6 @@ export default class LevelScene extends Scene {
         for (const handler of this.handlers) {
             handler.update(delta)
         }
-    }
-
-    buildTower(tower, pos) {
-        const snapped = this.grid.snapPosToTile(pos)
-        const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
-
-        const tiles = this.grid.getTilesByBounds(bounds)
-                               .filter(tile => !this.grid.isTileObstructed(tile))
-
-        if (tiles.length < 4) {
-            console.warn("Can not build here", pos)
-            return
-        }
-
-        this.grid.setTilesBlocked(tiles, true)
-        const topLeft = this.grid.getTopLeftTile(tiles)
-
-        const components = {
-            "transform": {
-                pos: topLeft.pos.add(Tile.Size - TowerSize / 2)
-            },
-            "display": {
-                anchor: new Vec2(0, 0),
-            },
-            "tower": {
-                data: tower,
-            },
-            "laser": {
-                layer: this.camera.getLayer(20),
-            }
-        }
-
-        try {
-            this.entities.createEntity(components)
-        }
-        catch (e) {
-            return console.error(e)
-        }
-
-        game.emit("tower_built")
-    }
-
-    removeTower(entity) {
-        const pos = entity.getComponent("transform").pos
-        const snapped = this.grid.snapPosToTile(pos)
-        const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
-        const tiles = this.grid.getTilesByBounds(bounds)
-
-        this.grid.setTilesBlocked(tiles, false)
-        this.entities.removeEntity(entity.id)
-    }
-
-    upgradeTower(entity) {
-        const cmpTower = entity.getComponent("tower")
-        const cmpLaser = entity.getComponent("laser")
-
-        cmpTower.damage += 1
-        cmpLaser.sprite.tint += 0x000308    // Todo: we need something better to modify the color
-    }
-
-    handleBuildTower = ({ pos, tower }) => {
-        this.buildTower(tower, pos)
     }
 
     handleKeyUp = (event) => {

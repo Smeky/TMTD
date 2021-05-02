@@ -4,7 +4,7 @@ import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
 
 import EntitySelection from "./entitySelection"
-import OptionsButton from "./optionsButtons"
+import OptionsButton from "./optionsButton"
 
 export default class TowerOptions extends IHandler {
     init() {
@@ -17,8 +17,8 @@ export default class TowerOptions extends IHandler {
 
         const size = new Vec2(50)
         const buttons = [
-            { id: "upgrade", icon: createUpgradeIcon(0xffeb74, 4) },
-            { id: "remove", icon: createCrossIcon(0xa20e0e, 4) },
+            { icon: createUpgradeIcon(0xffeb74, 4), callback: this.emitUpgradeTower },
+            { icon: createCrossIcon(0xa20e0e, 4), callback: this.emitRemoveTower },
         ]
         .forEach((meta, index) => {
             const angle = Math.PI * 1.9 + index * (Math.PI * 0.32)
@@ -27,17 +27,27 @@ export default class TowerOptions extends IHandler {
             button.pivot.copyFrom(size.divide(2))
             button.x = Math.cos(angle) * 75
             button.y = Math.sin(angle) * 75
+            button.on("click", meta.callback)
     
             this.container.addChild(button)
         })
 
         game.on("entity_clicked", this.onEntityClicked)
         game.on("unselect_tower", this.onUnselectTower)
+        game.on("tower_removed", this.onTowerRemoved)
     }
 
     close() {
         game.removeListener("entity_clicked", this.onEntityClicked)
         game.removeListener("unselect_tower", this.onUnselectTower)
+    }
+
+    emitUpgradeTower = () => {
+        game.emit("upgrade_tower", this.entitySelection.selected.id)
+    }
+
+    emitRemoveTower = () => {
+        game.emit("remove_tower", this.entitySelection.selected.id)
     }
 
     onEntityClicked = (entity) => {
@@ -59,6 +69,16 @@ export default class TowerOptions extends IHandler {
     }
 
     onUnselectTower = () => {
+        this.clearTowerSelection()
+    }
+
+    onTowerRemoved = (entityId) => {
+        if (this.entitySelection.hasSelected() && this.entitySelection.selected.id === entityId) {
+            this.clearTowerSelection()
+        }
+    }
+
+    clearTowerSelection() {
         this.entitySelection.clearSelection()
         this.container.visible = false
     }
