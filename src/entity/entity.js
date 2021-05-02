@@ -44,6 +44,10 @@ export default class Entity extends Container {
         return this.components.find(c => c.name === name)   
     }
 
+    hasComponent(name) {
+        return this.components.some(c => c.name === name)
+    }
+
     setupComponents() {
         for (const component of this.components) {
             component.setup()

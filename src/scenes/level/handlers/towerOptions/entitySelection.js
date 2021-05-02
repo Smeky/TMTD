@@ -37,8 +37,10 @@ export default class EntitySelection extends Container {
     }
 
     clearSelection() {
-        this.removeEntityEffect(this.selected)
-        this.selected = null
+        if (this.selected) {
+            this.removeEntityEffect(this.selected)
+            this.selected = null
+        }
     }
 
     hasSelected() {

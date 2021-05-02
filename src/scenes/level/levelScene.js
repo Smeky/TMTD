@@ -3,11 +3,11 @@ import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Rect, Vec2 } from "game/graphics"
 import { findPath, Grid, Tile, Camera } from "game/core"
-import { EntitySelection, TowerOptions } from "."
 
 import EnemyWaves from "./handlers/enemyWaves"
 import BuildMode from "./handlers/buildmode"
 import TowerBar from "./handlers/towerbar"
+import TowerOptions from "./handlers/towerOptions"
 
 const TowerSize = 50
 
@@ -55,10 +55,12 @@ export default class LevelScene extends Scene {
         this.setupCamera()
 
         // Todo: move this logic upstairs (IScene)
-        this.handlers = []
-        this.handlers.push(new EnemyWaves(this))
-        this.handlers.push(new BuildMode(this))
-        this.handlers.push(new TowerBar(this, this.towers))
+        this.handlers = [
+            new EnemyWaves(this),
+            new BuildMode(this),
+            new TowerBar(this, this.towers),
+            new TowerOptions(this),
+        ]
 
         for (const handler of this.handlers) {
             handler.init()
@@ -67,10 +69,6 @@ export default class LevelScene extends Scene {
         this.setupGameLogic()
         this.setupLayers()
         this.setupEvents()
-
-        this.setupTowerSelection()
-
-        this.handleTowerClicked(this.entities.children[0])
     }
 
     setupCamera() {
@@ -138,20 +136,8 @@ export default class LevelScene extends Scene {
 
     }
 
-    setupTowerSelection() {
-        this.entitySelection = new EntitySelection()
-
-        this.towerOptions = new TowerOptions()
-        this.towerOptions.on("click", this.handleTowerSelectClick)
-        this.towerOptions.visible = false
-
-        this.camera.addChild(this.entitySelection, 18)
-        this.camera.addChild(this.towerOptions, 55)
-    }
-
     close() {
         this.camera.close()
-        // this.buildMode.close()
         this.inputProxy.close()
 
         for (const handler of this.handlers) {
@@ -202,9 +188,7 @@ export default class LevelScene extends Scene {
         }
 
         try {
-            const entity = this.entities.createEntity(components)
-            entity.interactive = true
-            entity.on("click", () => this.handleTowerClicked(entity))
+            this.entities.createEntity(components)
         }
         catch (e) {
             return console.error(e)
@@ -241,38 +225,6 @@ export default class LevelScene extends Scene {
         }
         else if (event.key === "Escape") {
             game.emit("unselect_tower")
-
-            if (this.entitySelection.hasSelected()) {
-                this.entitySelection.clearSelection()
-                this.towerOptions.visible = false
-            }
-        }
-    }
-
-    handleTowerClicked = (entity) => {
-        this.entitySelection.selectEntity(entity)
-
-        const isSelected = this.entitySelection.hasSelected()
-        this.towerOptions.visible = isSelected
-        
-        if (isSelected) {
-            const cmpTranform = entity.getComponent("transform")
-            const cmpTower = entity.getComponent("tower")
-
-            const center = cmpTranform.pos.add(cmpTower.data.size.divide(2))
-            this.towerOptions.setCenter(center)
-        }
-    }
-
-    handleTowerSelectClick = (id) => {
-        if (id === "remove") {
-            this.removeTower(this.entitySelection.selected)
-            this.towerOptions.visible = false
-            this.entitySelection.clearSelection()
-        }
-        
-        if (id === "upgrade") {
-            this.upgradeTower(this.entitySelection.selected)
         }
     }
 }
