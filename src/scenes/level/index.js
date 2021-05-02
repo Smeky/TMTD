@@ -1,5 +1,1 @@
 export { default } from "./levelScene"
-export { default as BuildMode } from "./buildmode"
-export { default as EntitySelection } from "./entitySelection"
-export { default as TowerBar } from "./towerBar"
-export { default as TowerOptions } from "./towerOptions"

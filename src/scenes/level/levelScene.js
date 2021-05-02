@@ -3,10 +3,14 @@ import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Rect, Vec2 } from "game/graphics"
 import { findPath, Grid, Tile, Camera } from "game/core"
-import { BuildMode, EntitySelection, TowerBar, TowerOptions } from "."
-import { Sprite } from "pixi.js"
 
-const TowerSize = 50
+import EnemyWaves from "./handlers/enemyWaves"
+import BuildMode from "./handlers/buildmode"
+import TowerBar from "./handlers/towerbar"
+import TowerOptions from "./handlers/towerOptions"
+import TowerManager from "./handlers/towerManager"
+
+const TowerSize = 50    // Todo: get rid of me, please
 
 // Todo: this should be defined somewhere else. Not sure where atm
 async function createTowerList() {
@@ -37,40 +41,36 @@ export default class LevelScene extends Scene {
 
     constructor() {
         super()
-
-        this.cdEntity = 0.6
-        this.cdEntityProgress = this.cdEntity - 0.1
-
-        this.enemyMeta = {
-            entities: 0,
-            levelRaise: 10,
-            difficulty: 1,
-            maxHp: 100,
-            maxArmor: 0,
-            baseSpeed: 100,
-            speed: 100,
-            color: 0xffffff,
-        }
     }
 
     async load() {
         this.grid = new Grid()
         
         await this.grid.loadFromFile("dev.json")
-        return await createTowerList()
+        return await createTowerList() // Todo: remove this logic from IScene
     }
 
     setup(towers) {
         this.towers = towers
-
+        
         this.setupCamera()
+
+        // Todo: move this logic upstairs (IScene)
+        this.handlers = [
+            new EnemyWaves(this),
+            new BuildMode(this),
+            new TowerBar(this, this.towers),
+            new TowerOptions(this),
+            new TowerManager(this),
+        ]
+
+        for (const handler of this.handlers) {
+            handler.init()
+        }
+
         this.setupGameLogic()
         this.setupLayers()
         this.setupEvents()
-
-        this.setupTowerSelection()
-
-        this.handleTowerClicked(this.entities.children[0])
     }
 
     setupCamera() {
@@ -90,16 +90,8 @@ export default class LevelScene extends Scene {
     }
 
     setupGameLogic() {
-        this.towerBar = new TowerBar(this.towers)
         this.entities = new Entities()
-
-        this.buildMode = new BuildMode({
-            grid: this.grid,
-            camera: this.camera,
-        })
         
-        this.towerBar.x = Math.round(game.width / 2)
-        this.towerBar.y = game.height - 50
         
         {   // Put down some towers right away
             const placements = [
@@ -114,7 +106,7 @@ export default class LevelScene extends Scene {
             ]
 
             for (const pos of placements) {
-                this.buildTower(this.towers[0], pos)
+                game.emit("build_tower", { pos, tower: this.towers[0] })
             }
         }
 
@@ -132,8 +124,6 @@ export default class LevelScene extends Scene {
 
     setupLayers() {
         this.addChild(this.camera, 10)
-        this.addChild(this.buildMode, 50)
-        this.addChild(this.towerBar, 70)
 
         this.camera.addChild(this.grid, 10)
         this.camera.addChild(this.entities, 15)
@@ -142,203 +132,33 @@ export default class LevelScene extends Scene {
     setupEvents() {
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.handleKeyUp)
-
-        game.on("buildmode_click", this.handleBuildTower)
-
-        game.on("tower_selected", tower => {
-            this.buildMode.setSelectedTower(tower)
-            this.buildMode.toggle()
-        })
-        game.on("tower_unselected", () => {
-            this.buildMode.toggle()
-        })
-    }
-
-    setupTowerSelection() {
-        this.entitySelection = new EntitySelection()
-
-        this.towerOptions = new TowerOptions()
-        this.towerOptions.on("click", this.handleTowerSelectClick)
-        this.towerOptions.visible = false
-
-        this.camera.addChild(this.entitySelection, 18)
-        this.camera.addChild(this.towerOptions, 55)
     }
 
     close() {
         this.camera.close()
-        this.buildMode.close()
         this.inputProxy.close()
 
-        game.removeListener("buildmode_click", this.handleBuildTower)
+        for (const handler of this.handlers) {
+            handler.close()
+        }
     }
 
     update(delta) {
         if (!this.started) return
 
         this.entities.update(delta)
-        this.buildMode.update(delta)
 
-        this.cdEntityProgress += delta
-        if (this.cdEntityProgress >= this.cdEntity) {
-            this.cdEntityProgress %= this.cdEntity
-
-            this.createEnemy()
-            this.enemyMeta.entities++
-
-            if (this.enemyMeta.entities % this.enemyMeta.levelRaise === 0) {
-                this.increaseDifficulty()
-            }
+        for (const handler of this.handlers) {
+            handler.update(delta)
         }
-    }
-
-    increaseDifficulty() {
-        this.enemyMeta.difficulty++
-        this.enemyMeta.color *= 0.95
-
-        if (this.enemyMeta.color < 0x000000) {
-            this.enemyMeta.color = 0x000000
-        }
-
-        this.enemyMeta.maxHp *= 1.1
-        this.enemyMeta.maxArmor *= (1 - this.enemyMeta.maxArmor) * 1.1
-        this.enemyMeta.speed = this.enemyMeta.baseSpeed * (Math.random() + 0.5)
-    }
-
-    createEnemy() {
-        const components = {
-            "transform": {
-                pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
-            },
-            "display": {
-                displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
-            },
-            "movement": {
-                speed: this.enemyMeta.speed,
-                destinations: this.path,
-            },
-            "health": {
-                maximum: this.enemyMeta.maxHp,
-                armor: this.enemyMeta.maxArmor,
-                parent: this.camera.getLayer(50),
-            }
-        }
-
-        const entity = this.entities.createEntity(components, "enemy")
-        entity.on("entity_movement_finished", () => {
-            this.entities.removeEntity(entity.id)
-            // remove health
-        })
-        entity.on("entity_health_zero", () => {
-            this.entities.removeEntity(entity.id)
-            // add points
-        })
-    }
-
-    buildTower(tower, pos) {
-        const snapped = this.grid.snapPosToTile(pos)
-        const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
-
-        const tiles = this.grid.getTilesByBounds(bounds)
-                               .filter(tile => !this.grid.isTileObstructed(tile))
-
-        if (tiles.length < 4) {
-            console.warn("Can not build here", pos)
-            return
-        }
-
-        this.grid.setTilesBlocked(tiles, true)
-        const topLeft = this.grid.getTopLeftTile(tiles)
-
-        const components = {
-            "transform": {
-                pos: topLeft.pos.add(Tile.Size - TowerSize / 2)
-            },
-            "display": {
-                anchor: new Vec2(0, 0),
-            },
-            "tower": {
-                data: tower,
-            },
-            "laser": {
-                layer: this.camera.getLayer(20),
-            }
-        }
-
-        try {
-            const entity = this.entities.createEntity(components)
-            entity.interactive = true
-            entity.on("click", () => this.handleTowerClicked(entity))
-        }
-        catch (e) {
-            return console.error(e)
-        }
-
-        game.emit("tower_built")
-    }
-
-    removeTower(entity) {
-        const pos = entity.getComponent("transform").pos
-        const snapped = this.grid.snapPosToTile(pos)
-        const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
-        const tiles = this.grid.getTilesByBounds(bounds)
-
-        this.grid.setTilesBlocked(tiles, false)
-        this.entities.removeEntity(entity.id)
-    }
-
-    upgradeTower(entity) {
-        const cmpTower = entity.getComponent("tower")
-        const cmpLaser = entity.getComponent("laser")
-
-        cmpTower.damage += 1
-        cmpLaser.sprite.tint += 0x000308    // Todo: we need something better to modify the color
-    }
-
-    handleBuildTower = (pos) => {
-        this.buildTower(this.towerBar.getSelectedTower(), pos)
     }
 
     handleKeyUp = (event) => {
         if (event.key === "1") {
-            this.towerBar.selectTower(0)
+            game.emit("select_tower", 0)
         }
         else if (event.key === "Escape") {
-            if (this.buildMode.enabled) {
-                this.towerBar.clearSelection()
-            }
-
-            if (this.entitySelection.hasSelected()) {
-                this.entitySelection.clearSelection()
-                this.towerOptions.visible = false
-            }
-        }
-    }
-
-    handleTowerClicked = (entity) => {
-        this.entitySelection.selectEntity(entity)
-
-        const isSelected = this.entitySelection.hasSelected()
-        this.towerOptions.visible = isSelected
-        
-        if (isSelected) {
-            const cmpTranform = entity.getComponent("transform")
-            const cmpTower = entity.getComponent("tower")
-
-            const center = cmpTranform.pos.add(cmpTower.data.size.divide(2))
-            this.towerOptions.setCenter(center)
-        }
-    }
-
-    handleTowerSelectClick = (id) => {
-        if (id === "remove") {
-            this.removeTower(this.entitySelection.selected)
-            this.towerOptions.visible = false
-            this.entitySelection.clearSelection()
-        }
-        
-        if (id === "upgrade") {
-            this.upgradeTower(this.entitySelection.selected)
+            game.emit("unselect_tower")
         }
     }
 }

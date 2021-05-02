@@ -22,6 +22,8 @@ export default class Entities extends Container {
 
         this.addChild(entity)
         entity.setupComponents()
+        entity.interactive = true
+        entity.on("click", () => game.emit("entity_clicked", entity))
 
         return entity
     }
