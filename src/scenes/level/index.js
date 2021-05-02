@@ -7,7 +7,7 @@ import { findPath, Grid, Tile, Camera } from "game/core"
 import EnemyWaves from "./handlers/enemy_waves"
 import BuildMode from "./handlers/buildmode"
 import TowerBar from "./handlers/towerbar"
-import TowerOptions from "./handlers/towerOptions"
+import TowerOptions from "./handlers/tower_options"
 import TowerManager from "./handlers/tower_manager"
 
 const TowerSize = 50    // Todo: get rid of me, please
@@ -68,9 +68,17 @@ export default class LevelScene extends Scene {
             handler.init()
         }
 
-        this.setupGameLogic()
-        this.setupLayers()
-        this.setupEvents()
+        this.entities = new Entities()
+        
+        this.addChild(this.camera, 10)
+
+        this.camera.addChild(this.grid, 10)
+        this.camera.addChild(this.entities, 15)
+        
+        this.inputProxy = game.input.getProxy()
+        this.inputProxy.on("keyup", this.handleKeyUp)
+
+        this.setupLevel()
     }
 
     setupCamera() {
@@ -89,49 +97,32 @@ export default class LevelScene extends Scene {
         this.camera.moveTo(centered.round())
     }
 
-    setupGameLogic() {
-        this.entities = new Entities()
-        
-        
-        {   // Put down some towers right away
-            const placements = [
-                new Vec2(160, 64),
-                new Vec2(160, 160),
-                new Vec2(32, 160),
-                new Vec2(320, 128),
-                new Vec2(288, 32),
-                new Vec2(128, 256),
-                new Vec2(288, 256),
-                new Vec2(416, 224),
-            ]
+    setupLevel() {
+        // Put down some towers right away
+        const placements = [
+            new Vec2(160, 64),
+            new Vec2(160, 160),
+            new Vec2(32, 160),
+            new Vec2(320, 128),
+            new Vec2(288, 32),
+            new Vec2(128, 256),
+            new Vec2(288, 256),
+            new Vec2(416, 224),
+        ]
 
-            for (const pos of placements) {
-                game.emit("build_tower", { pos, tower: this.towers[0] })
-            }
+        for (const pos of placements) {
+            game.emit("build_tower", { pos, tower: this.towers[0] })
         }
 
-        {   // Calculate path
-            const pathTiles = this.grid.getPathTiles()
-                .map(tile => new Vec2(tile.pos).divide(Tile.Size))
-    
-            const start = new Vec2(3, 2)
-            const end = new Vec2(14, 11)
-    
-            this.path = findPath({ cells: pathTiles, start, end })
-                .map(cell => cell.multiply(Tile.Size))
-        }
-    }
+        // Calculate path
+        const pathTiles = this.grid.getPathTiles()
+            .map(tile => new Vec2(tile.pos).divide(Tile.Size))
 
-    setupLayers() {
-        this.addChild(this.camera, 10)
+        const start = new Vec2(3, 2)
+        const end = new Vec2(14, 11)
 
-        this.camera.addChild(this.grid, 10)
-        this.camera.addChild(this.entities, 15)
-    }
-
-    setupEvents() {
-        this.inputProxy = game.input.getProxy()
-        this.inputProxy.on("keyup", this.handleKeyUp)
+        this.path = findPath({ cells: pathTiles, start, end })
+            .map(cell => cell.multiply(Tile.Size))
     }
 
     close() {
