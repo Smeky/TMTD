@@ -51,7 +51,7 @@ export default class TowerManager extends IHandler {
         }
 
         try {
-            this.scene.entities.createEntity(components)
+            this.scene.entities.createEntity(components, "tower")
             game.emit("tower_built")
         }
         catch (e) {
@@ -60,7 +60,7 @@ export default class TowerManager extends IHandler {
     }
 
     onUpgradeTower = (entityId) => {
-        const entity = this.scene.entities.getEntity(entityId)
+        const entity = this.scene.entities.getEntityById(entityId)
 
         if (entity) {
             const cmpTower = entity.getComponent("tower")
@@ -77,7 +77,7 @@ export default class TowerManager extends IHandler {
     }
 
     onRemoveTower = (entityId) => {
-        const entity = this.scene.entities.getEntity(entityId)
+        const entity = this.scene.entities.getEntityById(entityId)
 
         const pos = entity.getComponent("transform").pos
         const snapped = this.scene.grid.snapPosToTile(pos)

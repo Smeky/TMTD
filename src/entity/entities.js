@@ -11,10 +11,10 @@ export default class Entities extends Container {
     /**
      * 
      * @param {object} components 
-     * @param {string} [tag] 
+     * @param {string|string[]} [tags] 
      */
-    createEntity(components, tag) {
-        const entity = new Entity(++this.idCounter, this, tag)
+    createEntity(components, tags) {
+        const entity = new Entity(++this.idCounter, this, tags)
         
         for (const [name, options] of Object.entries(components)) {
             entity.addComponent(name, options)
@@ -23,7 +23,7 @@ export default class Entities extends Container {
         this.addChild(entity)
         entity.setupComponents()
         entity.interactive = true
-        entity.on("click", () => game.emit("entity_clicked", entity))
+        entity.on("click", () => game.emit("entity_clicked", entity.id))
 
         return entity
     }
@@ -41,8 +41,20 @@ export default class Entities extends Container {
         this.removeChild(entity)
     }
 
-    getEntity(id) {
+    getEntityById(id) {
         return this.children.find(e => e.id === id)
+    }
+
+    /**
+     * 
+     * @param {string|string[]} tags
+     */
+    getEntitiesByTags(tags) {
+        const _tags = Array.isArray(tags) ? [...tags] : [tags]
+
+        return this.children.filter((entity) => {
+            return _tags.some(tag => entity.tags.includes(tag))
+        })
     }
 
     update(delta) {

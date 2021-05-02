@@ -40,6 +40,7 @@ export default class TowerOptions extends IHandler {
     close() {
         game.removeListener("entity_clicked", this.onEntityClicked)
         game.removeListener("unselect_tower", this.onUnselectTower)
+        game.removeListener("tower_removed", this.onTowerRemoved)
     }
 
     emitUpgradeTower = () => {
@@ -50,9 +51,12 @@ export default class TowerOptions extends IHandler {
         game.emit("remove_tower", this.entitySelection.selected.id)
     }
 
-    onEntityClicked = (entity) => {
-            // Todo: we should probably have tags on entities
-            if (!entity.hasComponent("tower")) return
+    onEntityClicked = (entityId) => {
+            const entity = this.scene.entities.getEntityById(entityId)
+
+            if (!entity || !entity.hasTag("tower")) {
+                return
+            }
 
             this.entitySelection.selectEntity(entity)
             const isSelected = this.entitySelection.hasSelected()
