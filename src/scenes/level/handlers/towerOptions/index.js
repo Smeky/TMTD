@@ -3,8 +3,8 @@ import { Vec2 } from "game/graphics"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
 
-import EntitySelection from "./entitySelection"
-import OptionsButton from "./optionsButton"
+import EntitySelection from "./entity_selection"
+import OptionsButton from "./options_button"
 
 export default class TowerOptions extends IHandler {
     init() {

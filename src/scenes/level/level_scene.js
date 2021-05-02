@@ -4,11 +4,11 @@ import { Entities } from "game/entity"
 import { Rect, Vec2 } from "game/graphics"
 import { findPath, Grid, Tile, Camera } from "game/core"
 
-import EnemyWaves from "./handlers/enemyWaves"
+import EnemyWaves from "./handlers/enemy_waves"
 import BuildMode from "./handlers/buildmode"
 import TowerBar from "./handlers/towerbar"
 import TowerOptions from "./handlers/towerOptions"
-import TowerManager from "./handlers/towerManager"
+import TowerManager from "./handlers/tower_manager"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
