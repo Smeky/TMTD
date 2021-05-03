@@ -3,8 +3,8 @@ import { Vec2 } from "game/graphics"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
 
-import EntitySelection from "./entitySelection"
-import OptionsButton from "./optionsButton"
+import EntitySelection from "./entity_selection"
+import OptionsButton from "./options_button"
 
 export default class TowerOptions extends IHandler {
     init() {
@@ -12,8 +12,8 @@ export default class TowerOptions extends IHandler {
         this.container = new Container()
         this.container.visible = false
 
-        this.scene.camera.addChild(this.entitySelection, 18)
-        this.scene.camera.addChild(this.container, 55)
+        game.camera.addChild(this.entitySelection, 18)
+        game.camera.addChild(this.container, 55)
 
         const size = new Vec2(50)
         const buttons = [
@@ -40,6 +40,7 @@ export default class TowerOptions extends IHandler {
     close() {
         game.removeListener("entity_clicked", this.onEntityClicked)
         game.removeListener("unselect_tower", this.onUnselectTower)
+        game.removeListener("tower_removed", this.onTowerRemoved)
     }
 
     emitUpgradeTower = () => {
@@ -50,9 +51,12 @@ export default class TowerOptions extends IHandler {
         game.emit("remove_tower", this.entitySelection.selected.id)
     }
 
-    onEntityClicked = (entity) => {
-            // Todo: we should probably have tags on entities
-            if (!entity.hasComponent("tower")) return
+    onEntityClicked = (entityId) => {
+            const entity = this.scene.entities.getEntityById(entityId)
+
+            if (!entity || !entity.hasTag("tower")) {
+                return
+            }
 
             this.entitySelection.selectEntity(entity)
             const isSelected = this.entitySelection.hasSelected()

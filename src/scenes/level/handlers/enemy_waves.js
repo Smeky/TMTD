@@ -45,7 +45,7 @@ export default class EnemyWaves extends IHandler {
             "health": {
                 maximum: this.enemyMeta.maxHp,
                 armor: this.enemyMeta.maxArmor,
-                parent: this.scene.camera.getLayer(50),
+                parent: game.camera.getLayer(50),
             }
         }
     }

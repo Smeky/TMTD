@@ -20,8 +20,8 @@ export default class BuildMode extends IHandler {
         this.buildTiles.mask = this.mask
         this.buildTiles.visible = false
 
-        this.scene.camera.addChild(this.buildTiles, 50)
-        this.scene.camera.addChild(this.mask, 50)
+        game.camera.addChild(this.buildTiles, 50)
+        game.camera.addChild(this.mask, 50)
 
         game.on("tower_built", this.updateBuildTiles)
         // Todo: remove these listeners
@@ -55,7 +55,7 @@ export default class BuildMode extends IHandler {
         this.highlight.alpha = 0.8
         this.highlight.pivot.copyFrom(this.selectedTower.size.divide(2))
 
-        this.scene.camera.addChild(this.highlight, 51)
+        game.camera.addChild(this.highlight, 51)
     }
 
     toggle() {
@@ -69,7 +69,7 @@ export default class BuildMode extends IHandler {
 
             // Mouse pos
             const screenPos = game.renderer.plugins.interaction.mouse.global
-            const worldPos = this.scene.camera.correctMousePos(screenPos)
+            const worldPos = game.camera.correctMousePos(screenPos)
 
             this.mask.x = worldPos.x - (this.mask.width) / 2
             this.mask.y = worldPos.y - (this.mask.height) / 2
@@ -127,7 +127,7 @@ export default class BuildMode extends IHandler {
 
     handleMouseMove = (event) => {
         const { x, y } = event
-        const pos = this.scene.camera.correctMousePos(new Vec2(x, y))
+        const pos = game.camera.correctMousePos(new Vec2(x, y))
 
         this.mask.x = pos.x - (this.mask.width) / 2
         this.mask.y = pos.y - (this.mask.height) / 2

@@ -6,9 +6,9 @@ export default class Entity extends Container {
      * 
      * @param {*} id 
      * @param {Entities[]} entities 
-     * @param {String|String[]} [tag]
+     * @param {string|string[]} [tags]
      */
-    constructor(id, entities, tag) {
+    constructor(id, entities, tags) {
         super()
 
         this.sortableChildren = true
@@ -16,7 +16,7 @@ export default class Entity extends Container {
         this.id = id
         this.entities = entities
         this.components = []
-        this.tags = Array.isArray(tag) ? [...tag] : [tag]
+        this.tags = Array.isArray(tags) ? [...tags] : [tags]
     }
 
     close() {
