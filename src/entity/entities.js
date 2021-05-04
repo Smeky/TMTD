@@ -28,17 +28,25 @@ export default class Entities extends Container {
         return entity
     }
 
-    removeEntity(id) {
+    /**
+     * 
+     * @param {*} id entity id
+     * @param {bool} force whether entity should be removed immediately (can have side effects) or before next update
+     */
+    removeEntity(id, force = false) {
         const entity = this.children.find(e => e.id === id)
 
-        if (!entity) {
-            throw "Invalid entity id"
+        if (!entity) throw "Invalid entity id"
+        
+        if (!force) {
+            entity.willBeRemoved = true
         }
+        else {
+            entity.emit("close")
+            entity.close()
 
-        entity.emit("close")
-        entity.close()
-
-        this.removeChild(entity)
+            this.removeChild(entity)
+        }
     }
 
     getEntityById(id) {
@@ -59,7 +67,12 @@ export default class Entities extends Container {
 
     update(delta) {
         for (const entity of this.children) {
-            entity.update(delta)
+            if (entity.willBeRemoved) {
+                this.removeEntity(entity.id, true)
+            }
+            else {
+                entity.update(delta)
+            }
         }
     }
 

@@ -68,8 +68,8 @@ export default class HealthComponent extends Component {
      */
     reduce(value) {
         this.current -= value * (1 - this.armor)
-        
-        if (this.current < 0) {
+
+        if (this.current <= 0) {
             this.current = 0
             this.entity.emit("entity_health_zero")
             return true
@@ -82,7 +82,11 @@ export default class HealthComponent extends Component {
         this.current += value
 
         if (this.current >= this.maximum) {
-            this.currente = this.maximum
+            this.current = this.maximum
         }
+    }
+
+    isAlive() {
+        return this.current > 0
     }
 }

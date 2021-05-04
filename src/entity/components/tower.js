@@ -79,7 +79,9 @@ export default class TowerComponent extends Component {
 
             const health = this.target.getComponent("health")
 
-            if (health.reduce(this.damage)) {
+            // Temporary 
+            if (health.isAlive() && health.reduce(this.damage)) {
+                game.emit("target_killed", { towerId: this.entity.id, targetId: this.target.id })
                 this.clearTarget()
             }
         }

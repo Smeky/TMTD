@@ -9,6 +9,7 @@ import BuildMode from "./handlers/buildmode"
 import TowerBar from "./handlers/towerbar"
 import TowerOptions from "./handlers/tower_options"
 import TowerManager from "./handlers/tower_manager"
+import CurrencyDisplay from "./handlers/currency_display"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
@@ -51,7 +52,11 @@ export default class LevelScene extends Scene {
     }
 
     setup(towers) {
+        // Todo: this seems to represent some data storage, could be replaced by that
         this.towers = towers
+        this.currency = 0
+
+        // Todo: like above, but more of a system
         this.entities = new Entities()
         
         // Todo: move this logic upstairs (IScene)
@@ -61,6 +66,7 @@ export default class LevelScene extends Scene {
             new TowerBar(this, this.towers),
             new TowerOptions(this),
             new TowerManager(this),
+            new CurrencyDisplay(this),
         ]
 
         for (const handler of this.handlers) {

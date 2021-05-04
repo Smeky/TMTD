@@ -17,6 +17,8 @@ export default class Entity extends Container {
         this.entities = entities
         this.components = []
         this.tags = Array.isArray(tags) ? [...tags] : [tags]
+
+        this.willBeRemoved = false
     }
 
     close() {
