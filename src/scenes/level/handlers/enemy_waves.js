@@ -4,9 +4,11 @@ import { Vec2, Rect } from "game/graphics"
 import { Tile } from "game/core"
 import { Sprite } from "pixi.js"
 
-import IHandler from "."
+import IHandler from "game/scenes/handler"
 
 export default class EnemyWaves extends IHandler {
+    static Name = "enemyWaves"
+
     init() {
         this.spawnCooldown = new Cooldown(0.6)
         
@@ -20,6 +22,12 @@ export default class EnemyWaves extends IHandler {
             speed: 100,
             color: 0xffffff,
         }
+
+        game.on("target_killed", this.onTargetKilled)
+    }
+
+    close() {
+        game.removeListener("target_killed", this.onTargetKilled)
     }
 
     update(delta) {
@@ -28,6 +36,10 @@ export default class EnemyWaves extends IHandler {
 
             this.createEnemy()
         }
+    }
+
+    onTargetKilled = (event) => {
+        this.scene.currency(this.scene.currency() + 5)
     }
 
     getEnemyComponents() {
@@ -79,8 +91,8 @@ export default class EnemyWaves extends IHandler {
         this.increaseSpawnCount()
 
         entity.on("entity_movement_finished", () => {
-            this.scene.entities.removeEntity(entity.id)
             // remove health
+            this.scene.entities.removeEntity(entity.id)
         })
         entity.on("entity_health_zero", () => {
             this.scene.entities.removeEntity(entity.id)

@@ -1,29 +1,30 @@
-import IHandler from "."
+import IHandler from "game/scenes/handler"
 import { Text } from "pixi.js"
 
 export default class CurrencyDisplay extends IHandler {
+    static Name = "currencyDisplay"
+
     init() {
-        this.textObject = new Text("132", { fill: 0xffffff, fontSize: 22 })
+        this.textObject = new Text("", { fill: 0xffffff, fontSize: 22 })
         this.textObject.x = Math.round(game.width / 2) - 50
         this.textObject.y = 30
         
         this.scene.addChild(this.textObject, 70)
         this.updateText()
 
-        game.on("target_killed", this.onTargetKilled)
+        game.on("currency_changed", this.onCurrencyChanged)
     }
     
     close() {
         this.scene.removeChild(this.textObject)
-        game.removeListener("target_killed", this.onTargetKilled)
+        game.removeListener("currency_changed", this.onCurrencyChanged)
     }
 
-    onTargetKilled = (event) => {
-        this.scene.currency += 5
+    onCurrencyChanged = (event) => {
         this.updateText()
     }
 
     updateText() {
-        this.textObject.text = `$ ${this.scene.currency}`
+        this.textObject.text = `$ ${this.scene.currency()}`
     }
 }

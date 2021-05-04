@@ -1,41 +1,18 @@
-import utils from "game/utils"
 import { Scene } from "game/scenes"
 import { Entities } from "game/entity"
-import { Rect, Vec2 } from "game/graphics"
+import { Vec2 } from "game/graphics"
 import { findPath, Grid, Tile } from "game/core"
+import { Observable } from "game/core"
 
-import EnemyWaves from "./handlers/enemy_waves"
-import BuildMode from "./handlers/buildmode"
-import TowerBar from "./handlers/towerbar"
-import TowerOptions from "./handlers/tower_options"
-import TowerManager from "./handlers/tower_manager"
-import CurrencyDisplay from "./handlers/currency_display"
-
-const TowerSize = 50    // Todo: get rid of me, please
-
-// Todo: this should be defined somewhere else. Not sure where atm
-async function createTowerList() {
-    return [
-        {
-            id: 1,
-            name: "The Ancient One",
-            size: new Vec2(TowerSize),
-            base: {
-                texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
-            },
-            head: {
-                texture: utils.createRectTexture(new Rect(0, 0, 8, 35), 0xffff00),
-                pos: new Vec2(0.5), // relative to center
-                pivot: new Vec2(4, 6),
-                attack: {
-                    range: 150,
-                    damage: 1,
-                    rate: 0.05,
-                }
-            }
-        }
-    ]
-}
+import {
+    EnemyWaves, 
+    BuildMode, 
+    TowerBar, 
+    TowerOptions, 
+    TowerManager, 
+    CurrencyDisplay, 
+    createHandlersStore
+} from "./handlers"
 
 export default class LevelScene extends Scene {
     static __Name = "level"
@@ -48,28 +25,27 @@ export default class LevelScene extends Scene {
         this.grid = new Grid()
         
         await this.grid.loadFromFile("dev.json")
-        return await createTowerList() // Todo: remove this logic from IScene
     }
 
-    setup(towers) {
-        // Todo: this seems to represent some data storage, could be replaced by that
-        this.towers = towers
-        this.currency = 0
-
+    setup() {
+        this.currency = new Observable(0)
+        this.currency.on("change", value => game.emit("currency_changed", value))
+        
         // Todo: like above, but more of a system
         this.entities = new Entities()
         
         // Todo: move this logic upstairs (IScene)
-        this.handlers = [
-            new EnemyWaves(this),
-            new BuildMode(this),
-            new TowerBar(this, this.towers),
-            new TowerOptions(this),
-            new TowerManager(this),
-            new CurrencyDisplay(this),
-        ]
+        this.handlers = createHandlersStore(
+            this,
+            EnemyWaves,
+            BuildMode,
+            TowerBar,
+            TowerOptions,
+            TowerManager,
+            CurrencyDisplay,
+        )
 
-        for (const handler of this.handlers) {
+        for (const handler of Object.values(this.handlers)) {
             handler.init()
         }
         
@@ -107,7 +83,7 @@ export default class LevelScene extends Scene {
         ]
 
         for (const pos of placements) {
-            game.emit("build_tower", { pos, tower: this.towers[0] })
+            game.emit("build_tower", { pos, tower: this.handlers.towerBar.towers[0] })
         }
 
         // Calculate path
@@ -125,7 +101,7 @@ export default class LevelScene extends Scene {
         game.camera.close()
         this.inputProxy.close()
 
-        for (const handler of this.handlers) {
+        for (const handler of Object.values(this.handlers)) {
             handler.close()
         }
     }
@@ -135,7 +111,7 @@ export default class LevelScene extends Scene {
 
         this.entities.update(delta)
 
-        for (const handler of this.handlers) {
+        for (const handler of Object.values(this.handlers)) {
             handler.update(delta)
         }
     }

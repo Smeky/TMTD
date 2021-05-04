@@ -2,9 +2,11 @@ import utils from "game/utils"
 import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
-import IHandler from "."
+import IHandler from "game/scenes/handler"
 
 export default class BuildMode extends IHandler {
+    static Name = "buildMode"
+
     init() {
         this.enabled = false
         this.selectedTower = null

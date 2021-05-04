@@ -1,14 +1,13 @@
 import utils from "game/utils"
+import IHandler from "game/scenes/handler"
 import { Button } from "game/ui"
-import IHandler from "."
+import { Rect, Vec2 } from "game/graphics"
 import { Container } from "pixi.js"
 
-export default class TowerBar extends IHandler {
-    constructor(scene, towers) {
-        super(scene)
+const TowerSize = 50    // Todo: get rid of me, please
 
-        this.towers = towers // Todo: move when we add load() function to IHandler
-    }
+export default class TowerBar extends IHandler {
+    static Name = "towerBar"
 
     init() { 
         this.selected = -1
@@ -19,6 +18,28 @@ export default class TowerBar extends IHandler {
 
         this.scene.addChild(this.container, 70)
 
+        // Temporary
+        this.towers = [
+            {
+                id: 1,
+                name: "The Ancient One",
+                size: new Vec2(TowerSize),
+                base: {
+                    texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
+                },
+                head: {
+                    texture: utils.createRectTexture(new Rect(0, 0, 8, 35), 0xffff00),
+                    pos: new Vec2(0.5), // relative to center
+                    pivot: new Vec2(4, 6),
+                    attack: {
+                        range: 150,
+                        damage: 1,
+                        rate: 0.05,
+                    }
+                }
+            }
+        ]
+        
         this.towers.forEach((tower, index) => {
             const display = utils.createTowerDisplay(tower, Math.PI * 0.9)
             const button = new Button(display)

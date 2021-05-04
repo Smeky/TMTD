@@ -1,10 +1,12 @@
-import IHandler from "."
+import IHandler from "game/scenes/handler"
 import { Vec2, Rect } from "game/graphics"
 import { Tile } from "game/core"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
 export default class TowerManager extends IHandler {
+    static Name = "towerManager"
+
     init() {
         game.on("build_tower", this.onBuildTower)
         game.on("upgrade_tower", this.onUpgradeTower)
@@ -65,11 +67,23 @@ export default class TowerManager extends IHandler {
         if (entity) {
             const cmpTower = entity.getComponent("tower")
             const cmpLaser = entity.getComponent("laser")
+            
+            const basePrice = 20    // Todo: handle purchases / currency manipulation elsewhere
+            const price = Math.round((cmpTower.level * basePrice) * 0.9)
+            const currency = this.scene.currency
 
-            cmpTower.damage += 1
-            cmpLaser.sprite.tint += 0x000308    // Todo: we need something better to modify the color
+            if (currency() >= price) {
+                currency(currency() - price)
 
-            game.emit("tower_upgraded", entityId)
+                cmpTower.level++
+                cmpTower.damage += 1
+                cmpLaser.sprite.tint += 0x000308    // Todo: we need something better to modify the color
+    
+                game.emit("tower_upgraded", entityId)
+            }
+            else {
+                console.warn(`not enough currency! (price: ${price})`)
+            }
         }
         else {
             throw new Error(`Unable to find entity (tower) id: ${entityId} for upgrade`)

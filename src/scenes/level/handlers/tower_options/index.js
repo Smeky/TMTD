@@ -1,4 +1,4 @@
-import IHandler from "game/scenes/level/handlers"
+import IHandler from "game/scenes/handler"
 import { Vec2 } from "game/graphics"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
@@ -7,6 +7,8 @@ import EntitySelection from "./entity_selection"
 import OptionsButton from "./options_button"
 
 export default class TowerOptions extends IHandler {
+    static Name = "towerOptions"
+
     init() {
         this.entitySelection = new EntitySelection()
         this.container = new Container()
@@ -20,14 +22,14 @@ export default class TowerOptions extends IHandler {
             { icon: createUpgradeIcon(0xffeb74, 4), callback: this.emitUpgradeTower },
             { icon: createCrossIcon(0xa20e0e, 4), callback: this.emitRemoveTower },
         ]
-        .forEach((meta, index) => {
+        .forEach((data, index) => {
             const angle = Math.PI * 1.9 + index * (Math.PI * 0.32)
-            const button = new OptionsButton(meta.icon, size)
+            const button = new OptionsButton(data.icon, size)
 
             button.pivot.copyFrom(size.divide(2))
             button.x = Math.cos(angle) * 75
             button.y = Math.sin(angle) * 75
-            button.on("click", meta.callback)
+            button.on("click", data.callback)
     
             this.container.addChild(button)
         })

@@ -21,6 +21,8 @@ export default class TowerComponent extends Component {
         this.transform = null
         this.target = null
 
+        this.level = 1
+
         this.setupHeadDisplay()
 
         {   // Setup damage
