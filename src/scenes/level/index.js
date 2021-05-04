@@ -93,7 +93,11 @@ export default class LevelScene extends Scene {
     }
 
     close() {
-        game.camera.close()
+        this.entities.clear()
+
+        game.camera.removeChild(this.grid)
+        game.camera.removeChild(this.entities)
+
         this.inputProxy.close()
 
         for (const handler of Object.values(this.handlers)) {

@@ -26,19 +26,23 @@ export default class BuildMode extends IHandler {
         game.camera.addChild(this.mask, 50)
 
         game.on("tower_built", this.updateBuildTiles)
-        // Todo: remove these listeners
-        game.on("tower_selected", tower => {
-            this.setSelectedTower(tower)
-            this.toggle()
-        })
-        game.on("tower_unselected", () => {
-            this.toggle()
-        })
+        game.on("tower_selected", this.onTowerSelected)
+        game.on("tower_unselected", this.onTowerUnselected)
     }
 
     close() {
+        game.camera.removeChild(this.buildTiles)
+        game.camera.removeChild(this.mask)
+
+        if (this.highlight) {
+            game.camera.removeChild(this.highlight)
+        }
+
         this.inputProxy.close()
+
         game.removeListener("tower_built", this.updateBuildTiles)
+        game.removeListener("tower_selected", this.onTowerSelected)
+        game.removeListener("tower_unselected", this.onTowerUnselected)
     }
 
     update(delta) {
@@ -137,5 +141,14 @@ export default class BuildMode extends IHandler {
         const snapped = this.scene.grid.snapPosToTile(pos.add(Tile.Size / 2))
         this.highlight.x = snapped.x
         this.highlight.y = snapped.y
+    }
+
+    onTowerSelected = tower => {
+        this.setSelectedTower(tower)
+        this.toggle()
+    }
+    
+    onTowerUnselected = () => {
+        this.toggle()
     }
 }

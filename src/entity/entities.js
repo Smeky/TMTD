@@ -42,7 +42,6 @@ export default class Entities extends Container {
             entity.willBeRemoved = true
         }
         else {
-            entity.emit("close")
             entity.close()
 
             this.removeChild(entity)
@@ -74,6 +73,14 @@ export default class Entities extends Container {
                 entity.update(delta)
             }
         }
+    }
+
+    clear() {
+        for (const entity of this.children) {
+            entity.close()
+        }
+
+        this.children = []
     }
 
     count() {

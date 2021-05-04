@@ -17,6 +17,14 @@ export default class Layers extends Container {
         layer.addChild(object)
     }
 
+    removeChild(object) {
+        for (const layer of this.children) {
+            if (layer.children.find(obj => obj === object)) {
+                layer.removeChild(object)
+            }
+        }        
+    }
+
     ensureLayer(level) {
         // If no level is provided, get the current highest and insert this 
         // one above it, making it the utmost layer

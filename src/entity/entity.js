@@ -22,6 +22,8 @@ export default class Entity extends Container {
     }
 
     close() {
+        this.emit("close")
+
         for (const component of this.components) {
             component.close()
         }

@@ -40,6 +40,9 @@ export default class TowerOptions extends IHandler {
     }
 
     close() {
+        game.camera.removeChild(this.entitySelection)
+        game.camera.removeChild(this.container)
+
         game.removeListener("entity_clicked", this.onEntityClicked)
         game.removeListener("unselect_tower", this.onUnselectTower)
         game.removeListener("tower_removed", this.onTowerRemoved)
