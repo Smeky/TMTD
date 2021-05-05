@@ -12,12 +12,6 @@ export default class TowerBar extends IHandler {
     init() { 
         this.selected = -1
 
-        this.container = new Container()
-        this.container.x = Math.round(game.width / 2)
-        this.container.y = game.height - 80
-
-        this.scene.addChild(this.container, 70)
-
         // Temporary
         this.towers = [
             {
@@ -39,6 +33,10 @@ export default class TowerBar extends IHandler {
                 }
             }
         ]
+
+        
+        this.container = new Container()
+        this.scene.addChild(this.container, 70)
         
         this.towers.forEach((tower, index) => {
             const display = utils.createTowerDisplay(tower, Math.PI * 0.9)
@@ -50,17 +48,17 @@ export default class TowerBar extends IHandler {
             this.container.addChild(button)
         })
 
-        const { width, height } = this.container.getLocalBounds()
-        this.container.pivot.x = Math.round(width / 2) - 25
-        this.container.pivot.y = Math.round(height / 2) - 25
+        this.updateContainerPosition()
 
         game.on("select_tower", this.onSelectTower)
         game.on("unselect_tower", this.onUnselectTower)
+        game.on("window_resized", this.onWindowResized)
     }
 
     close() {
         game.removeListener("select_tower", this.onSelectTower)
         game.removeListener("unselect_tower", this.onUnselectTower)
+        game.removeListener("window_resized", this.onWindowResized)
     }
 
     onSelectTower = (index) => {
@@ -69,6 +67,10 @@ export default class TowerBar extends IHandler {
 
     onUnselectTower = () => {
         this.clearSelection()
+    }
+
+    onWindowResized = (event) => {
+        this.updateContainerPosition()
     }
 
     selectTower(index) {
@@ -90,5 +92,14 @@ export default class TowerBar extends IHandler {
 
     getSelectedTower() {
         return this.towers[this.selected]
+    }
+
+    updateContainerPosition() {
+        const { width, height } = this.container.getLocalBounds()
+        
+        this.container.x = Math.round(game.width / 2)
+        this.container.y = game.height - 40
+        this.container.pivot.x = Math.round(width / 2) - 25
+        this.container.pivot.y = Math.round(height / 2) - 25
     }
 }

@@ -3,11 +3,6 @@ import { Rect, Vec2 } from "game/graphics"
 import { Layers } from "game/graphics"
 import { Sprite } from "pixi.js"
 
-/**
- * - Perhaps camera could serve as a bridge between games and layers. Keeping track,
- *   possibiltiy to exclude some layers from certain effects (shake, ..), etc.
- * 
- */
 
 export default class Camera extends Layers {
     /**
@@ -28,7 +23,10 @@ export default class Camera extends Layers {
             ...options,
         }
 
-        this.background = new Sprite(utils.createRectTexture(new Rect(0, 0, options.size.x, options.size.y)))
+        this.backgroundSize = new Vec2(10, 10)
+        this.background = new Sprite(utils.createRectTexture(new Rect(0, 0, this.backgroundSize.x, this.backgroundSize.y)))
+        this.background.scale.x = this.options.size.x / this.backgroundSize.x
+        this.background.scale.y = this.options.size.y / this.backgroundSize.y
         this.background.alpha = 0
         this.background.interactive = true
         this.background.pivot.copyFrom(this.pivot)
@@ -71,6 +69,16 @@ export default class Camera extends Layers {
         }
     }
 
+    handleViewResize(newSize) {
+        // Reposition camera by movement difference / 2
+        this.move(newSize.subtract(this.options.size).divide(2))
+        this.options.size.copyFrom(newSize)
+
+        // Update background so it covers whole screen
+        this.background.scale.x = newSize.x / this.backgroundSize.x
+        this.background.scale.y = newSize.y / this.backgroundSize.y
+    }
+
     onWheelEvent = (event) => {
         event.stopPropagation()
         this.zoom(event.deltaY / 100) // zoom accepts 1 as base, so let's give it that
@@ -105,6 +113,11 @@ export default class Camera extends Layers {
     moveTo(pos) {
         this.x = pos.x
         this.y = pos.y
+    }
+
+    move(movement) {
+        this.x += movement.x
+        this.y += movement.y
     }
 
     /**

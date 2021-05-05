@@ -60,7 +60,7 @@ export default class Game extends EventEmitter {
             width: width, 
             height: height,
             backgroundColor: 0x1c2433,
-            antialias: true
+            antialias: true,
         })
 
         this.stage = new pixi.Container()
@@ -132,9 +132,9 @@ export default class Game extends EventEmitter {
             after: new Vec2(event.target.innerWidth, event.target.innerHeight)
         }
 
-        view.width = event.target.innerWidth
-        view.height = event.target.innerHeight
+        this.renderer.resize(meta.after.x, meta.after.y)
 
+        this.camera.handleViewResize(meta.after)
         this.emit("window_resized", meta)
     }
 }
