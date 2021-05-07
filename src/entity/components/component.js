@@ -1,11 +1,11 @@
 
 export default class Component {
-    constructor(entity) {
+    constructor(entity, options) {
         this.entity = entity
         this.name = null
     }
 
-    setup(options) {}
+    setup() {}
     close() {}
 
     update(delta) {}

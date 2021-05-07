@@ -11,6 +11,7 @@ import {
     TowerOptions, 
     TowerManager, 
     CurrencyDisplay, 
+    DamageHandler,
     createHandlersStore
 } from "./handlers"
 
@@ -37,7 +38,8 @@ export default class LevelScene extends Scene {
         // Todo: move this logic upstairs (IScene)
         this.handlers = createHandlersStore(
             this,
-            [ EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay ]
+            [ EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, 
+              DamageHandler ]
         )
 
         for (const handler of Object.values(this.handlers)) {

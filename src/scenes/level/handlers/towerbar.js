@@ -4,7 +4,8 @@ import { Button } from "game/ui"
 import { Rect, Vec2 } from "game/graphics"
 import { Container } from "pixi.js"
 
-const TowerSize = 50    // Todo: get rid of me, please
+// Todo: get rid of us, please
+const TowerSize = 50 
 
 export default class TowerBar extends IHandler {
     static Name = "towerBar"
@@ -18,6 +19,14 @@ export default class TowerBar extends IHandler {
                 id: 1,
                 name: "The Ancient One",
                 size: new Vec2(TowerSize),
+                action: {
+                    component: "towerLaserAttack",
+                    data: {
+                        range: 150,
+                        damage: 1,
+                        rate: 0.05,
+                    }
+                },
                 base: {
                     texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
                 },
@@ -25,11 +34,6 @@ export default class TowerBar extends IHandler {
                     texture: utils.createRectTexture(new Rect(0, 0, 8, 35), 0xffff00),
                     pos: new Vec2(0.5), // relative to center
                     pivot: new Vec2(4, 6),
-                    attack: {
-                        range: 150,
-                        damage: 1,
-                        rate: 0.05,
-                    }
                 }
             }
         ]

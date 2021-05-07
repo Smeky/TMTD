@@ -48,6 +48,16 @@ export default class Entity extends Container {
         return this.components.find(c => c.name === name)   
     }
 
+    ensureComponent(name) {
+        const found = this.getComponent(name)
+
+        if (!found) {
+            throw `ensureComponent failed for "${name}"`
+        }
+
+        return found
+    }
+
     hasComponent(name) {
         return this.components.some(c => c.name === name)
     }

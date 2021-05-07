@@ -52,6 +52,10 @@ export default class TowerManager extends IHandler {
             }
         }
 
+        if (tower.action) {
+            components[tower.action.component] = tower.action.data
+        }
+
         try {
             this.scene.entities.createEntity(components, "tower")
             game.emit("tower_built")
