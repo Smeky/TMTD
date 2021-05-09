@@ -60,6 +60,20 @@ export default class TowerComponent extends Component {
     setHeadRotation(angle) {
         this.headSprite.rotation = angle - Math.PI / 2
     }
+
+    getHeadRotation() {
+        return this.headSprite.rotation + Math.PI / 2
+    }
+
+    getHeadEndPosition() {
+        const offset = this.headSprite.height - this.headSprite.pivot.y
+        const angle = this.getHeadRotation()
+
+        return new Vec2(
+            this.headSprite.x + Math.cos(angle) * offset,
+            this.headSprite.y + Math.sin(angle) * offset,
+        )
+    }
     
     setLevel(level) {
         this.level = level

@@ -155,15 +155,8 @@ export class TowerLaserAttack extends ITowerAttack {
     }
 
     updateSprite() {
+        const fromPos = this.tower.getHeadEndPosition()
         const targetPos = this.target.getComponent("transform").pos
-        const cannonSprite = this.tower.headSprite
-        const angle = this.getAngleToTarget()
-
-        const offset = cannonSprite.height - cannonSprite.pivot.y
-        const fromPos = new Vec2(
-            cannonSprite.x + Math.cos(angle) * offset,
-            cannonSprite.y + Math.sin(angle) * offset,
-        )
 
         this.sprite.position.copyFrom(fromPos)
         this.sprite.height = fromPos.distance(targetPos)
@@ -177,5 +170,31 @@ export class TowerLaserAttack extends ITowerAttack {
 
     onTargetCleared() {
         this.sprite.visible = false
+    }
+}
+
+
+export class TowerBulletAttack extends ITowerAttack {
+    setup() {
+        super.setup()
+
+        this.bulletTexture = utils.createRectTexture(new Rect(0, 0, 6, 2), 0xffffff)
+    }
+
+    close() {
+        super.close()
+    }
+
+    trigger() {
+        if (this.target) {
+            game.emit("create_bullet", { 
+                texture: this.bulletTexture,
+                source: this.entity,
+                pos: this.tower.getHeadEndPosition(),
+                direction: this.tower.getHeadRotation(),
+                velocity: 500,
+                range: this.range
+            })
+        }
     }
 }

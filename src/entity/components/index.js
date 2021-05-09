@@ -5,7 +5,7 @@ import MovementComponent from "./movement"
 import HealthComponent from "./health"
 import TowerComponent from "./tower"
 import StatsComponent from "./stats"
-import { TowerLaserAttack } from "./tower_action"
+import { TowerLaserAttack, TowerBulletAttack } from "./tower_action"
 
 export default {
     "transform": TransformComponent,
@@ -16,4 +16,5 @@ export default {
     "stats":     StatsComponent,
 
     "towerLaserAttack": TowerLaserAttack,
+    "towerBulletAttack": TowerBulletAttack,
 }

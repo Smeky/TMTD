@@ -12,6 +12,7 @@ import {
     TowerManager, 
     CurrencyDisplay, 
     DamageHandler,
+    BulletHandler,
     createHandlersStore
 } from "./handlers"
 
@@ -39,7 +40,7 @@ export default class LevelScene extends Scene {
         this.handlers = createHandlersStore(
             this,
             [ EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, 
-              DamageHandler ]
+              DamageHandler, BulletHandler ]
         )
 
         for (const handler of Object.values(this.handlers)) {
@@ -77,11 +78,9 @@ export default class LevelScene extends Scene {
             new Vec2(128, 256),
             new Vec2(288, 256),
             new Vec2(416, 224),
-        ]
-
-        for (const pos of placements) {
-            game.emit("build_tower", { pos, tower: this.handlers.towerBar.towers[0] })
-        }
+        ].forEach((pos, index) => {
+            game.emit("build_tower", { pos, tower: this.handlers.towerBar.towers[index % 2] })
+        })
 
         // Calculate path
         const pathTiles = this.grid.getPathTiles()
@@ -120,6 +119,9 @@ export default class LevelScene extends Scene {
     handleKeyUp = (event) => {
         if (event.key === "1") {
             game.emit("select_tower", 0)
+        }
+        else if (event.key === "2") {
+            game.emit("select_tower", 1)
         }
         else if (event.key === "Escape") {
             game.emit("unselect_tower")

@@ -35,7 +35,28 @@ export default class TowerBar extends IHandler {
                     pos: new Vec2(0.5), // relative to center
                     pivot: new Vec2(4, 6),
                 }
-            }
+            },
+            {
+                id: 2,
+                name: "Mk Two",
+                size: new Vec2(TowerSize, TowerSize),
+                stats: {
+                    attackRate: 1,
+                    damage: 18,
+                    range: 250,
+                },
+                action: {
+                    component: "towerBulletAttack",
+                },
+                base: {
+                    texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x955550),
+                },
+                head: {
+                    texture: utils.createRectTexture(new Rect(0, 0, 8, 35), 0x999999),
+                    pos: new Vec2(0.5), // relative to center
+                    pivot: new Vec2(4, 6),
+                }
+            },
         ]
 
         

@@ -5,6 +5,7 @@ export { default as TowerOptions } from "./tower_options"
 export { default as TowerManager } from "./tower_manager"
 export { default as CurrencyDisplay } from "./currency_display"
 export { default as DamageHandler } from "./damage_handler"
+export { default as BulletHandler } from "./bullet_handler"
 
 export function createHandlersStore(scene, Handlers = []) {
     return Handlers.reduce((acc, Handler) => {
