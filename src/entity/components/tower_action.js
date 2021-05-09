@@ -8,17 +8,23 @@ import { Component } from "."
 export class ITowerAttack extends Component {
     constructor(entity, options) {
         super(entity)
-
-        this.options = options || {}
-        this.range = options.range || 0
-        this.rate = options.rate || 0
-
-        this.cooldown = new Cooldown(this.rate)
     }
+
+    set range(v) {}
+    get range() { return this.stats.current.range }
+
+    set attackRate(v) {}
+    get attackRate() { return this.stats.current.attackRate }
+
+    set damage(v) {}
+    get damage() { return this.stats.current.damage }
 
     setup() {
         this.transform = this.entity.ensureComponent("transform")
         this.tower = this.entity.ensureComponent("tower")
+        this.stats = this.entity.ensureComponent("stats")
+
+        this.cooldown = new Cooldown(this.attackRate)
     }
 
     close() {
@@ -89,7 +95,7 @@ export class ITowerAttack extends Component {
         }
 
         const targetPos = this.target.getComponent("transform").pos
-        const center = this.transform.pos.add(this.tower.data.size.divide(2))
+        const center = this.transform.pos.add(this.tower.size.divide(2))
 
         return center.angle(targetPos)
     }
@@ -135,7 +141,7 @@ export class TowerLaserAttack extends ITowerAttack {
             game.emit("deal_damage", { 
                 target: this.target, 
                 source: this.entity, 
-                amount: this.options.damage 
+                amount: this.damage 
             })
         }
     }

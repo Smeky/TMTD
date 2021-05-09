@@ -17,7 +17,7 @@ export default class HealthComponent extends Component {
     constructor(entity, options) {
         super(entity) 
 
-        this.transform = null
+        this.useStatsComponent = options.useStatsComponent || false
         this.maximum = options.maximum || 0
         this.armor = options.armor || 0
         this.current = options.current || this.maximum
@@ -29,7 +29,14 @@ export default class HealthComponent extends Component {
     }
 
     setup() {
-        this.transform = this.entity.getComponent("transform")
+        this.transform = this.entity.ensureComponent("transform")
+
+        if (this.useStatsComponent) {
+            this.stats = this.entity.ensureComponent("stats")
+            this.maximum = this.stats.current.health
+            this.current = this.current
+        }
+
         const display = this.entity.getComponent("display")
 
         if (display) {

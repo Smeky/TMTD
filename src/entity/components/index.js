@@ -4,7 +4,7 @@ import DisplayComponent from "./display"
 import MovementComponent from "./movement"
 import HealthComponent from "./health"
 import TowerComponent from "./tower"
-import LaserComponent from "./laser"
+import StatsComponent from "./stats"
 import { TowerLaserAttack } from "./tower_action"
 
 export default {
@@ -13,7 +13,7 @@ export default {
     "movement":  MovementComponent,
     "health":    HealthComponent,
     "tower":     TowerComponent,
-    "laser":     LaserComponent,
+    "stats":     StatsComponent,
 
     "towerLaserAttack": TowerLaserAttack,
 }

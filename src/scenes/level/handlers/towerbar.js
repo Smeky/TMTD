@@ -18,14 +18,14 @@ export default class TowerBar extends IHandler {
             {
                 id: 1,
                 name: "The Ancient One",
-                size: new Vec2(TowerSize),
+                size: new Vec2(TowerSize, TowerSize),
+                stats: {
+                    attackRate: 0.05,
+                    damage: 1,
+                    range: 150,
+                },
                 action: {
                     component: "towerLaserAttack",
-                    data: {
-                        range: 150,
-                        damage: 1,
-                        rate: 0.05,
-                    }
                 },
                 base: {
                     texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),

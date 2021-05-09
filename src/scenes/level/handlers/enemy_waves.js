@@ -39,7 +39,7 @@ export default class EnemyWaves extends IHandler {
     }
 
     onTargetKilled = (event) => {
-        this.scene.currency(this.scene.currency() + 5)
+        this.scene.currency(this.scene.currency() + 20)
     }
 
     getEnemyComponents() {

@@ -41,19 +41,17 @@ export default class TowerManager extends IHandler {
             "transform": {
                 pos: topLeft.pos.add(Tile.Size - TowerSize / 2)
             },
-            "display": {
-                anchor: new Vec2(0, 0),
-            },
             "tower": {
-                data: tower,
+                base: tower.base,
+                head: tower.head,
             },
-            "laser": {
-                layer: game.camera.getLayer(20),
+            "stats": {
+                ...tower.stats
             }
         }
 
         if (tower.action) {
-            components[tower.action.component] = tower.action.data
+            components[tower.action.component] = {}
         }
 
         try {
@@ -70,18 +68,19 @@ export default class TowerManager extends IHandler {
 
         if (entity) {
             const cmpTower = entity.getComponent("tower")
-            const cmpLaser = entity.getComponent("laser")
+            const cmpStats = entity.getComponent("stats")
             
             const basePrice = 20    // Todo: handle purchases / currency manipulation elsewhere
-            const price = Math.round((cmpTower.level * basePrice) * 0.9)
+            const price = cmpTower.level
+            // const price = Math.round((cmpTower.level * basePrice) * 0.9)
             const currency = this.scene.currency
 
             if (currency() >= price) {
                 currency(currency() - price)
 
-                cmpTower.level++
-                cmpTower.damage += 1
-                cmpLaser.sprite.tint += 0x000308    // Todo: we need something better to modify the color
+                cmpTower.setLevel(cmpTower.level + 1)
+                
+                cmpStats.current.damage += 1
     
                 game.emit("tower_upgraded", entityId)
             }

@@ -10,24 +10,28 @@ export default class MovementComponent extends Component {
      * @param {Vec2[]} [options.destinations] [optional] array of points along which the component will move
      */
     constructor(entity, options) {
-        super(entity) 
+        super(entity)
 
-        this.transform = null
+        this.useStatsComponent = options.useStatsComponent || false
         this.speed = options.speed || 0
-        this.destinations = [...(options.destinations || [])]
+        this.destinations = [...options.destinations] || []
     }
 
     setup() {
-        this.transform = this.entity.getComponent("transform")
+        this.transform = this.entity.ensureComponent("transform")
 
-        if (!this.transform) {
-            throw "Requires Transform component"
+        if (this.useStatsComponent) {
+            this.stats = this.entity.ensureComponent("stats")
         }
     }
 
     update(delta) {
         if (this.destinations.length === 0) {
             return
+        }
+
+        if (this.useStatsComponent) {
+            this.speed = this.stats.current.movementSpeed
         }
 
         if (this.transform.pos.distance(this.destinations[0]) < this.speed * delta) {

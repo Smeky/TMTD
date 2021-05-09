@@ -1,3 +1,4 @@
+import { Vec2 } from "game/graphics"
 import { DisplayObject, Sprite } from "pixi.js"
 import { Component } from "."
 
@@ -12,40 +13,44 @@ export default class TowerComponent extends Component {
     constructor(entity, options) {
         super(entity) 
 
-        this.data = options.data
-        this.parent = options.parent || this.entity
+        this.base = options.base
+        this.head = options.head
 
+        const { width, height } = this.base.texture
+        this.size = new Vec2(width, height)
+
+        this.data = options.data
         this.level = 1
 
-        this.setupHeadDisplay()
+        this.setupSprites()
+    }
+
+    setupSprites() {
+        const { texture, pivot } = this.head
+
+        this.baseSprite = new Sprite(this.base.texture)
+        
+        this.headSprite = new Sprite(texture)
+        this.headSprite.pivot.copyFrom(pivot)
+        this.headSprite.zIndex = 5
+
+        this.entity.addChild(this.baseSprite)
+        this.entity.addChild(this.headSprite)
     }
 
     setup() {
-        const display = this.entity.ensureComponent("display")
         const transform = this.entity.ensureComponent("transform")
 
-        const { size } = this.data
-        const { texture } = this.data.base
+        this.baseSprite.position.copyFrom(transform.pos)
 
-        display.setDisplayObject(new Sprite(texture))
-
-        const posOnTower = this.data.head.pos.multiply(size)
+        const posOnTower = this.head.pos.multiply(this.size)
         this.headSprite.x = transform.pos.x + posOnTower.x
         this.headSprite.y = transform.pos.y + posOnTower.y
     }
 
-    setupHeadDisplay() {
-        const { texture, pivot } = this.data.head
-
-        this.headSprite = new Sprite(texture)
-        this.headSprite.pivot.copyFrom(pivot)
-        this.headSprite.zIndex = 5
-        
-        this.parent.addChild(this.headSprite)
-    }
-
     close() {
-        this.parent.removeChild(this.headSprite)
+        this.entity.removeChild(this.baseSprite)
+        this.entity.removeChild(this.headSprite)
     }
 
     update(delta) {
@@ -54,5 +59,10 @@ export default class TowerComponent extends Component {
 
     setHeadRotation(angle) {
         this.headSprite.rotation = angle - Math.PI / 2
+    }
+    
+    setLevel(level) {
+        this.level = level
+        this.headSprite.tint = 0xffffff - Math.min((0x001515 * level), 0x00ffff)
     }
 }
