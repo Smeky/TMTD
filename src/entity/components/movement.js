@@ -13,13 +13,15 @@ export default class MovementComponent extends Component {
         super(entity)
 
         this.useStatsComponent = options.useStatsComponent || false
+        
         this.speed = options.speed || 0
         this.angle = options.angle || 0
+        this.velocity = new Vec2()
 
-        this.maxDistance = options.maxDistance || null
         this.movedDistance = 0
+        this.maxDistance = options.maxDistance || Infinity
 
-        this.destinations = options.destinations ? [...options.destinations] : []
+        this.updateVelocity()
     }
 
     setup() {
@@ -35,34 +37,40 @@ export default class MovementComponent extends Component {
             this.speed = this.stats.current.movementSpeed
         }
 
-        const deltaSpeed = this.speed * delta
+        let finished = false
+        let deltaSpeed = this.speed * delta
 
-        if (this.destinations.length === 0) {
-            this.moveTowardsAngle(deltaSpeed, this.angle)
+        if (this.movedDistance + deltaSpeed >= this.maxDistance) {
+            const diff = this.maxDistance - this.movedDistance
 
-            if (this.maxDistance) {
-                this.movedDistance += deltaSpeed
+            this.transform.pos.x += this.velocity.x * (delta * diff / this.movedDistance)
+            this.transform.pos.y += this.velocity.y * (delta * diff / this.movedDistance)
 
-                if (this.movedDistance >= this.maxDistance) {
-                    this.entity.emit("entity_movement_finished")
-                }
-            }
+            deltaSpeed = this.maxDistance - this.movedDistance
+            finished = true
         }
         else {
-            if (this.transform.pos.distance(this.destinations[0]) < deltaSpeed) {
-                // Todo: ensure this can't happen please
-                // Copy vec since we don't want to mutate the destinations vectors
-                this.transform.pos = new Vec2(this.destinations.shift())
-    
-                if (this.destinations.length === 0) {
-                    this.entity.emit("entity_movement_finished")
-                }
-            }
-            else {
-                const angle = this.transform.pos.angle(this.destinations[0])
-                this.moveTowardsAngle(deltaSpeed, angle)
-            }
+            this.transform.pos.x += this.velocity.x * delta
+            this.transform.pos.y += this.velocity.y * delta
         }
+
+        this.movedDistance += deltaSpeed
+
+        if (finished) {
+            this.entity.emit("movement.finished")
+        }
+    }
+
+    setTargetPosition(pos) {
+        this.maxDistance = this.movedDistance + this.transform.pos.distance(pos)
+        this.angle = this.transform.pos.angle(pos)
+
+        this.updateVelocity()
+    }
+    
+    updateVelocity() {
+        this.velocity.x = Math.cos(this.angle) * this.speed
+        this.velocity.y = Math.sin(this.angle) * this.speed
     }
 
     moveTowardsAngle(speed, angle) {

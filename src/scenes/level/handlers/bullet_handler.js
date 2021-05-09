@@ -1,3 +1,4 @@
+import { Vec2 } from "game/graphics"
 import IHandler from "game/scenes/handler"
 import { Container, Sprite } from "pixi.js"
 
@@ -19,7 +20,7 @@ export default class BulletHandler extends IHandler {
     }
 
     onCreateBullet = (event) => {
-        const { texture, source, pos, direction, velocity, range } = event
+        const { texture, source, pos, angle, speed, range } = event
 
         const components = {
             "transform": {
@@ -30,15 +31,15 @@ export default class BulletHandler extends IHandler {
                 parent: this.container,
             },
             "movement": {
-                speed: velocity,
-                angle: direction,
-                maxDistance: range,
+                speed,
+                angle,
+                maxDistance: range
             },
         }
 
         const entities = this.scene.entities
 
         const entity = entities.createEntity(components)
-        entity.on("entity_movement_finished", () => entities.removeEntity(entity.id))
+        entity.on("movement.finished", (entity) => entity.despawn())
     }
 }

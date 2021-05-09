@@ -39,11 +39,10 @@ export default class Entities extends Container {
         if (!entity) throw "Invalid entity id"
         
         if (!force) {
-            entity.willBeRemoved = true
+            entity.despawn()
         }
         else {
             entity.close()
-
             this.removeChild(entity)
         }
     }
@@ -66,7 +65,7 @@ export default class Entities extends Container {
 
     update(delta) {
         for (const entity of this.children) {
-            if (entity.willBeRemoved) {
+            if (entity.shouldDespawn) {
                 this.removeEntity(entity.id, true)
             }
             else {

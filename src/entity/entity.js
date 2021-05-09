@@ -18,7 +18,7 @@ export default class Entity extends Container {
         this.components = []
         this.tags = Array.isArray(tags) ? [...tags] : [tags]
 
-        this.willBeRemoved = false
+        this.shouldDespawn = false
     }
 
     close() {
@@ -27,6 +27,14 @@ export default class Entity extends Container {
         for (const component of this.components) {
             component.close()
         }
+    }
+
+    despawn() {
+        this.shouldDespawn = true
+    }
+
+    emit(name, ...args) {
+        super.emit(name, this, ...args)
     }
     
     addComponent(name, options) {

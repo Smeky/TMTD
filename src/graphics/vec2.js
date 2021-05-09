@@ -144,4 +144,11 @@ export default class Vec2 {
             Math.round(this.y),
         )
     }
+
+    velocity(angle) {
+        return new Vec2(
+            this.x * Math.cos(angle),
+            this.y * Math.sin(angle),
+        )
+    }
 }

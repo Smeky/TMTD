@@ -191,8 +191,8 @@ export class TowerBulletAttack extends ITowerAttack {
                 texture: this.bulletTexture,
                 source: this.entity,
                 pos: this.tower.getHeadEndPosition(),
-                direction: this.tower.getHeadRotation(),
-                velocity: 500,
+                angle: this.tower.getHeadRotation(),
+                speed: 500,
                 range: this.range
             })
         }

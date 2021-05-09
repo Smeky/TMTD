@@ -52,7 +52,9 @@ export default class EnemyWaves extends IHandler {
             },
             "movement": {
                 speed: this.enemyMeta.speed,
-                destinations: this.scene.path,  // Todo: move path here (probably)
+            },
+            "pathFollower": {
+                path: this.scene.path,
             },
             "health": {
                 maximum: this.enemyMeta.maxHp,
@@ -90,14 +92,8 @@ export default class EnemyWaves extends IHandler {
 
         this.increaseSpawnCount()
 
-        entity.on("entity_movement_finished", () => {
-            // remove health
-            this.scene.entities.removeEntity(entity.id)
-        })
-        entity.on("entity_health_zero", () => {
-            this.scene.entities.removeEntity(entity.id)
-            // add points
-        })
+        entity.on("path_follower.finished", (entity) => entity.despawn())
+        entity.on("entity_health_zero", (entity) => entity.despawn())
     }
 }
 
