@@ -1,4 +1,4 @@
-export { default as Scene } from "./scene"
+export { default as IScene } from "./scene"
 export { default as SceneHandler } from "./scene_handler"
 
 import LevelScene from "./level"

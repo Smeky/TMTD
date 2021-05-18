@@ -1,6 +1,6 @@
 import { Layers } from "game/graphics"
 
-export default class Scene extends Layers {
+export default class IScene extends Layers {
     static __Name = null
 
     constructor() {

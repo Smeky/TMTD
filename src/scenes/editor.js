@@ -1,12 +1,12 @@
 import utils from "game/utils"
-import { Scene } from "game/scenes"
+import { IScene } from "game/scenes"
 import { Tile, TilePalette } from "game/core"
 import { Vec2 } from "game/graphics"
 import { Rect } from "game/graphics"
 import { Button } from "game/ui"
 import { Container, Sprite, Text } from "pixi.js"
 
-export default class EditorScene extends Scene {
+export default class EditorScene extends IScene {
     static __Name = "editor"
 
     constructor() {

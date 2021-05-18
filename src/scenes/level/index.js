@@ -1,4 +1,4 @@
-import { Scene } from "game/scenes"
+import { IScene } from "game/scenes"
 import { Entities } from "game/entity"
 import { Vec2 } from "game/graphics"
 import { findPath, Grid, Tile } from "game/core"
@@ -16,7 +16,7 @@ import {
     createHandlersStore
 } from "./handlers"
 
-export default class LevelScene extends Scene {
+export default class LevelScene extends IScene {
     static __Name = "level"
 
     constructor() {
