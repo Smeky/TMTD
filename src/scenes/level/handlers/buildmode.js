@@ -2,12 +2,12 @@ import utils from "game/utils"
 import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 
 export default class BuildMode extends IHandler {
     static Name = "buildMode"
 
-    init() {
+    setup() {
         this.enabled = false
         this.selectedTower = null
 
@@ -145,7 +145,10 @@ export default class BuildMode extends IHandler {
 
     onTowerSelected = tower => {
         this.setSelectedTower(tower)
-        this.toggle()
+
+        if (!this.enabled) {
+            this.toggle()
+        }
     }
     
     onTowerUnselected = () => {

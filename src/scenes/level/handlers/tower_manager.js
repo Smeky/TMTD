@@ -1,4 +1,4 @@
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 import { Vec2, Rect } from "game/graphics"
 import { Tile } from "game/core"
 
@@ -7,7 +7,7 @@ const TowerSize = 50    // Todo: get rid of me, please
 export default class TowerManager extends IHandler {
     static Name = "towerManager"
 
-    init() {
+    setup() {
         game.on("build_tower", this.onBuildTower)
         game.on("upgrade_tower", this.onUpgradeTower)
         game.on("remove_tower", this.onRemoveTower)

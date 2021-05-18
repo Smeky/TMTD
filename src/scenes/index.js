@@ -1,10 +1,11 @@
-export { default as IScene } from "./scene"
-export { default as SceneHandler } from "./scene_handler"
+export { default as IHandler } from "./ihandler"
+export { default as SceneBase } from "./scene_base"
+export { default as SceneManager } from "./scene_manager"
 
 import LevelScene from "./level"
 import EditorScene from "./editor"
 
 export default {
-    [LevelScene.__Name]: LevelScene,
-    [EditorScene.__Name]: EditorScene,
+    [LevelScene.Name]: LevelScene,
+    [EditorScene.Name]: EditorScene,
 }

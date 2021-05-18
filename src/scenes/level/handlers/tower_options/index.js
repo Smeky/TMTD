@@ -1,4 +1,4 @@
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 import { Vec2 } from "game/graphics"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
@@ -9,7 +9,7 @@ import OptionsButton from "./options_button"
 export default class TowerOptions extends IHandler {
     static Name = "towerOptions"
 
-    init() {
+    setup() {
         this.entitySelection = new EntitySelection()
         this.container = new Container()
         this.container.visible = false

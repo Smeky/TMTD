@@ -1,7 +1,7 @@
 import { Container } from "pixi.js"
 import Scenes from "game/scenes"
 
-export default class SceneHandler extends Container {
+export default class SceneManager extends Container {
     constructor() {
         super()
         this.scene = null
@@ -17,8 +17,8 @@ export default class SceneHandler extends Container {
         this.addChild(this.scene)
 
         this.scene.load()
-                  .then((loadData) => {
-                        this.scene.setup(loadData)
+                  .then(() => {
+                        this.scene.setup()
                         this.scene.started = true
                   })
     }

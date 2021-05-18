@@ -2,8 +2,10 @@ export default class IHandler {
     constructor(scene) {
         this.scene = scene
     }
+
+    async load() {}
     
-    init() {}
+    setup() {}
     close() {}
 
     update(delta) {}

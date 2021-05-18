@@ -1,11 +1,11 @@
 import { Vec2 } from "game/graphics"
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 import { Container, Sprite } from "pixi.js"
 
 export default class BulletHandler extends IHandler {
     static Name = "bulletHandler"
 
-    init() {
+    setup() {
         this.container = new Container()
 
         game.camera.addChild(this.container, 20)

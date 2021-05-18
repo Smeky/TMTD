@@ -1,9 +1,9 @@
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 
 export default class DamageHandler extends IHandler {
     static Name = "damageHandler"
 
-    init() {
+    setup() {
         game.on("deal_damage", this.onDealDamage)
     }
 

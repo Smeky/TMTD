@@ -1,4 +1,4 @@
-import { IScene } from "game/scenes"
+import { SceneBase } from "game/scenes"
 import { Entities } from "game/entity"
 import { Vec2 } from "game/graphics"
 import { findPath, Grid, Tile } from "game/core"
@@ -13,48 +13,48 @@ import {
     CurrencyDisplay, 
     DamageHandler,
     BulletHandler,
-    createHandlersStore
 } from "./handlers"
 
-export default class LevelScene extends IScene {
-    static __Name = "level"
+export default class LevelScene extends SceneBase {
+    static Name = "level"
+    static Handlers = [ 
+        EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, 
+        DamageHandler, BulletHandler 
+    ]
 
     constructor() {
         super()
-    }
 
-    async load() {
         this.grid = new Grid()
-        
-        await this.grid.loadFromFile("dev.json")
-    }
+        this.entities = new Entities()
 
-    setup() {
         this.currency = new Observable(0)
         this.currency.on("change", value => game.emit("currency_changed", value))
         
-        // Todo: like above, but more of a system
-        this.entities = new Entities()
-        
-        // Todo: move this logic upstairs (IScene)
-        this.handlers = createHandlersStore(
-            this,
-            [ EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, 
-              DamageHandler, BulletHandler ]
-        )
-
-        for (const handler of Object.values(this.handlers)) {
-            handler.init()
-        }
-        
-        game.camera.addChild(this.grid, 10)
-        game.camera.addChild(this.entities, 15)
-        
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.handleKeyUp)
+    }
+
+    async load() {
+        await this.grid.loadFromFile("dev.json")
+        return await super.load()
+    }
+
+    setupScene() {
+        game.camera.addChild(this.grid, 10)
+        game.camera.addChild(this.entities, 15)
 
         this.setupLevel()
         this.positionCamera()
+    }
+
+    closeScene() {
+        this.entities.clear()
+
+        game.camera.removeChild(this.grid)
+        game.camera.removeChild(this.entities)
+
+        this.inputProxy.close()
     }
 
     positionCamera() {
@@ -93,25 +93,12 @@ export default class LevelScene extends IScene {
             .map(cell => cell.multiply(Tile.Size))
     }
 
-    close() {
-        this.entities.clear()
-
-        game.camera.removeChild(this.grid)
-        game.camera.removeChild(this.entities)
-
-        this.inputProxy.close()
-
-        for (const handler of Object.values(this.handlers)) {
-            handler.close()
-        }
-    }
-
     update(delta) {
         if (!this.started) return
 
         this.entities.update(delta)
 
-        for (const handler of Object.values(this.handlers)) {
+        for (const handler of this.handlerList) {
             handler.update(delta)
         }
     }

@@ -1,10 +1,12 @@
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 import { Text } from "pixi.js"
 
 export default class CurrencyDisplay extends IHandler {
     static Name = "currencyDisplay"
 
-    init() {
+    setup() {
+        console.log(this.scene)
+
         this.textObject = new Text("", { fill: 0xffffff, fontSize: 22 })
         this.scene.addChild(this.textObject, 70)
 

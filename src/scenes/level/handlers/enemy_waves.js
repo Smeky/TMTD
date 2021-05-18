@@ -4,12 +4,12 @@ import { Vec2, Rect } from "game/graphics"
 import { Tile } from "game/core"
 import { Sprite } from "pixi.js"
 
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 
 export default class EnemyWaves extends IHandler {
     static Name = "enemyWaves"
 
-    init() {
+    setup() {
         this.spawnCooldown = new Cooldown(0.6)
         
         this.enemyMeta = {

@@ -1,7 +1,7 @@
 import { Camera, InputHandler } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
-import { SceneHandler } from "game/scenes"
+import { SceneManager } from "game/scenes"
 import { Vec2 } from "game/graphics"
 import { Button } from "game/ui"
 import * as pixi from "pixi.js"
@@ -25,7 +25,7 @@ export default class Game extends EventEmitter {
     }
 
     get scene() {
-        return this.sceneHandler.scene
+        return this.sceneManager.scene
     }
     
     init() {
@@ -71,8 +71,8 @@ export default class Game extends EventEmitter {
 
     setupScene() {
         // Scene init should be last
-        this.sceneHandler = new SceneHandler()
-        this.stage.addChild(this.sceneHandler)
+        this.sceneManager = new SceneManager()
+        this.stage.addChild(this.sceneManager)
 
         {   // Buttons to switch between scenes 
             const style = { fill: "#ffffff", fontSize: 18 }
@@ -84,7 +84,7 @@ export default class Game extends EventEmitter {
             scenes.forEach((scene, index) => {
                 const button = new Button(new pixi.Text(scene.label,  style))
     
-                button.on("click", () => this.sceneHandler.setScene(scene.id))
+                button.on("click", () => this.sceneManager.setScene(scene.id))
                 button.pivot.set(0, 0)
                 button.x = 20
                 button.y = 20 + index * 35
@@ -93,7 +93,7 @@ export default class Game extends EventEmitter {
             })
         }
 
-        this.sceneHandler.setScene("level")
+        this.sceneManager.setScene("editor")
     }
     
     run() {
@@ -116,7 +116,7 @@ export default class Game extends EventEmitter {
         while (delta > 0) {
             delta -= this.SPF
 
-            this.sceneHandler.update(this.SPF)
+            this.sceneManager.update(this.SPF)
             this.debug.update(this.SPF)
         }
 

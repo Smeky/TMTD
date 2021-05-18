@@ -1,5 +1,5 @@
 import utils from "game/utils"
-import IHandler from "game/scenes/handler"
+import IHandler from "game/scenes/ihandler"
 import { Button } from "game/ui"
 import { Rect, Vec2 } from "game/graphics"
 import { Container } from "pixi.js"
@@ -10,9 +10,7 @@ const TowerSize = 50
 export default class TowerBar extends IHandler {
     static Name = "towerBar"
 
-    init() { 
-        this.selected = -1
-
+    async load() {
         // Temporary
         this.towers = [
             {
@@ -58,7 +56,10 @@ export default class TowerBar extends IHandler {
                 }
             },
         ]
+    }
 
+    setup() { 
+        this.selected = -1
         
         this.container = new Container()
         this.scene.addChild(this.container, 70)
