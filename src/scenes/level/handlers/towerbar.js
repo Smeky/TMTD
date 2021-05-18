@@ -41,7 +41,7 @@ export default class TowerBar extends IHandler {
                 name: "Mk Two",
                 size: new Vec2(TowerSize, TowerSize),
                 stats: {
-                    attackRate: 1,
+                    attackRate: 0.3,
                     damage: 18,
                     range: 250,
                 },

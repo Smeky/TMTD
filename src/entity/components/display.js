@@ -62,4 +62,10 @@ export default class DisplayComponent extends Component {
 
         this.parent.addChild(this.displayObject)
     }
+
+    setRotation(angle) {
+        if (this.displayObject) {
+            this.displayObject.rotation = angle
+        }
+    }
 }

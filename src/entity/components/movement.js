@@ -6,14 +6,13 @@ export default class MovementComponent extends Component {
      * 
      * @param {Entity} entity 
      * @param {object} options 
-     * @param {number} [options.speed] [optional] speed in pixels per second
-     * @param {Vec2[]} [options.destinations] [optional] array of points along which the component will move
      */
     constructor(entity, options) {
         super(entity)
 
-        this.useStatsComponent = options.useStatsComponent || false
-        
+        this.useStatsComponent = !!options.useStatsComponent
+        this.enableFacingDirection = !!options.enableFacingDirection
+
         this.speed = options.speed || 0
         this.angle = options.angle || 0
         this.velocity = new Vec2()
@@ -29,6 +28,11 @@ export default class MovementComponent extends Component {
 
         if (this.useStatsComponent) {
             this.stats = this.entity.ensureComponent("stats")
+        }
+
+        if (this.enableFacingDirection) {
+            this.display = this.entity.ensureComponent("display")        
+            this.display.setRotation(this.angle)
         }
     }
 
@@ -64,6 +68,10 @@ export default class MovementComponent extends Component {
     setTargetPosition(pos) {
         this.maxDistance = this.movedDistance + this.transform.pos.distance(pos)
         this.angle = this.transform.pos.angle(pos)
+        
+        if (this.enableFacingDirection) {
+            this.display.setRotation(this.angle)
+        }
 
         this.updateVelocity()
     }

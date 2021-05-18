@@ -33,7 +33,8 @@ export default class BulletHandler extends IHandler {
             "movement": {
                 speed,
                 angle,
-                maxDistance: range
+                maxDistance: range,
+                enableFacingDirection: true,
             },
         }
 
