@@ -1,4 +1,6 @@
+import Game from "game/game"
 import { SceneBase } from "game/scenes"
+import { EditorLevelManager } from "./handlers/editor_level_manager"
 
 // import utils from "game/utils"
 // import { Tile, TilePalette } from "game/core"
@@ -9,7 +11,7 @@ import { SceneBase } from "game/scenes"
 
 export default class EditorScene extends SceneBase {
     static Name = "editor"
-    static Handlers = []
+    static Handlers = [EditorLevelManager]
 
     constructor() {
         super("editor")
@@ -20,7 +22,7 @@ export default class EditorScene extends SceneBase {
     }
 
     closeScene() {
-        
+
     }
 
     // handleTilePlacement(clampedPos) {

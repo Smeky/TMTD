@@ -51,9 +51,13 @@ export default class Game extends EventEmitter {
         this.ticker.start()
     }
 
+    close() {
+
+    }
+
     setupRenderer() {
-        const width = window.innerWidth
-        const height = window.innerHeight
+        const containerEl = document.getElementById("canvas_container")
+        const { width, height } = containerEl.getBoundingClientRect()
 
         this.input = new InputHandler()
         this.renderer = new pixi.Renderer({ 
@@ -64,9 +68,9 @@ export default class Game extends EventEmitter {
         })
 
         this.stage = new pixi.Container()
-
+        
         window.addEventListener("resize", this.handleResize)
-        document.body.appendChild(this.renderer.view)
+        containerEl.append(this.renderer.view)
     }
 
     setupScene() {
@@ -124,7 +128,21 @@ export default class Game extends EventEmitter {
         this.renderer.render(this.stage)
     }
 
+    resizeWindow = (width, height) => {
+        const mockEvent = {
+            target: {
+                innerWidth: width,
+                innerHeight: height,
+            }
+        }
+
+        this.handleResize(mockEvent)
+    }
+
     handleResize = (event) => {
+        // Todo: [bug] doesn't work because we now have sidebar on the left
+        //              - Create a Renderer class and handle everything related there
+        //              - Store prev window size, and then viewSize - windowDiff in .resize
         const {view} = this.renderer
 
         const meta = {
@@ -134,7 +152,7 @@ export default class Game extends EventEmitter {
 
         this.renderer.resize(meta.after.x, meta.after.y)
 
-        this.camera.handleViewResize(meta.after)
+        this.camera.handleViewResize(meta.after) // Todo: move this to camera, listen to event?
         this.emit("window_resized", meta)
     }
 }

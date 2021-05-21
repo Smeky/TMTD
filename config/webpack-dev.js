@@ -1,4 +1,5 @@
 const path = require("path")
+const webpack = require("webpack")
 
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
@@ -17,12 +18,16 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.scss$/,
+                test: /\.(css|scss)$/,
                 use: ["Style-loader", "css-loader", "sass-loader"]
             },
             {
-                test: /\.png/,
+                test: /\.(png|ttf|eot)$/,
                 use: ["file-loader"]
+            },
+            {
+                test: /\.(woff|woff2)$/,
+                use: ["url-loader"]
             },
             {
                 test: /\.js$/,
@@ -34,6 +39,9 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: path.resolve("src", "index.html")
+        }),
+        new webpack.DefinePlugin({
+            "process.env": "{}"
         })
     ]
 }

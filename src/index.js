@@ -1,17 +1,17 @@
-import "./style.scss"
+import "./main.scss"
+import "normalize.css"
+import "@blueprintjs/core/lib/css/blueprint.css"
+import "@blueprintjs/icons/lib/css/blueprint-icons.css"
+import "@blueprintjs/popover2/lib/css/blueprint-popover2.css"
 
-import Game from "./game"
-import * as pixi from "pixi.js"
+import React from "react"
+import ReactDOM from "react-dom"
+import App from "./app"
 
-const game = new Game()
+import { FocusStyleManager } from "@blueprintjs/core";
+FocusStyleManager.onlyShowFocusOnTabs();
 
-if (process.env.NODE_ENV === "development") {
-    // Expose to global scope
-    window.game = game
-    window.game.pixi = pixi 
-}
-
-console.log(window.game)
-
-game.init()
-game.run()
+ReactDOM.render(
+    <App />,
+    document.getElementById("root")
+)
