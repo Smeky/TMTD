@@ -9,12 +9,10 @@ export default class App extends React.Component {
         super()
 
         this.game = new Game()
+        window.game = this.game // Expose to global scope
 
         if (process.env.NODE_ENV === "development") {
-            // Expose to global scope
-            window.game = this.game
             window.game.pixi = pixi 
-            
             console.log(window.game)
         }
     }
