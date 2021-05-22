@@ -122,9 +122,10 @@ export default class TowerBar extends IHandler {
 
     updateContainerPosition() {
         const { width, height } = this.container.getLocalBounds()
+        const canvasSize = game.getCanvasSize()
         
-        this.container.x = Math.round(game.width / 2)
-        this.container.y = game.height - 40
+        this.container.x = Math.round(canvasSize.x / 2)
+        this.container.y = canvasSize.y - 40
         this.container.pivot.x = Math.round(width / 2) - 25
         this.container.pivot.y = Math.round(height / 2) - 25
     }

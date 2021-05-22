@@ -34,7 +34,7 @@ export default class CurrencyDisplay extends IHandler {
     }
 
     updatePosition() {
-        this.textObject.x = Math.round(game.width / 2) - 50
+        this.textObject.x = Math.round(game.getCanvasSize().x / 2) - 50
         this.textObject.y = 30
     }
 }

@@ -15,14 +15,6 @@ export default class Game extends EventEmitter {
         super()
     }
     
-    get width() {
-        return this.renderer.view.width
-    }
-    
-    get height() {
-        return this.renderer.view.height
-    }
-
     get scene() {
         return this.sceneManager.scene
     }
@@ -84,6 +76,13 @@ export default class Game extends EventEmitter {
 
         this.deltaBuffer = delta
         this.renderer.render(this.stage)
+    }
+
+    getCanvasSize() {
+        return new Vec2(
+            this.renderer.width,
+            this.renderer.height,
+        )
     }
 
     resizeWindow = (width, height) => {

@@ -14,4 +14,10 @@ export default class _Renderer extends Renderer {
 
         containerEl.append(this.view)
     }
+
+    set width(v) { throw "Can't set width this way" }
+    get width() { return this.view.width }
+
+    set height(v) { throw "Can't set height this way" }
+    get height() { return this.view.height }
 }
