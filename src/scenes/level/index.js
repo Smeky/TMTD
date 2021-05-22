@@ -61,6 +61,7 @@ export default class LevelScene extends SceneBase {
         const gridSize = this.grid.sizeInPixels()
         const centered = game.getCanvasSize().subtract(gridSize).divide(2)
 
+        game.camera.resetZoom()
         game.camera.moveTo(centered.round())
     }
 

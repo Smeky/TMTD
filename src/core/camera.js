@@ -142,6 +142,10 @@ export default class Camera extends Layers {
         this.emit("zoom", this, before.subtract(this.scale))
     }
 
+    resetZoom() {
+        this.scale.set(1, 1)
+    }
+
     correctMousePos(pos) {
         return new Vec2(this.toLocal(pos))
     }
