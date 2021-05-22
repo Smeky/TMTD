@@ -29,7 +29,7 @@ export default class Game extends EventEmitter {
         this.sceneManager = new SceneManager()
         this.debug = new Debug()
         this.camera = new Camera({
-            size: new Vec2(game.width, game.height),
+            size: new Vec2(this.renderer.width, this.renderer.height),
             zoomEnabled: true,
             dragEnabled: true,
         })
