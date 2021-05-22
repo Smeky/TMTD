@@ -4,6 +4,8 @@ export class EditorLevelManager extends IHandler {
     static Name = "editorLevelManager"
 
     setup() {
+        this.createNewLevel()
+
         game.on("sidebar.new_level", this.onNewLevel)
         game.on("sidebar.open_file", this.onOpenFile)
         game.on("sidebar.save_level", this.onSaveLevel)
@@ -17,19 +19,14 @@ export class EditorLevelManager extends IHandler {
         game.removeListener("sidebar.save_level_as", this.onSaveLevelAs)
     }
 
-    onNewLevel = () => {
-        console.log("onNewLevel")
-    }
+    onNewLevel = () => { this.createNewLevel() }
+    onOpenFile = () => { console.log("onOpenFile") }
+    onSaveLevel = () => { console.log("onSaveLevel") }
+    onSaveLevelAs = () => { console.log("onSaveLevelAs") }
 
-    onOpenFile = () => {
-        console.log("onOpenFile")
-    }
-
-    onSaveLevel = () => {
-        console.log("onSaveLevel")
-    }
-
-    onSaveLevelAs = () => {
-        console.log("onSaveLevelAs")
+    createNewLevel() {
+        this.levelData = {
+            title: ""
+        }    
     }
 }

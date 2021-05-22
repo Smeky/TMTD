@@ -19,12 +19,14 @@ export default class SceneManager extends Container {
         this.scene.load()
                   .then(() => {
                         this.scene.setup()
+                        game.emit("scene_changed", name)
+                        
                         this.scene.started = true
                   })
     }
 
     update(delta) {
-        if (this.scene) {
+        if (this.scene && this.scene.started) {
             this.scene.update(delta)
         }
     }

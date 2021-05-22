@@ -1,10 +1,10 @@
 import { SiderbarBlock } from "."
 import React from "react"
 
-import { ButtonGroup, Button, Menu, MenuItem, MenuDivider } from "@blueprintjs/core"
+import { ButtonGroup, Button, Classes, Menu, MenuItem, MenuDivider, Label } from "@blueprintjs/core"
 import { Popover2 } from "@blueprintjs/popover2";
 
-const LevelMenu = props => {
+const LevelMenu = () => {
     return (
         <Menu>
             <MenuItem icon="new-text-box" text="New level" onClick={() => game.emit("sidebar.new_level", 0)} />
@@ -14,16 +14,27 @@ const LevelMenu = props => {
             <MenuItem icon="floppy-disk" text="Save" onClick={() => game.emit("sidebar.save_level")} />
             <MenuItem icon="floppy-disk" text="Save As..." onClick={() => game.emit("sidebar.save_level_as")} />
 
-            {/* <MenuItem text="Settings..." icon="cog">
-                <MenuItem icon="tick" text="Save on edit" />
-                <MenuItem icon="blank" text="Compile on edit" />
-            </MenuItem> */}
+            {/* 
+                <MenuItem text="Settings..." icon="cog">
+                    <MenuItem icon="tick" text="Save on edit" />
+                    <MenuItem icon="blank" text="Compile on edit" />
+                </MenuItem> 
+            */}
         </Menu>
     )
 }
 
 export default class EditorSiderbarBlock extends React.Component {
+    onTitleChange = (event) => {
+        const { target } = event
+        game.scene.handlers.editorLevelManager.levelData.title = target.value
+
+        this.forceUpdate()  // Todo: remove this when we add a data store
+    }
+
     render() {
+        const { title } = game.scene.handlers.editorLevelManager.levelData
+
         return (
             <SiderbarBlock>
                 <ButtonGroup fill>
@@ -31,6 +42,11 @@ export default class EditorSiderbarBlock extends React.Component {
                         <Button rightIcon="caret-down" icon="document" text="Level"></Button>
                     </Popover2>
                 </ButtonGroup>
+                
+                <Label className="bp3-inline">
+                    Title: 
+                    <input className={Classes.INPUT} placeholder="Enter level title.." onChange={this.onTitleChange} value={title} />
+                </Label>
             </SiderbarBlock>
         )
     }

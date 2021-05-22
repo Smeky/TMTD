@@ -22,8 +22,30 @@ const SiderbarDivider = () => (
 )
 
 export class Sidebar extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { Blocks: [] }
+    }
+    
+    componentDidMount() {
+        game.on("scene_changed", this.onSceneChanged)
+    }
+
+    componentWillUnmount() {
+        game.removeListener("scene_changed", this.onSceneChanged)
+    }
+
+    onSceneChanged = sceneId => {
+        this.setState({
+            Blocks: [
+                ScenesSiderbarBlock,
+                ...(sceneId === "editor" ? [EditorSiderbarBlock] : [])
+            ]
+        })
+    }
+
     render() {
-        const list = [ScenesSiderbarBlock, EditorSiderbarBlock].reduce((acc, Block, index, blocks) => {
+        const list = this.state.Blocks.reduce((acc, Block, index, blocks) => {
             acc.push(<Block key={`block-${index}`} />)
 
             if (acc.length > 0 && index < blocks.length - 1) {

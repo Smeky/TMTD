@@ -8,7 +8,9 @@
 }
 
 .siderbar-block {
-    margin: 6px 0;
+    > * {
+        margin: 6px 0;
+    }
 }
 
 .siderbar-divider {
