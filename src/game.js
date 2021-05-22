@@ -2,7 +2,7 @@ import { Camera, InputHandler } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
-import { Vec2 } from "game/graphics"
+import { Renderer, Vec2 } from "game/graphics"
 import * as pixi from "pixi.js"
 
 pixi.utils.skipHello()
@@ -31,8 +31,10 @@ export default class Game extends EventEmitter {
         this.firstUpdate = true
         this.deltaBuffer = 0
 
-        this.setupRenderer()
-
+        this.input = new InputHandler()
+        this.renderer = new Renderer()
+        this.stage = new pixi.Container()
+        this.sceneManager = new SceneManager()
         this.debug = new Debug()
         this.camera = new Camera({
             size: new Vec2(game.width, game.height),
@@ -41,15 +43,17 @@ export default class Game extends EventEmitter {
         })
 
         this.stage.addChild(this.camera)
-        
-        this.setupScene()
+        this.stage.addChild(this.sceneManager)
         this.stage.addChild(this.debug)
+
+        window.addEventListener("resize", this.handleResize)
+        this.on("change_scene", this.onChangeScene)
+
+        this.sceneManager.setScene("editor")
 
         this.ticker = new pixi.Ticker()
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
         this.ticker.start()
-
-        this.on("change_scene", this.onChangeScene)
     }
 
     close() {
@@ -59,38 +63,6 @@ export default class Game extends EventEmitter {
     onChangeScene = (sceneId) => {
         this.sceneManager.setScene(sceneId)
     }
-
-    setupRenderer() {
-        const containerEl = document.getElementById("canvas_container")
-        const { width, height } = containerEl.getBoundingClientRect()
-
-        this.input = new InputHandler()
-        this.renderer = new pixi.Renderer({ 
-            width: width, 
-            height: height,
-            backgroundColor: 0x1c2433,
-            antialias: true,
-        })
-
-        this.stage = new pixi.Container()
-        
-        window.addEventListener("resize", this.handleResize)
-        containerEl.append(this.renderer.view)
-    }
-
-    setupScene() {
-        // Scene init should be last
-        this.sceneManager = new SceneManager()
-        this.stage.addChild(this.sceneManager)
-
-        this.sceneManager.setScene("editor")
-    }
-    
-    run() {
-        this.ticker.start()
-        this.counter = 0
-    }
-
 
     update = () => {
         if (this.firstUpdate) {
