@@ -5,8 +5,6 @@ export default class CurrencyDisplay extends IHandler {
     static Name = "currencyDisplay"
 
     setup() {
-        console.log(this.scene)
-
         this.textObject = new Text("", { fill: 0xffffff, fontSize: 22 })
         this.scene.addChild(this.textObject, 70)
 

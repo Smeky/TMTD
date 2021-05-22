@@ -3,4 +3,18 @@
     left: -300px;
     min-width: 300px;
     padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.siderbar-block {
+    margin: 6px 0;
+}
+
+.siderbar-divider {
+    margin: 6px 0;
+    height: 1px;
+    width: 90%;
+    background-color: #ffffff33;
+    align-self: center;
 }

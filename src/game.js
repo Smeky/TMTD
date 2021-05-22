@@ -3,7 +3,6 @@ import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
 import { Vec2 } from "game/graphics"
-import { Button } from "game/ui"
 import * as pixi from "pixi.js"
 
 pixi.utils.skipHello()
@@ -49,10 +48,16 @@ export default class Game extends EventEmitter {
         this.ticker = new pixi.Ticker()
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
         this.ticker.start()
+
+        this.on("change_scene", this.onChangeScene)
     }
 
     close() {
+        this.removeListener("change_scene", this.onChangeScene)
+    }
 
+    onChangeScene = (sceneId) => {
+        this.sceneManager.setScene(sceneId)
     }
 
     setupRenderer() {
@@ -77,25 +82,6 @@ export default class Game extends EventEmitter {
         // Scene init should be last
         this.sceneManager = new SceneManager()
         this.stage.addChild(this.sceneManager)
-
-        {   // Buttons to switch between scenes 
-            const style = { fill: "#ffffff", fontSize: 18 }
-            const scenes = [
-                { id: "level", label: "Level Scene" },
-                { id: "editor", label: "Editor Scene" },
-            ]
-
-            scenes.forEach((scene, index) => {
-                const button = new Button(new pixi.Text(scene.label,  style))
-    
-                button.on("click", () => this.sceneManager.setScene(scene.id))
-                button.pivot.set(0, 0)
-                button.x = 20
-                button.y = 20 + index * 35
-    
-                this.stage.addChild(button)
-            })
-        }
 
         this.sceneManager.setScene("editor")
     }
