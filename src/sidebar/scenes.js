@@ -9,15 +9,13 @@ const createSceneButton = (sceneId, label) => {
     )
 }
 
-export default class ScenesSiderbarBlock extends React.Component {
-    render() {
-        return (
-            <SiderbarBlock>
-                <ButtonGroup>
-                    {createSceneButton("level", "Level")}
-                    {createSceneButton("editor", "Editor")}
-                </ButtonGroup>
-            </SiderbarBlock>
-        )
-    }
+export default function ScenesSiderbarBlock() {
+    return (
+        <SiderbarBlock>
+            <ButtonGroup>
+                {createSceneButton("level", "Level")}
+                {createSceneButton("editor", "Editor")}
+            </ButtonGroup>
+        </SiderbarBlock>
+    )
 }

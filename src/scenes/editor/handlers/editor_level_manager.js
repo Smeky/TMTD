@@ -27,6 +27,6 @@ export class EditorLevelManager extends IHandler {
     createNewLevel() {
         this.levelData = {
             title: ""
-        }    
+        }
     }
 }
