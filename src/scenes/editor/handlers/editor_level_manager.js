@@ -10,6 +10,8 @@ export class EditorLevelManager extends IHandler {
         game.on("sidebar.open_file", this.onOpenFile)
         game.on("sidebar.save_level", this.onSaveLevel)
         game.on("sidebar.save_level_as", this.onSaveLevelAs)
+
+        game.emit("set_sidebar_visibility", true)
     }
 
     close() {

@@ -1,4 +1,4 @@
-import { SiderbarBlock } from "."
+import { SidebarBlock } from "."
 import React from "react"
 
 import { Button, ButtonGroup } from "@blueprintjs/core";
@@ -9,13 +9,13 @@ const createSceneButton = (sceneId, label) => {
     )
 }
 
-export default function ScenesSiderbarBlock() {
+export default function ScenesSidebarBlock() {
     return (
-        <SiderbarBlock>
+        <SidebarBlock>
             <ButtonGroup>
                 {createSceneButton("level", "Level")}
                 {createSceneButton("editor", "Editor")}
             </ButtonGroup>
-        </SiderbarBlock>
+        </SidebarBlock>
     )
 }

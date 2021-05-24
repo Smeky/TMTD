@@ -1,4 +1,4 @@
-import { SiderbarBlock } from "."
+import { SidebarBlock } from "."
 import React, { useState, useEffect } from "react"
 
 import { ButtonGroup, Button, Classes, Menu, MenuItem, MenuDivider, Label } from "@blueprintjs/core"
@@ -24,7 +24,7 @@ function LevelMenu() {
     )
 }
 
-export default function EditorSiderbarBlock() {
+export default function EditorSidebarBlock() {
     const handler = game.scene.handlers.editorLevelManager
     const [title, setTitle] = useState("")
 
@@ -37,7 +37,7 @@ export default function EditorSiderbarBlock() {
     }
 
     return (
-        <SiderbarBlock>
+        <SidebarBlock>
             <ButtonGroup fill>
                 <Popover2 content={<LevelMenu />} placement="bottom-start">
                     <Button rightIcon="caret-down" icon="document" text="Level"></Button>
@@ -48,7 +48,7 @@ export default function EditorSiderbarBlock() {
                 Title: 
                 <input className={Classes.INPUT} placeholder="Enter level title.." onChange={handleTitleChange} value={title} />
             </Label>
-        </SiderbarBlock>
+        </SidebarBlock>
     )
 }
 

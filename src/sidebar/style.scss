@@ -1,5 +1,5 @@
 
-.siderbar {
+.sidebar {
     left: -300px;
     min-width: 300px;
     padding: 12px;
@@ -7,13 +7,17 @@
     flex-direction: column;
 }
 
-.siderbar-block {
+.sidebar-hidden {
+    display: none;
+}
+
+.sidebar-block {
     > * {
         margin: 6px 0;
     }
 }
 
-.siderbar-divider {
+.sidebar-divider {
     margin: 6px 0;
     height: 1px;
     width: 90%;
