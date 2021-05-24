@@ -28,7 +28,7 @@ export default class App extends React.Component {
     render() {
         return (
             <div id="game">
-                <Sidebar />
+                <Sidebar game={this.game} />
                 <div id="canvas_container"></div>
             </div>
         )

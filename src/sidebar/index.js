@@ -16,22 +16,20 @@ export function SiderbarDivider() {
     return <div className="siderbar-divider"></div>
 }
 
-export function Sidebar() {
-    const [blocks, setBlocks] = useState([ScenesSiderbarBlock])
+export function Sidebar(props) {
+    const [blocks, setBlocks] = useState([])
+
+    const onSceneChanged = (sceneId) => {
+        setBlocks([
+            ScenesSiderbarBlock,
+            ...(sceneId === "editor" ? [EditorSiderbarBlock] : [])
+        ])
+    }
+
+    props.game.on("scene_changed", onSceneChanged)
 
     useEffect(() => {
-        const onSceneChanged = (sceneId) => {
-            console.log("scene change")
-
-            setBlocks([
-                ScenesSiderbarBlock,
-                ...(sceneId === "editor" ? [EditorSiderbarBlock] : [])
-            ])
-        }
-
-        game.on("scene_changed", onSceneChanged)
-
-        return () => game.removeListener("scene_changed", onSceneChanged)
+        return () => props.game.removeListener("scene_changed", onSceneChanged)
     })
 
     const list = blocks.reduce((acc, Block, index) => {
