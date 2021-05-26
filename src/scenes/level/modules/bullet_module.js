@@ -8,13 +8,13 @@ export default class BulletModule extends IModule {
     setup() {
         this.container = new Container()
 
-        game.camera.addChild(this.container, 20)
+        this.scene.addChild(this.container, 20)
 
         game.on("create_bullet", this.onCreateBullet)
     }
     
     close() {
-        game.camera.removeChild(this.container)
+        this.scene.removeChild(this.container)
 
         game.removeListener("create_bullet", this.onCreateBullet)
     }
@@ -38,7 +38,7 @@ export default class BulletModule extends IModule {
             },
         }
 
-        const entities = this.scene.entities
+        const entities = this.scene.entitySystem
 
         const entity = entities.createEntity(components)
         entity.on("movement.finished", (entity) => entity.despawn())

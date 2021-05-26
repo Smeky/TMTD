@@ -1,6 +1,7 @@
-import IModule from "game/scenes/imodule"
-import { Vec2, Rect } from "game/graphics"
+import { IModule } from "game/scenes"
+import { Rect } from "game/graphics"
 import { Tile } from "game/core"
+import { Container } from "pixi.js"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
@@ -8,12 +9,17 @@ export default class TowerManager extends IModule {
     static Name = "towerManager"
 
     setup() {
+        this.container = new Container()
+        this.scene.addChild(this.container, 15)
+
         game.on("build_tower", this.onBuildTower)
         game.on("upgrade_tower", this.onUpgradeTower)
         game.on("remove_tower", this.onRemoveTower)
     }
 
     close() {
+        this.scene.removeChild(this.container)
+
         game.removeListener("build_tower", this.onBuildTower)       
         game.removeListener("upgrade_tower", this.onUpgradeTower)
         game.removeListener("remove_tower", this.onRemoveTower)
@@ -44,6 +50,7 @@ export default class TowerManager extends IModule {
             "tower": {
                 base: tower.base,
                 head: tower.head,
+                parent: this.container,
             },
             "stats": {
                 ...tower.stats
@@ -51,11 +58,13 @@ export default class TowerManager extends IModule {
         }
 
         if (tower.action) {
-            components[tower.action.component] = {}
+            components[tower.action.component] = {
+                parent: this.scene.getLayer(30)
+            }
         }
 
         try {
-            this.scene.entities.createEntity(components, "tower")
+            this.scene.entitySystem.createEntity(components, "tower")
             game.emit("tower_built")
         }
         catch (e) {
@@ -64,7 +73,7 @@ export default class TowerManager extends IModule {
     }
 
     onUpgradeTower = (entityId) => {
-        const entity = this.scene.entities.getEntityById(entityId)
+        const entity = this.scene.entitySystem.getEntityById(entityId)
 
         if (entity) {
             const cmpTower = entity.getComponent("tower")
@@ -94,7 +103,7 @@ export default class TowerManager extends IModule {
     }
 
     onRemoveTower = (entityId) => {
-        const entity = this.scene.entities.getEntityById(entityId)
+        const entity = this.scene.entitySystem.getEntityById(entityId)
 
         const pos = entity.getComponent("transform").pos
         const snapped = this.scene.grid.snapPosToTile(pos)
@@ -102,7 +111,7 @@ export default class TowerManager extends IModule {
         const tiles = this.scene.grid.getTilesByBounds(bounds)
 
         this.scene.grid.setTilesBlocked(tiles, false)
-        this.scene.entities.removeEntity(entity.id)
+        this.scene.entitySystem.removeEntity(entity.id)
 
         game.emit("tower_removed", entityId)
     }

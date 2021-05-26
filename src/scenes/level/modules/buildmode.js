@@ -22,8 +22,8 @@ export default class BuildMode extends IModule {
         this.buildTiles.mask = this.mask
         this.buildTiles.visible = false
 
-        game.camera.addChild(this.buildTiles, 50)
-        game.camera.addChild(this.mask, 50)
+        this.scene.addChild(this.buildTiles, 50)
+        this.scene.addChild(this.mask, 50)
 
         game.on("tower_built", this.updateBuildTiles)
         game.on("tower_selected", this.onTowerSelected)
@@ -31,11 +31,11 @@ export default class BuildMode extends IModule {
     }
 
     close() {
-        game.camera.removeChild(this.buildTiles)
-        game.camera.removeChild(this.mask)
+        this.scene.removeChild(this.buildTiles)
+        this.scene.removeChild(this.mask)
 
         if (this.highlight) {
-            game.camera.removeChild(this.highlight)
+            this.scene.removeChild(this.highlight)
         }
 
         this.inputProxy.close()
@@ -61,7 +61,7 @@ export default class BuildMode extends IModule {
         this.highlight.alpha = 0.8
         this.highlight.pivot.copyFrom(this.selectedTower.size.divide(2))
 
-        game.camera.addChild(this.highlight, 51)
+        this.scene.addChild(this.highlight, 51)
     }
 
     toggle() {

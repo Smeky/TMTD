@@ -35,12 +35,12 @@ export default class Game extends EventEmitter {
         })
 
         this.stage.addChild(this.camera)
-        this.stage.addChild(this.sceneManager)
         this.stage.addChild(this.debug)
 
         window.addEventListener("resize", this.handleResize)
         this.on("change_scene", this.onChangeScene)
 
+        this.camera.addChild(this.sceneManager)
         this.sceneManager.setScene("level")
 
         this.ticker = new pixi.Ticker()

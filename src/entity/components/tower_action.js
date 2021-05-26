@@ -8,6 +8,8 @@ import { Component } from "."
 export class ITowerAttack extends Component {
     constructor(entity, options) {
         super(entity)
+
+        this.parent = options.parent || this.entity
     }
 
     set range(v) {}
@@ -127,13 +129,13 @@ export class TowerLaserAttack extends ITowerAttack {
         bloom.padding = 10 // otherwise the filter is cut off at texture edge
         this.sprite.filters = [bloom]
 
-        game.camera.addChild(this.sprite, 20)
+        this.parent.addChild(this.sprite)
     }
 
     close() {
         super.close()
 
-        game.camera.removeChild(this.sprite)
+        this.parent.removeChild(this.sprite)
     }
 
     trigger() {

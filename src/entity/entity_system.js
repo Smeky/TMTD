@@ -1,7 +1,7 @@
 import { Container } from "pixi.js"
 import { Entity } from "."
 
-export default class Entities extends Container {
+export default class EntitySystem extends Container {
     constructor() {
         super()
 

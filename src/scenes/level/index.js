@@ -1,5 +1,5 @@
 import { SceneBase } from "game/scenes"
-import { Entities } from "game/entity"
+import { EntitySystem } from "game/entity"
 import { Vec2 } from "game/graphics"
 import { findPath, Grid, Tile } from "game/core"
 import { Observable } from "game/core"
@@ -26,7 +26,9 @@ export default class LevelScene extends SceneBase {
         super()
 
         this.grid = new Grid()
-        this.entities = new Entities()
+        this.entitySystem = new EntitySystem()
+
+        this.addChild(this.grid, 10)
 
         this.currency = new Observable(0)
         this.currency.on("change", value => game.emit("currency_changed", value))
@@ -41,19 +43,12 @@ export default class LevelScene extends SceneBase {
     }
 
     setupScene() {
-        game.camera.addChild(this.grid, 10)
-        game.camera.addChild(this.entities, 15)
-
         this.setupLevel()
         this.positionCamera()
     }
 
     closeScene() {
-        this.entities.clear()
-
-        game.camera.removeChild(this.grid)
-        game.camera.removeChild(this.entities)
-
+        this.entitySystem.clear()
         this.inputProxy.close()
     }
 
@@ -94,7 +89,7 @@ export default class LevelScene extends SceneBase {
     update(delta) {
         if (!this.started) return
 
-        this.entities.update(delta)
+        this.entitySystem.update(delta)
 
         for (const module of this.moduleList) {
             module.update(delta)

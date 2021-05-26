@@ -49,6 +49,7 @@ export default class EnemyWaves extends IModule {
             },
             "display": {
                 displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
+                parent: this.scene.getLayer(15)
             },
             "movement": {
                 speed: this.enemyMeta.speed,
@@ -59,7 +60,7 @@ export default class EnemyWaves extends IModule {
             "health": {
                 maximum: this.enemyMeta.maxHp,
                 armor: this.enemyMeta.maxArmor,
-                parent: game.camera.getLayer(50),
+                parent: this.scene.getLayer(50),
             }
         }
     }
@@ -88,7 +89,7 @@ export default class EnemyWaves extends IModule {
     // Todo: this should probably be moved to some enemy spawner
     createEnemy() {
         const components = this.getEnemyComponents()
-        const entity = this.scene.entities.createEntity(components, "enemy")
+        const entity = this.scene.entitySystem.createEntity(components, "enemy")
 
         this.increaseSpawnCount()
 

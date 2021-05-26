@@ -14,8 +14,8 @@ export default class TowerOptions extends IModule {
         this.container = new Container()
         this.container.visible = false
 
-        game.camera.addChild(this.entitySelection, 18)
-        game.camera.addChild(this.container, 55)
+        this.scene.addChild(this.entitySelection, 18)
+        this.scene.addChild(this.container, 55)
 
         const size = new Vec2(50)
         const buttons = [
@@ -40,8 +40,8 @@ export default class TowerOptions extends IModule {
     }
 
     close() {
-        game.camera.removeChild(this.entitySelection)
-        game.camera.removeChild(this.container)
+        this.scene.removeChild(this.entitySelection)
+        this.scene.removeChild(this.container)
 
         game.removeListener("entity_clicked", this.onEntityClicked)
         game.removeListener("unselect_tower", this.onUnselectTower)
@@ -57,7 +57,7 @@ export default class TowerOptions extends IModule {
     }
 
     onEntityClicked = (entityId) => {
-            const entity = this.scene.entities.getEntityById(entityId)
+            const entity = this.scene.entitySystem.getEntityById(entityId)
 
             if (!entity || !entity.hasTag("tower")) {
                 return

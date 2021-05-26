@@ -15,6 +15,7 @@ export default class TowerComponent extends Component {
 
         this.base = options.base
         this.head = options.head
+        this.parent = options.parent || this.entity
 
         const { width, height } = this.base.texture
         this.size = new Vec2(width, height)
@@ -34,8 +35,8 @@ export default class TowerComponent extends Component {
         this.headSprite.pivot.copyFrom(pivot)
         this.headSprite.zIndex = 5
 
-        this.entity.addChild(this.baseSprite)
-        this.entity.addChild(this.headSprite)
+        this.parent.addChild(this.baseSprite)
+        this.parent.addChild(this.headSprite)
     }
 
     setup() {
@@ -49,8 +50,8 @@ export default class TowerComponent extends Component {
     }
 
     close() {
-        this.entity.removeChild(this.baseSprite)
-        this.entity.removeChild(this.headSprite)
+        this.parent.removeChild(this.baseSprite)
+        this.parent.removeChild(this.headSprite)
     }
 
     update(delta) {
