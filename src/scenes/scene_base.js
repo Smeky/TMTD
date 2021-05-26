@@ -1,5 +1,5 @@
 import { Layers } from "game/graphics"
-import { createHandlersStore } from "./level/handlers"
+import { createModulesStore } from "./level/modules"
 
 export default class SceneBase extends Layers {
     static Name = null
@@ -9,18 +9,18 @@ export default class SceneBase extends Layers {
         this.name = this.constructor.Name
         this.started = false
 
-        // Creates a { name: handler } structure from a list of handlers
-        //   - So we can do game.scene.handlers.myHandler.doSomething
+        // Creates a { name: module } structure from a list of modules
+        //   - So we can do game.scene.modules.myModule.doSomething
         //   - Note that this should probably not be used too often as we want to rely on events
-        this.handlers = createHandlersStore(this, this.constructor.Handlers || [])
+        this.modules = createModulesStore(this, this.constructor.Modules || [])
     }
 
-    get handlerList() {
-        return Object.values(this.handlers)
+    get moduleList() {
+        return Object.values(this.modules)
     }
 
     async load() {
-        await Promise.all(this.handlerList.map(async (handler) => await handler.load()))
+        await Promise.all(this.moduleList.map(async (module) => await module.load()))
     }
     
     /**
@@ -28,8 +28,8 @@ export default class SceneBase extends Layers {
      */
     setupScene() { throw "setupScene requires an override" }
     setup() {
-        for (const handler of this.handlerList) {
-            handler.setup()
+        for (const module of this.moduleList) {
+            module.setup()
         }
 
         this.setupScene()
@@ -40,8 +40,8 @@ export default class SceneBase extends Layers {
      */
     closeScene() { throw "closeScene requires an override" }
     close() {
-        for (const handler of this.handlerList) {
-            handler.close()
+        for (const module of this.moduleList) {
+            module.close()
         }
 
         this.closeScene()        

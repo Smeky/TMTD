@@ -1,30 +1,30 @@
 
 class InputProxy {
-    constructor(id, handler) {
+    constructor(id, module) {
         this.id = id
-        this.handler = handler
+        this.module = module
         this.callbacks = [] // Tuples of (event, callback)
     }
 
     on(event, callback) {
         this.callbacks.push([event, callback])
-        this.handler.on(event, callback)
+        this.module.on(event, callback)
     }
 
     leave(callback) {
         const index = this.callbacks.findIndex(([_, cb]) => cb === callback)
         const [event, cb] = this.callbacks.splice(index, 1)[0]
-        this.handler.leave(event, cb)
+        this.module.leave(event, cb)
     }
     
     close() {
-        // Todo:optimize: This can be heavy, store events under proxies in the handler instead
-        this.callbacks.forEach(([event, cb]) => this.handler.leave(event, cb))
-        this.handler.removeProxy(this)
+        // Todo:optimize: This can be heavy, store events under proxies in the module instead
+        this.callbacks.forEach(([event, cb]) => this.module.leave(event, cb))
+        this.module.removeProxy(this)
     }
 }
 
-export default class InputHandler {
+export default class InputModule {
     constructor() {
         // {event-name: [], ...}
         this.proxies = []

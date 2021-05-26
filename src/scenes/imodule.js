@@ -1,4 +1,4 @@
-export default class IHandler {
+export default class IModule {
     constructor(scene) {
         this.scene = scene
     }

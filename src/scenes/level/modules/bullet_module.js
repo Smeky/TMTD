@@ -1,9 +1,9 @@
 import { Vec2 } from "game/graphics"
-import IHandler from "game/scenes/ihandler"
+import IModule from "game/scenes/imodule"
 import { Container, Sprite } from "pixi.js"
 
-export default class BulletHandler extends IHandler {
-    static Name = "bulletHandler"
+export default class BulletModule extends IModule {
+    static Name = "bulletModule"
 
     setup() {
         this.container = new Container()

@@ -1,4 +1,4 @@
-import IHandler from "game/scenes/ihandler"
+import IModule from "game/scenes/imodule"
 import { Vec2 } from "game/graphics"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
@@ -6,7 +6,7 @@ import { Container } from "pixi.js";
 import EntitySelection from "./entity_selection"
 import OptionsButton from "./options_button"
 
-export default class TowerOptions extends IHandler {
+export default class TowerOptions extends IModule {
     static Name = "towerOptions"
 
     setup() {

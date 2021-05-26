@@ -1,5 +1,5 @@
 import { SceneBase } from "game/scenes"
-import { EditorLevelManager } from "./handlers/editor_level_manager"
+import { EditorLevelManager } from "./modules/editor_level_manager"
 // import utils from "game/utils"
 // import { Tile, TilePalette } from "game/core"
 // import { Vec2 } from "game/graphics"
@@ -9,7 +9,7 @@ import { EditorLevelManager } from "./handlers/editor_level_manager"
 
 export default class EditorScene extends SceneBase {
     static Name = "editor"
-    static Handlers = [EditorLevelManager]
+    static Modules = [EditorLevelManager]
 
     constructor() {
         super("editor")

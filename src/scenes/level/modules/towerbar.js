@@ -1,5 +1,5 @@
 import utils from "game/utils"
-import IHandler from "game/scenes/ihandler"
+import IModule from "game/scenes/imodule"
 import { Button } from "game/ui"
 import { Rect, Vec2 } from "game/graphics"
 import { Container } from "pixi.js"
@@ -7,7 +7,7 @@ import { Container } from "pixi.js"
 // Todo: get rid of us, please
 const TowerSize = 50 
 
-export default class TowerBar extends IHandler {
+export default class TowerBar extends IModule {
     static Name = "towerBar"
 
     async load() {

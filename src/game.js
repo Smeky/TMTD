@@ -1,4 +1,4 @@
-import { Camera, InputHandler } from "game/core"
+import { Camera, InputModule } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
@@ -23,7 +23,7 @@ export default class Game extends EventEmitter {
         this.firstUpdate = true
         this.deltaBuffer = 0
 
-        this.input = new InputHandler()
+        this.input = new InputModule()
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
         this.sceneManager = new SceneManager()

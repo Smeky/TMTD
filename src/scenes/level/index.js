@@ -11,15 +11,15 @@ import {
     TowerOptions, 
     TowerManager, 
     CurrencyDisplay, 
-    DamageHandler,
-    BulletHandler,
-} from "./handlers"
+    DamageModule,
+    BulletModule,
+} from "./modules"
 
 export default class LevelScene extends SceneBase {
     static Name = "level"
-    static Handlers = [ 
+    static Modules = [ 
         EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, 
-        DamageHandler, BulletHandler 
+        DamageModule, BulletModule 
     ]
 
     constructor() {
@@ -77,7 +77,7 @@ export default class LevelScene extends SceneBase {
             new Vec2(288, 256),
             new Vec2(416, 224),
         ].forEach((pos, index) => {
-            game.emit("build_tower", { pos, tower: this.handlers.towerBar.towers[index % 2] })
+            game.emit("build_tower", { pos, tower: this.modules.towerBar.towers[index % 2] })
         })
 
         // Calculate path
@@ -96,8 +96,8 @@ export default class LevelScene extends SceneBase {
 
         this.entities.update(delta)
 
-        for (const handler of this.handlerList) {
-            handler.update(delta)
+        for (const module of this.moduleList) {
+            module.update(delta)
         }
     }
 

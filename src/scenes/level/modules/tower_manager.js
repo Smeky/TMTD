@@ -1,10 +1,10 @@
-import IHandler from "game/scenes/ihandler"
+import IModule from "game/scenes/imodule"
 import { Vec2, Rect } from "game/graphics"
 import { Tile } from "game/core"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
-export default class TowerManager extends IHandler {
+export default class TowerManager extends IModule {
     static Name = "towerManager"
 
     setup() {

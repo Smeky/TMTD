@@ -1,7 +1,7 @@
-import IHandler from "game/scenes/ihandler"
+import IModule from "game/scenes/imodule"
 import { Text } from "pixi.js"
 
-export default class CurrencyDisplay extends IHandler {
+export default class CurrencyDisplay extends IModule {
     static Name = "currencyDisplay"
 
     setup() {

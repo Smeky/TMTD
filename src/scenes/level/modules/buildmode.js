@@ -2,9 +2,9 @@ import utils from "game/utils"
 import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
-import IHandler from "game/scenes/ihandler"
+import IModule from "game/scenes/imodule"
 
-export default class BuildMode extends IHandler {
+export default class BuildMode extends IModule {
     static Name = "buildMode"
 
     setup() {

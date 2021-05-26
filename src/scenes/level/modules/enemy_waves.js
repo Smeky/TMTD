@@ -4,9 +4,9 @@ import { Vec2, Rect } from "game/graphics"
 import { Tile } from "game/core"
 import { Sprite } from "pixi.js"
 
-import IHandler from "game/scenes/ihandler"
+import IModule from "game/scenes/imodule"
 
-export default class EnemyWaves extends IHandler {
+export default class EnemyWaves extends IModule {
     static Name = "enemyWaves"
 
     setup() {
