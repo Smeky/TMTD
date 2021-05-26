@@ -25,12 +25,7 @@ function LevelMenu() {
 }
 
 export default function EditorSidebarBlock() {
-    const handler = game.scene.handlers.editorLevelManager
     const [title, setTitle] = useState("")
-
-    useEffect(() => {
-        handler.levelData.title = title
-    })
 
     const handleTitleChange = (e) => {
         setTitle(e.target.value)

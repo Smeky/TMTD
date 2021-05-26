@@ -33,21 +33,26 @@ function SidebarContainer(props) {
     )
 }
 
-export function Sidebar(props) {
+function useSidebarBlocks() {
     const [blocks, setBlocks] = useState([])
 
-    const onSceneChanged = (sceneId) => {
-        setBlocks([
-            ScenesSidebarBlock,
-            ...(sceneId === "editor" ? [EditorSidebarBlock] : [])
-        ])
-    }
-
-    props.game.on("scene_changed", onSceneChanged)
-
     useEffect(() => {
-        return () => props.game.removeListener("scene_changed", onSceneChanged)
+        const handleCommand = command => {
+            if (command.type === "add_blocks") {
+                setBlocks([ ...blocks, ...command.data.blocks ])
+            }
+        }
+        
+        game.on("sidebar_command", handleCommand)
+
+        return () => { game.removeListener("sidebar_command", handleCommand) }
     })
+
+    return blocks
+}
+
+export function Sidebar(props) {
+    const blocks = useSidebarBlocks()
 
     const list = blocks.reduce((acc, Block, index) => {
         acc.push(<Block key={`block-${index}`} />)

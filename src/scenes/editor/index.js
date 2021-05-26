@@ -1,7 +1,5 @@
-import Game from "game/game"
 import { SceneBase } from "game/scenes"
 import { EditorLevelManager } from "./handlers/editor_level_manager"
-
 // import utils from "game/utils"
 // import { Tile, TilePalette } from "game/core"
 // import { Vec2 } from "game/graphics"
