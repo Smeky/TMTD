@@ -1,6 +1,6 @@
 import { SceneBase } from "game/scenes"
 import { EntitySystem } from "game/entity"
-import { Vec2 } from "game/graphics"
+import { Vec2, Layers } from "game/graphics"
 import { findPath, Grid, Tile } from "game/core"
 import { Observable } from "game/core"
 
@@ -15,6 +15,24 @@ import {
     BulletModule,
 } from "./modules"
 
+const SceneLayers = {
+    Grid: 10,
+
+    TowerBase: 15,
+    TowerSelection: 18,
+
+    Bullets: 20,
+
+    BuildmodeTiles: 50,
+    BuildmodeHighlight: 51,
+    
+    TowerOptions: 55,
+}
+
+const UILayers = {
+    Base: 10,
+}
+
 export default class LevelScene extends SceneBase {
     static Name = "level"
     static Modules = [ 
@@ -25,10 +43,16 @@ export default class LevelScene extends SceneBase {
     constructor() {
         super()
 
+        this.Layers = SceneLayers
+
         this.grid = new Grid()
         this.entitySystem = new EntitySystem()
 
-        this.addChild(this.grid, 10)
+        this.ui = new Layers()
+        this.ui.Layers = UILayers
+
+        game.stage.addChild(this.ui)
+        this.addChild(this.grid, this.Layers.Grid)
 
         this.currency = new Observable(0)
         this.currency.on("change", value => game.emit("currency_changed", value))
@@ -50,6 +74,8 @@ export default class LevelScene extends SceneBase {
     closeScene() {
         this.entitySystem.clear()
         this.inputProxy.close()
+
+        game.stage.removeChild(this.ui)
     }
 
     positionCamera() {

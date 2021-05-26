@@ -10,7 +10,7 @@ export default class TowerManager extends IModule {
 
     setup() {
         this.container = new Container()
-        this.scene.addChild(this.container, 15)
+        this.scene.addChild(this.container, this.scene.Layers.TowerBase)
 
         game.on("build_tower", this.onBuildTower)
         game.on("upgrade_tower", this.onUpgradeTower)

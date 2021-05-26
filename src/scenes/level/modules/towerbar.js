@@ -62,7 +62,7 @@ export default class TowerBar extends IModule {
         this.selected = -1
         
         this.container = new Container()
-        this.scene.addChild(this.container, 70)
+        this.scene.ui.addChild(this.container, this.scene.ui.Layers.Base)
         
         this.towers.forEach((tower, index) => {
             const display = utils.createTowerDisplay(tower, Math.PI * 0.9)

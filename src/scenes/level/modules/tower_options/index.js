@@ -14,8 +14,8 @@ export default class TowerOptions extends IModule {
         this.container = new Container()
         this.container.visible = false
 
-        this.scene.addChild(this.entitySelection, 18)
-        this.scene.addChild(this.container, 55)
+        this.scene.addChild(this.entitySelection, this.scene.Layers.TowerSelection)
+        this.scene.addChild(this.container, this.scene.Layers.TowerOptions)
 
         const size = new Vec2(50)
         const buttons = [

@@ -6,7 +6,7 @@ export default class CurrencyDisplay extends IModule {
 
     setup() {
         this.textObject = new Text("", { fill: 0xffffff, fontSize: 22 })
-        this.scene.addChild(this.textObject, 70)
+        this.scene.ui.addChild(this.textObject, this.scene.ui.Layers.Base)
 
         this.updateText()
         this.updatePosition()

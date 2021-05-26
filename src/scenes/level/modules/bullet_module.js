@@ -8,7 +8,7 @@ export default class BulletModule extends IModule {
     setup() {
         this.container = new Container()
 
-        this.scene.addChild(this.container, 20)
+        this.scene.addChild(this.container, this.scene.Layers.Bullets)
 
         game.on("create_bullet", this.onCreateBullet)
     }
