@@ -6,6 +6,7 @@ import HealthComponent from "./health"
 import TowerComponent from "./tower"
 import StatsComponent from "./stats"
 import PathFollowerComponent from "./path_follower"
+import OnClickComponent from "./on_click"
 import { TowerLaserAttack, TowerBulletAttack } from "./tower_action"
 
 export default {
@@ -15,7 +16,8 @@ export default {
     "health":    HealthComponent,
     "tower":     TowerComponent,
     "stats":     StatsComponent,
-    "pathFollower":     PathFollowerComponent,
+    "pathFollower": PathFollowerComponent,
+    "onClick":   OnClickComponent,
 
     "towerLaserAttack": TowerLaserAttack,
     "towerBulletAttack": TowerBulletAttack,

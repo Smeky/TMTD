@@ -54,6 +54,9 @@ export default class TowerManager extends IModule {
             },
             "stats": {
                 ...tower.stats
+            },
+            "onClick": {
+                onClick: (event) => { console.log(event) }
             }
         }
 
