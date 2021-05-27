@@ -1,9 +1,56 @@
 import { IModule } from "game/scenes"
 import { Rect } from "game/graphics"
 import { Tile } from "game/core"
-import { Container } from "pixi.js"
+import { Container, Sprite } from "pixi.js"
 
 const TowerSize = 50    // Todo: get rid of me, please
+
+function handleDamageAction(data) {
+    const { target, amount } = data
+    const health = target.getComponent("health")
+
+    if (health) {
+        if (health.isAlive() && health.reduce(amount)) {
+            game.emit("enemy_killed", target)
+        }
+    }
+    else {
+        throw new Error(`Unable to deal damage. Target entity is missing "health" component.`)
+    }
+}
+
+function handleBulletAction(data, scene) {
+    const { texture, pos, angle, speed, range } = data
+
+    const components = {
+        "transform": {
+            pos
+        },
+        "display": {
+            displayObject: new Sprite(texture),
+        },
+        "movement": {
+            speed,
+            angle,
+            maxDistance: range,
+            enableFacingDirection: true,
+        },
+    }
+
+    const entity = scene.entitySystem.createEntity(components)
+    scene.addChild(entity, scene.Layers.Bullets)
+
+    entity.on("movement.finished", (entity) => entity.despawn())
+}
+
+function createTowerActionHandler(scene) {
+    return (actionType, data) => {
+        switch(actionType) {
+            case "deal_damage": handleDamageAction(data); break;
+            case "create_bullet": handleBulletAction(data, scene); break;
+        }
+    }
+}
 
 export default class TowerManager extends IModule {
     static Name = "towerManager"
@@ -118,7 +165,8 @@ export default class TowerManager extends IModule {
 
         if (towerData.action) {
             components[towerData.action.component] = {
-                parent: this.scene.getLayer(30)
+                handler: createTowerActionHandler(this.scene),
+                parent: this.scene.getLayer(30),
             }
         }
 

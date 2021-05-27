@@ -23,11 +23,11 @@ export default class EnemyWaves extends IModule {
             color: 0xffffff,
         }
 
-        game.on("target_killed", this.onTargetKilled)
+        game.on("enemy_killed", this.onTargetKilled)
     }
 
     close() {
-        game.removeListener("target_killed", this.onTargetKilled)
+        game.removeListener("enemy_killed", this.onTargetKilled)
     }
 
     update(delta) {

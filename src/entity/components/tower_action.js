@@ -10,6 +10,11 @@ export class ITowerAttack extends Component {
         super(entity)
 
         this.parent = options.parent || this.entity
+        this.handler = options.handler
+
+        if (!this.handler) {
+            throw new Error("ITowerAttack - Missing required param 'handler'")
+        }
     }
 
     set range(v) {}
@@ -140,7 +145,7 @@ export class TowerLaserAttack extends ITowerAttack {
 
     trigger() {
         if (this.target) {
-            game.emit("deal_damage", { 
+            this.handler("deal_damage", { 
                 target: this.target, 
                 source: this.entity, 
                 amount: this.damage 
@@ -189,7 +194,7 @@ export class TowerBulletAttack extends ITowerAttack {
 
     trigger() {
         if (this.target) {
-            game.emit("create_bullet", { 
+            this.handler("create_bullet", { 
                 texture: this.bulletTexture,
                 source: this.entity,
                 pos: this.tower.getHeadEndPosition(),

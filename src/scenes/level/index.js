@@ -37,7 +37,7 @@ export default class LevelScene extends SceneBase {
     static Name = "level"
     static Modules = [ 
         EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, 
-        DamageModule, BulletModule 
+        DamageModule
     ]
 
     constructor() {

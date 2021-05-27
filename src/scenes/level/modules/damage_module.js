@@ -18,7 +18,7 @@ export default class DamageModule extends IModule {
 
         if (health) {
             if (health.isAlive() && health.reduce(amount)) {
-                game.emit("target_killed", target)
+                game.emit("enemy_killed", target)
             }
         }
         else {
