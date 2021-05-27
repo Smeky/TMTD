@@ -7,7 +7,6 @@ export default class BulletModule extends IModule {
 
     setup() {
         this.container = new Container()
-
         this.scene.addChild(this.container, this.scene.Layers.Bullets)
 
         game.on("create_bullet", this.onCreateBullet)
@@ -41,5 +40,7 @@ export default class BulletModule extends IModule {
 
         const entity = entities.createEntity(components)
         entity.on("movement.finished", (entity) => entity.despawn())
+
+        this.container.addChild(entity)
     }
 }
