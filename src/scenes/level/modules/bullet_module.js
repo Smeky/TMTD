@@ -28,7 +28,6 @@ export default class BulletModule extends IModule {
             },
             "display": {
                 displayObject: new Sprite(texture),
-                parent: this.container,
             },
             "movement": {
                 speed,

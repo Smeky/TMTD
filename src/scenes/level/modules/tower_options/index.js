@@ -34,7 +34,7 @@ export default class TowerOptions extends IModule {
             this.container.addChild(button)
         })
 
-        game.on("entity_clicked", this.onEntityClicked)
+        game.on("tower_clicked", this.onTowerClicked)
         game.on("unselect_tower", this.onUnselectTower)
         game.on("tower_removed", this.onTowerRemoved)
     }
@@ -43,7 +43,7 @@ export default class TowerOptions extends IModule {
         this.scene.removeChild(this.entitySelection)
         this.scene.removeChild(this.container)
 
-        game.removeListener("entity_clicked", this.onEntityClicked)
+        game.removeListener("tower_clicked", this.onTowerClicked)
         game.removeListener("unselect_tower", this.onUnselectTower)
         game.removeListener("tower_removed", this.onTowerRemoved)
     }
@@ -56,7 +56,7 @@ export default class TowerOptions extends IModule {
         game.emit("remove_tower", this.entitySelection.selected.id)
     }
 
-    onEntityClicked = (entityId) => {
+    onTowerClicked = (entityId) => {
             const entity = this.scene.entitySystem.getEntityById(entityId)
 
             if (!entity || !entity.hasTag("tower")) {

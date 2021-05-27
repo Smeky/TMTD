@@ -49,7 +49,6 @@ export default class EnemyWaves extends IModule {
             },
             "display": {
                 displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
-                parent: this.scene.getLayer(15)
             },
             "movement": {
                 speed: this.enemyMeta.speed,
@@ -90,7 +89,8 @@ export default class EnemyWaves extends IModule {
     createEnemy() {
         const components = this.getEnemyComponents()
         const entity = this.scene.entitySystem.createEntity(components, "enemy")
-
+        
+        this.scene.addChild(entity, this.scene.Layers.TowerBase)
         this.increaseSpawnCount()
 
         entity.on("path_follower.finished", (entity) => entity.despawn())

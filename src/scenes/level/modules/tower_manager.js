@@ -41,33 +41,14 @@ export default class TowerManager extends IModule {
         }
 
         grid.setTilesBlocked(tiles, true)
-        const topLeft = grid.getTopLeftTile(tiles)
 
-        const components = {
-            "transform": {
-                pos: topLeft.pos.add(Tile.Size - TowerSize / 2)
-            },
-            "tower": {
-                base: tower.base,
-                head: tower.head,
-                parent: this.container,
-            },
-            "stats": {
-                ...tower.stats
-            },
-            "onClick": {
-                onClick: (event) => { console.log(event) }
-            }
-        }
-
-        if (tower.action) {
-            components[tower.action.component] = {
-                parent: this.scene.getLayer(30)
-            }
-        }
+        const topLeft = grid.getTopLeftTile(tiles).pos
+        const components = this.getTowerComponents(tower, topLeft.add(Tile.Size - TowerSize / 2))
 
         try {
-            this.scene.entitySystem.createEntity(components, "tower")
+            const entity = this.scene.entitySystem.createEntity(components, "tower")
+            this.container.addChild(entity)
+
             game.emit("tower_built")
         }
         catch (e) {
@@ -91,7 +72,6 @@ export default class TowerManager extends IModule {
                 currency(currency() - price)
 
                 cmpTower.setLevel(cmpTower.level + 1)
-                
                 cmpStats.current.damage += 1
     
                 game.emit("tower_upgraded", entityId)
@@ -117,5 +97,31 @@ export default class TowerManager extends IModule {
         this.scene.entitySystem.removeEntity(entity.id)
 
         game.emit("tower_removed", entityId)
+    }
+    
+    getTowerComponents(towerData, position) {
+        const components = {
+            "transform": {
+                pos: position
+            },
+            "tower": {
+                base: towerData.base,
+                head: towerData.head,
+            },
+            "stats": {
+                ...towerData.stats
+            },
+            "onClick": {
+                onClick: (entity) => { game.emit("tower_clicked", entity.id) }
+            },
+        }
+
+        if (towerData.action) {
+            components[towerData.action.component] = {
+                parent: this.scene.getLayer(30)
+            }
+        }
+
+        return components
     }
 }

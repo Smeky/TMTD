@@ -1,11 +1,9 @@
-import { Container } from "pixi.js"
 import { Entity } from "."
 
-export default class EntitySystem extends Container {
+export default class EntitySystem {
     constructor() {
-        super()
-
         this.idCounter = 0 // Todo:id: Replace me
+        this.entities = []
     }
 
     /**
@@ -20,10 +18,9 @@ export default class EntitySystem extends Container {
             entity.addComponent(name, options)
         }
 
-        this.addChild(entity)
         entity.setupComponents()
-        entity.interactive = true
-        entity.on("click", () => game.emit("entity_clicked", entity.id))
+
+        this.entities.push(entity)
 
         return entity
     }
@@ -34,21 +31,22 @@ export default class EntitySystem extends Container {
      * @param {bool} force whether entity should be removed immediately (can have side effects) or before next update
      */
     removeEntity(id, force = false) {
-        const entity = this.children.find(e => e.id === id)
+        const index = this.entities.findIndex(e => e.id === id)
+        if (index < 0) throw "Invalid entity id"
 
-        if (!entity) throw "Invalid entity id"
+        const entity = this.entities[index]
         
         if (!force) {
             entity.despawn()
         }
         else {
             entity.close()
-            this.removeChild(entity)
+            this.entities.splice(index, 1)
         }
     }
 
     getEntityById(id) {
-        return this.children.find(e => e.id === id)
+        return this.entities.find(e => e.id === id)
     }
 
     /**
@@ -58,13 +56,13 @@ export default class EntitySystem extends Container {
     getEntitiesByTags(tags) {
         const _tags = Array.isArray(tags) ? [...tags] : [tags]
 
-        return this.children.filter((entity) => {
+        return this.entities.filter((entity) => {
             return _tags.some(tag => entity.tags.includes(tag))
         })
     }
 
     update(delta) {
-        for (const entity of this.children) {
+        for (const entity of this.entities) {
             if (entity.shouldDespawn) {
                 this.removeEntity(entity.id, true)
             }
@@ -75,15 +73,15 @@ export default class EntitySystem extends Container {
     }
 
     clear() {
-        for (const entity of this.children) {
+        for (const entity of this.entities) {
             entity.close()
         }
 
-        this.children = []
+        this.entities = []
     }
 
     count() {
-        return this.children.length
+        return this.entities.length
     }
 
     /**
@@ -93,7 +91,7 @@ export default class EntitySystem extends Container {
      * @param {string} [tag] [optional] also filter by the tag
      */
     getEntitiesInRadius(pos, radius, tag) {
-        return this.children.filter((entity) => {
+        return this.entities.filter((entity) => {
             if (tag && !entity.hasTag(tag)) {
                 return
             }
