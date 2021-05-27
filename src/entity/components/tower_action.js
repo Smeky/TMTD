@@ -5,15 +5,17 @@ import { BLEND_MODES, Sprite } from "pixi.js"
 import { Cooldown } from "game/core"
 import { Component } from "."
 
-export class ITowerAttack extends Component {
+export class ITowerAction extends Component {
     constructor(entity, options) {
         super(entity)
 
+        this.target = null
         this.parent = options.parent || this.entity
+        this.actionType = options.actionType
         this.handler = options.handler
 
         if (!this.handler) {
-            throw new Error("ITowerAttack - Missing required param 'handler'")
+            throw new Error("ITowerAction - Missing required param 'handler'")
         }
     }
 
@@ -41,7 +43,10 @@ export class ITowerAttack extends Component {
     update(delta) {
         if (this.cooldown.update(delta)) {
             this.cooldown.reset()
-            this.trigger()
+
+            if (this.target) {
+                this.trigger()
+            }
         }
 
         if (!this.target) {
@@ -57,6 +62,10 @@ export class ITowerAttack extends Component {
                 this.tower.setHeadRotation(this.getAngleToTarget())
             }
         }
+    }
+
+    trigger() {
+        this.handler(this.actionType, this, this.entity)
     }
 
     findTarget() {
@@ -96,6 +105,10 @@ export class ITowerAttack extends Component {
         }
     }
 
+    getTarget() {
+        return this.target
+    }
+
     getAngleToTarget() {
         if (!this.target) {
             return 0
@@ -111,7 +124,7 @@ export class ITowerAttack extends Component {
     onTargetCleared() {}
 }
 
-export class TowerLaserAttack extends ITowerAttack {
+export class TowerBeamAttack extends ITowerAction {
     setup() {
         super.setup()
 
@@ -143,16 +156,6 @@ export class TowerLaserAttack extends ITowerAttack {
         this.parent.removeChild(this.sprite)
     }
 
-    trigger() {
-        if (this.target) {
-            this.handler("deal_damage", { 
-                target: this.target, 
-                source: this.entity, 
-                amount: this.damage 
-            })
-        }
-    }
-
     update(delta) {
         super.update(delta)
 
@@ -181,7 +184,7 @@ export class TowerLaserAttack extends ITowerAttack {
 }
 
 
-export class TowerBulletAttack extends ITowerAttack {
+export class TowerBulletAttack extends ITowerAction {
     setup() {
         super.setup()
 
@@ -192,16 +195,16 @@ export class TowerBulletAttack extends ITowerAttack {
         super.close()
     }
 
-    trigger() {
-        if (this.target) {
-            this.handler("create_bullet", { 
-                texture: this.bulletTexture,
-                source: this.entity,
-                pos: this.tower.getHeadEndPosition(),
-                angle: this.tower.getHeadRotation(),
-                speed: 500,
-                range: this.range
-            })
-        }
-    }
+    // trigger() {
+    //     if (this.target) {
+    //         this.handler("create_bullet", { 
+    //             texture: this.bulletTexture,
+    //             source: this.entity,
+    //             pos: this.tower.getHeadEndPosition(),
+    //             angle: this.tower.getHeadRotation(),
+    //             speed: 500,
+    //             range: this.range
+    //         })
+    //     }
+    // }
 }

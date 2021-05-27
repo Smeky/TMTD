@@ -23,11 +23,11 @@ export default class EnemyWaves extends IModule {
             color: 0xffffff,
         }
 
-        game.on("enemy_killed", this.onTargetKilled)
+        game.on("enemy_killed", this.onEnemyKilled)
     }
 
     close() {
-        game.removeListener("enemy_killed", this.onTargetKilled)
+        game.removeListener("enemy_killed", this.onEnemyKilled)
     }
 
     update(delta) {
@@ -38,7 +38,7 @@ export default class EnemyWaves extends IModule {
         }
     }
 
-    onTargetKilled = (event) => {
+    onEnemyKilled = (enemyId) => {
         this.scene.currency(this.scene.currency() + 20)
     }
 

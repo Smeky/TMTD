@@ -7,7 +7,7 @@ import TowerComponent from "./tower"
 import StatsComponent from "./stats"
 import PathFollowerComponent from "./path_follower"
 import OnClickComponent from "./on_click"
-import { TowerLaserAttack, TowerBulletAttack } from "./tower_action"
+import { TowerBeamAttack, TowerBulletAttack } from "./tower_action"
 
 export default {
     "transform": TransformComponent,
@@ -19,6 +19,6 @@ export default {
     "pathFollower": PathFollowerComponent,
     "onClick":   OnClickComponent,
 
-    "towerLaserAttack": TowerLaserAttack,
+    "towerBeamAttack": TowerBeamAttack,
     "towerBulletAttack": TowerBulletAttack,
 }

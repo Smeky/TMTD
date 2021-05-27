@@ -5,13 +5,13 @@ import { Container, Sprite } from "pixi.js"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
-function handleDamageAction(data) {
-    const { target, amount } = data
+function handleDamageAction(actionComponent, entity) {
+    const target = actionComponent.getTarget()
     const health = target.getComponent("health")
 
     if (health) {
-        if (health.isAlive() && health.reduce(amount)) {
-            game.emit("enemy_killed", target)
+        if (health.isAlive() && health.reduce(actionComponent.damage)) {
+            game.emit("enemy_killed", target.id)
         }
     }
     else {
@@ -20,14 +20,14 @@ function handleDamageAction(data) {
 }
 
 function handleBulletAction(data, scene) {
-    const { texture, pos, angle, speed, range } = data
+    const { pos, angle, speed, range } = data
 
     const components = {
         "transform": {
             pos
         },
         "display": {
-            displayObject: new Sprite(texture),
+            displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 6, 2), 0xffffff)),
         },
         "movement": {
             speed,
@@ -41,13 +41,28 @@ function handleBulletAction(data, scene) {
     scene.addChild(entity, scene.Layers.Bullets)
 
     entity.on("movement.finished", (entity) => entity.despawn())
+
+    // TowerBulletAttack
+    // trigger() {
+    //     if (this.target) {
+    //         this.handler("create_bullet", { 
+    //             texture: this.bulletTexture,
+    //             source: this.entity,
+    //             pos: this.tower.getHeadEndPosition(),
+    //             angle: this.tower.getHeadRotation(),
+    //             speed: 500,
+    //             range: this.range
+    //         })
+    //     }
+    // }
 }
 
 function createTowerActionHandler(scene) {
-    return (actionType, data) => {
+    return (actionType, actionComponent, entity) => {
         switch(actionType) {
-            case "deal_damage": handleDamageAction(data); break;
-            case "create_bullet": handleBulletAction(data, scene); break;
+            case "direct_damage": handleDamageAction(actionComponent, entity); break;
+            // case "create_bullet": handleBulletAction(actionComponent, entity, scene); break;
+            default: new Error("Undefined actionType")
         }
     }
 }
@@ -165,8 +180,9 @@ export default class TowerManager extends IModule {
 
         if (towerData.action) {
             components[towerData.action.component] = {
-                handler: createTowerActionHandler(this.scene),
                 parent: this.scene.getLayer(30),
+                handler: createTowerActionHandler(this.scene),
+                actionType: towerData.action.type
             }
         }
 

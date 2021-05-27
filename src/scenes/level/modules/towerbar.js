@@ -23,7 +23,8 @@ export default class TowerBar extends IModule {
                     range: 150,
                 },
                 action: {
-                    component: "towerLaserAttack",
+                    type: "direct_damage",
+                    component: "towerBeamAttack",
                 },
                 base: {
                     texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
@@ -44,6 +45,7 @@ export default class TowerBar extends IModule {
                     range: 250,
                 },
                 action: {
+                    type: "spawn_projectile",
                     component: "towerBulletAttack",
                 },
                 base: {
