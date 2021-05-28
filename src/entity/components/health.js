@@ -24,7 +24,7 @@ export default class HealthComponent extends Component {
         this.parent = options.parent || this.entity
         
         this.maxWidth = 0
-        this.sprite = new Sprite(utils.createRectTexture(new Rect(0, 0, 20, 4), 0xff0000))
+        this.sprite = new Sprite(game.assets.HealthBar)
         this.parent.addChild(this.sprite)
     }
 

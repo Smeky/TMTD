@@ -5,15 +5,15 @@ import { Sprite } from "pixi.js"
 import { AdvancedBloomFilter, BevelFilter } from "pixi-filters"
 
 export default class OptionsButton extends ButtonBase {
-    constructor(icon, size) {
+    constructor(icon, texture) {
         super()
 
-        this.icon = icon
-        this.icon.position.copyFrom(size.divide(2))
-
-        const texture = utils.createRectTexture(new Rect(0, 0, size.x, size.y), 0xffffff)
         this.bg = new Sprite(texture)
         this.bg.tint = 0x20212b
+
+        this.icon = icon
+        this.icon.position.x = texture.width / 2
+        this.icon.position.y = texture.height / 2
 
         this.addChild(this.bg)
         this.addChild(this.icon)

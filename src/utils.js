@@ -122,6 +122,13 @@ export default {
         container.addChild(headSprite)
 
         return container
+    },
+
+    // Todo: move me, please!
+    partition: function(array, validateFunc) {
+        return array.reduce(([pass, fail], item) => {
+            return validateFunc(item) ? [[...pass, item], fail] : [pass, [...fail, item]];
+        }, [[], []]);
     }
 
     // Todo: Just an idea:

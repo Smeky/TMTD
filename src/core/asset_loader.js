@@ -1,0 +1,56 @@
+import { Loader } from "pixi.js"
+import utils from "game/utils"
+import { Rect } from "game/graphics"
+
+// How should we properly do this?
+export const AssetList = [
+    { name: "Tileset", url: "media/tileset.png" },
+
+    { name: "TowerBase1", textureDef: [50, 50, 0x35352f] },
+    { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
+    { name: "TowerHead1", textureDef: [8,  35, 0xffff00] }, 
+    { name: "TowerHead2", textureDef: [8,  35, 0x999999] }, 
+    { name: "HealthBar", textureDef: [20, 4,  0xff0000] }, 
+    { name: "BeamBase", textureDef: [4,  1,  0xffffff] }, 
+    { name: "Bullet", textureDef: [6,  2,  0xffffff] }, 
+    { name: "EnemyBase", textureDef: [16, 16, 0xffffff] }, 
+
+    { name: "TowerOptionsButton", textureDef: [50, 50, 0xffffff] },
+]
+
+export default class AssetLoader {
+    constructor() {
+        this.assets = {}
+    }
+
+    async loadAssets(assetList) {
+        const [assetFiles, assetTextures] = utils.partition(assetList, asset => !asset.hasOwnProperty("textureDef"))
+
+        const files = await this.loadFiles(assetFiles)
+        const placeholders = await this.createPlaceholderTextures(assetTextures)
+
+        this.assets = { ...files, ...placeholders }
+    }
+
+    async loadFiles(assetFiles) {
+        const loader = Loader.shared
+
+        loader.add(assetFiles)
+        loader.onError.add(console.error)
+
+        return new Promise((resolve) => {
+            loader.load((loader, resources) => {
+                resolve(resources)
+            })
+        })
+    }
+
+    async createPlaceholderTextures(textureArray) {
+        return textureArray.reduce((acc, asset) => {
+            const [w, h, color] = asset.textureDef
+            acc[asset.name] = utils.createRectTexture(new Rect(0, 0, w, h), color)
+
+            return acc
+        }, {})
+    }
+}

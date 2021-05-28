@@ -43,12 +43,15 @@ export default class EnemyWaves extends IModule {
     }
 
     getEnemyComponents() {
+        const sprite = new Sprite(game.assets.EnemyBase)
+        sprite.tint = this.enemyMeta.color
+
         return {
             "transform": {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
-                displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 16, 16), this.enemyMeta.color)),
+                displayObject: sprite,
             },
             "movement": {
                 speed: this.enemyMeta.speed,

@@ -13,7 +13,8 @@ export default function App() {
     }
 
     useEffect(() => {
-        game.init()
+        game.beforeLoad()
+        game.load().then(() => game.afterLoad())
 
         return () => {
             game.close()

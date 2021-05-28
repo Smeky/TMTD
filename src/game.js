@@ -4,6 +4,7 @@ import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
 import { Renderer, Vec2 } from "game/graphics"
 import * as pixi from "pixi.js"
+import AssetLoader, { AssetList } from "./core/asset_loader"
 
 pixi.utils.skipHello()
 
@@ -11,23 +12,16 @@ export default class Game extends EventEmitter {
     FPS = 60
     SPF = 1 / this.FPS
 
-    constructor() {
-        super()
-    }
-    
-    get scene() {
-        return this.sceneManager.scene
-    }
-    
-    init() {
-        this.firstUpdate = true
-        this.deltaBuffer = 0
+    get assets() { return this.loader.assets }
+    get scene() { return this.sceneManager.scene }
 
+    beforeLoad() {
         this.input = new InputModule()
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
         this.sceneManager = new SceneManager()
         this.debug = new Debug()
+        this.loader = new AssetLoader()
         this.camera = new Camera({
             size: new Vec2(this.renderer.width, this.renderer.height),
             zoomEnabled: true,
@@ -36,18 +30,27 @@ export default class Game extends EventEmitter {
 
         this.stage.addChild(this.camera)
         this.stage.addChild(this.debug)
-
-        window.addEventListener("resize", this.handleResize)
-        this.on("change_scene", this.onChangeScene)
-
         this.camera.addChild(this.sceneManager)
-        this.sceneManager.setScene("level")
+
+        this.firstUpdate = true
+        this.deltaBuffer = 0
 
         this.ticker = new pixi.Ticker()
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
         this.ticker.start()
+
+        window.addEventListener("resize", this.handleResize)
+        this.on("change_scene", this.onChangeScene)
     }
 
+    async load() {
+        await this.loader.loadAssets(AssetList)
+    }
+
+    afterLoad() {
+        this.sceneManager.setScene("level")
+    }
+    
     close() {
         this.removeListener("change_scene", this.onChangeScene)
     }

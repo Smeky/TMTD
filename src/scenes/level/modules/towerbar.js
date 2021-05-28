@@ -27,10 +27,10 @@ export default class TowerBar extends IModule {
                     component: "towerBeamAttack",
                 },
                 base: {
-                    texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x35352f),
+                    texture: game.assets.TowerBase1,
                 },
                 head: {
-                    texture: utils.createRectTexture(new Rect(0, 0, 8, 35), 0xffff00),
+                    texture: game.assets.TowerHead1,
                     pos: new Vec2(0.5), // relative to center
                     pivot: new Vec2(4, 6),
                 }
@@ -49,10 +49,10 @@ export default class TowerBar extends IModule {
                     component: "towerBulletAttack",
                 },
                 base: {
-                    texture: utils.createRectTexture(new Rect(0, 0, TowerSize, TowerSize), 0x955550),
+                    texture: game.assets.TowerBase2,
                 },
                 head: {
-                    texture: utils.createRectTexture(new Rect(0, 0, 8, 35), 0x999999),
+                    texture: game.assets.TowerHead2,
                     pos: new Vec2(0.5), // relative to center
                     pivot: new Vec2(4, 6),
                 }

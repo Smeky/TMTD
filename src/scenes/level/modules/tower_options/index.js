@@ -17,16 +17,17 @@ export default class TowerOptions extends IModule {
         this.scene.addChild(this.entitySelection, this.scene.Layers.TowerSelection)
         this.scene.addChild(this.container, this.scene.Layers.TowerOptions)
 
-        const size = new Vec2(50)
+        const texture = game.assets.TowerOptionsButton
         const buttons = [
             { icon: createUpgradeIcon(0xffeb74, 4), callback: this.emitUpgradeTower },
             { icon: createCrossIcon(0xa20e0e, 4), callback: this.emitRemoveTower },
         ]
         .forEach((data, index) => {
             const angle = Math.PI * 1.9 + index * (Math.PI * 0.32)
-            const button = new OptionsButton(data.icon, size)
+            const button = new OptionsButton(data.icon, texture)
 
-            button.pivot.copyFrom(size.divide(2))
+            button.pivot.x = texture.width / 2
+            button.pivot.y = texture.height / 2
             button.x = Math.cos(angle) * 75
             button.y = Math.sin(angle) * 75
             button.on("click", data.callback)

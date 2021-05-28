@@ -27,7 +27,7 @@ function handleBulletAction(data, scene) {
             pos
         },
         "display": {
-            displayObject: new Sprite(utils.createRectTexture(new Rect(0, 0, 6, 2), 0xffffff)),
+            displayObject: new Sprite(game.assets.Bullet),
         },
         "movement": {
             speed,

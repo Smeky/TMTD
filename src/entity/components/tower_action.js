@@ -130,7 +130,7 @@ export class TowerBeamAttack extends ITowerAction {
 
         // Todo:shader: When we get our filters running, this can be replaced
         //              (there's a bug with this, the first laser places has incorrect pivot.x)
-        this.sprite = new Sprite(utils.createRectTexture(new Rect(0, 0, 4, 1), 0xffffff))
+        this.sprite = new Sprite(game.assets.BeamBase)
         this.sprite.scale.x = 0.5
         this.sprite.pivot.x = Math.round(this.sprite.width / (2 * this.sprite.scale.x))
         this.sprite.tint = 0xff1800
@@ -188,7 +188,7 @@ export class TowerBulletAttack extends ITowerAction {
     setup() {
         super.setup()
 
-        this.bulletTexture = utils.createRectTexture(new Rect(0, 0, 6, 2), 0xffffff)
+        this.bulletTexture = game.assets.Bullet
     }
 
     close() {
