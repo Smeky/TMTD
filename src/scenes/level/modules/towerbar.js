@@ -45,7 +45,7 @@ export default class TowerBar extends IModule {
                     range: 250,
                 },
                 action: {
-                    type: "spawn_projectile",
+                    type: "create_bullet",
                     component: "towerBulletAttack",
                 },
                 base: {

@@ -19,49 +19,35 @@ function handleDamageAction(actionComponent, entity) {
     }
 }
 
-function handleBulletAction(data, scene) {
-    const { pos, angle, speed, range } = data
+function handleBulletAction(actionComponent, entity, scene) {
+    const cmpTower = entity.getComponent("tower")
 
     const components = {
         "transform": {
-            pos
+            pos: cmpTower.getHeadEndPosition()
         },
         "display": {
             displayObject: new Sprite(game.assets.Bullet),
         },
         "movement": {
-            speed,
-            angle,
-            maxDistance: range,
+            speed: 500,
+            angle: cmpTower.getHeadRotation(),
+            maxDistance: actionComponent.range,
             enableFacingDirection: true,
         },
     }
 
-    const entity = scene.entitySystem.createEntity(components)
-    scene.addChild(entity, scene.Layers.Bullets)
+    const bulletEntity = scene.entitySystem.createEntity(components)
+    scene.addChild(bulletEntity, scene.Layers.Bullets)
 
-    entity.on("movement.finished", (entity) => entity.despawn())
-
-    // TowerBulletAttack
-    // trigger() {
-    //     if (this.target) {
-    //         this.handler("create_bullet", { 
-    //             texture: this.bulletTexture,
-    //             source: this.entity,
-    //             pos: this.tower.getHeadEndPosition(),
-    //             angle: this.tower.getHeadRotation(),
-    //             speed: 500,
-    //             range: this.range
-    //         })
-    //     }
-    // }
+    bulletEntity.on("movement.finished", (e) => e.despawn())
 }
 
 function createTowerActionHandler(scene) {
     return (actionType, actionComponent, entity) => {
         switch(actionType) {
             case "direct_damage": handleDamageAction(actionComponent, entity); break;
-            // case "create_bullet": handleBulletAction(actionComponent, entity, scene); break;
+            case "create_bullet": handleBulletAction(actionComponent, entity, scene); break;
             default: new Error("Undefined actionType")
         }
     }
