@@ -107,11 +107,11 @@ export function round(number, decimals = 1) {
  * @param {object} tower        Tower data // Todo: give tower data a type and use it here
  * @param {number} [headAngle]  [optional] Angle of the head sprite   
  */
-// Todo: move me, plase!
+// Todo: Replace be with some proper impl, please!
 export function createTowerDisplay(tower, headAngle = 0) {
     const container = new Container()
-    const baseSprite = new Sprite(tower.base.texture)
-    const headSprite = new Sprite(tower.head.texture)
+    const baseSprite = new Sprite(game.assets[tower.base.textureId])
+    const headSprite = new Sprite(game.assets[tower.head.textureId])
 
     headSprite.position.copyFrom(tower.head.pos.multiply(tower.size))
     headSprite.pivot.copyFrom(tower.head.pivot)

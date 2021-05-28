@@ -60,8 +60,6 @@ export default class TowerManager extends IModule {
         this.container = new Container()
         this.scene.addChild(this.container, this.scene.Layers.TowerBase)
 
-        console.log(Color.fromHex(0xff0000).toHex())
-
         game.on("build_tower", this.onBuildTower)
         game.on("upgrade_tower", this.onUpgradeTower)
         game.on("remove_tower", this.onRemoveTower)
@@ -155,8 +153,10 @@ export default class TowerManager extends IModule {
                 pos: position
             },
             "tower": {
-                base: towerData.base,
-                head: towerData.head,
+                baseSprite: new Sprite(game.assets[towerData.base.textureId]),
+                headSprite: new Sprite(game.assets[towerData.head.textureId]),
+                headPosition: towerData.head.pos,
+                headPivot: towerData.head.pivot
             },
             "stats": {
                 ...towerData.stats

@@ -13,30 +13,25 @@ export default class TowerComponent extends Component {
     constructor(entity, options) {
         super(entity) 
 
-        this.base = options.base
-        this.head = options.head
         this.parent = options.parent || this.entity
+        this.headPosition = options.headPosition || new Vec2(0.5, 0.5)
 
-        const { width, height } = this.base.texture
+        this.baseSprite = options.baseSprite
+        this.headSprite = options.headSprite
+        this.headSprite.zIndex = 5
+
+        if ("headPivot" in options) {
+            this.headSprite.pivot.copyFrom(options.headPivot)
+        }
+
+        this.parent.addChild(this.baseSprite)
+        this.parent.addChild(this.headSprite)
+        
+        const { width, height } = this.baseSprite.getLocalBounds()
         this.size = new Vec2(width, height)
 
         this.data = options.data
         this.level = 1
-
-        this.setupSprites()
-    }
-
-    setupSprites() {
-        const { texture, pivot } = this.head
-
-        this.baseSprite = new Sprite(this.base.texture)
-        
-        this.headSprite = new Sprite(texture)
-        this.headSprite.pivot.copyFrom(pivot)
-        this.headSprite.zIndex = 5
-
-        this.parent.addChild(this.baseSprite)
-        this.parent.addChild(this.headSprite)
     }
 
     setup() {
@@ -44,7 +39,7 @@ export default class TowerComponent extends Component {
 
         this.baseSprite.position.copyFrom(transform.pos)
 
-        const posOnTower = this.head.pos.multiply(this.size)
+        const posOnTower = this.headPosition.multiply(this.size)
         this.headSprite.x = transform.pos.x + posOnTower.x
         this.headSprite.y = transform.pos.y + posOnTower.y
     }

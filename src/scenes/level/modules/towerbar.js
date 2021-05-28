@@ -1,64 +1,11 @@
 import { createTowerDisplay } from "game/utils"
 import IModule from "game/scenes/imodule"
 import { Button } from "game/ui"
-import { Rect, Vec2 } from "game/graphics"
 import { Container } from "pixi.js"
-
-// Todo: get rid of us, please
-const TowerSize = 50 
+import TowerData from "game/data/tower_data"
 
 export default class TowerBar extends IModule {
     static Name = "towerBar"
-
-    async load() {
-        // Temporary
-        this.towers = [
-            {
-                id: 1,
-                name: "The Ancient One",
-                size: new Vec2(TowerSize, TowerSize),
-                stats: {
-                    attackRate: 0.05,
-                    damage: 1,
-                    range: 150,
-                },
-                action: {
-                    type: "direct_damage",
-                    component: "towerBeamAttack",
-                },
-                base: {
-                    texture: game.assets.TowerBase1,
-                },
-                head: {
-                    texture: game.assets.TowerHead1,
-                    pos: new Vec2(0.5), // relative to center
-                    pivot: new Vec2(4, 6),
-                }
-            },
-            {
-                id: 2,
-                name: "Mk Two",
-                size: new Vec2(TowerSize, TowerSize),
-                stats: {
-                    attackRate: 0.3,
-                    damage: 18,
-                    range: 250,
-                },
-                action: {
-                    type: "create_bullet",
-                    component: "towerBulletAttack",
-                },
-                base: {
-                    texture: game.assets.TowerBase2,
-                },
-                head: {
-                    texture: game.assets.TowerHead2,
-                    pos: new Vec2(0.5), // relative to center
-                    pivot: new Vec2(4, 6),
-                }
-            },
-        ]
-    }
 
     setup() { 
         this.selected = -1
@@ -66,7 +13,7 @@ export default class TowerBar extends IModule {
         this.container = new Container()
         this.scene.ui.addChild(this.container, this.scene.ui.Layers.Base)
         
-        this.towers.forEach((tower, index) => {
+        TowerData.forEach((tower, index) => {
             const display = createTowerDisplay(tower, Math.PI * 0.9)
             const button = new Button(display)
             
@@ -119,7 +66,7 @@ export default class TowerBar extends IModule {
     }
 
     getSelectedTower() {
-        return this.towers[this.selected]
+        return TowerData[this.selected]
     }
 
     updateContainerPosition() {
