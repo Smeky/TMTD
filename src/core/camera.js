@@ -1,4 +1,4 @@
-import utils from "game/utils"
+import { createRectTexture } from "game/utils"
 import { Rect, Vec2 } from "game/graphics"
 import { Container, Sprite } from "pixi.js"
 
@@ -23,7 +23,7 @@ export default class Camera extends Container {
         }
 
         this.backgroundSize = new Vec2(10, 10)
-        this.background = new Sprite(utils.createRectTexture(new Rect(0, 0, this.backgroundSize.x, this.backgroundSize.y)))
+        this.background = new Sprite(createRectTexture(new Rect(0, 0, this.backgroundSize.x, this.backgroundSize.y)))
         this.background.scale.x = this.options.size.x / this.backgroundSize.x
         this.background.scale.y = this.options.size.y / this.backgroundSize.y
         this.background.alpha = 0

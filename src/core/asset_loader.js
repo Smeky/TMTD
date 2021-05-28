@@ -1,5 +1,5 @@
 import { Loader } from "pixi.js"
-import utils from "game/utils"
+import { partition, createRectTexture } from "game/utils"
 import { Rect } from "game/graphics"
 
 // How should we properly do this?
@@ -24,7 +24,7 @@ export default class AssetLoader {
     }
 
     async loadAssets(assetList) {
-        const [assetFiles, assetTextures] = utils.partition(assetList, asset => !asset.hasOwnProperty("textureDef"))
+        const [assetFiles, assetTextures] = partition(assetList, asset => !asset.hasOwnProperty("textureDef"))
 
         const files = await this.loadFiles(assetFiles)
         const placeholders = await this.createPlaceholderTextures(assetTextures)
@@ -48,7 +48,7 @@ export default class AssetLoader {
     async createPlaceholderTextures(textureArray) {
         return textureArray.reduce((acc, asset) => {
             const [w, h, color] = asset.textureDef
-            acc[asset.name] = utils.createRectTexture(new Rect(0, 0, w, h), color)
+            acc[asset.name] = createRectTexture(new Rect(0, 0, w, h), color)
 
             return acc
         }, {})

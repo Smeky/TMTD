@@ -1,4 +1,4 @@
-import utils from "game/utils"
+import { createTowerDisplay } from "game/utils"
 import IModule from "game/scenes/imodule"
 import { Button } from "game/ui"
 import { Rect, Vec2 } from "game/graphics"
@@ -67,7 +67,7 @@ export default class TowerBar extends IModule {
         this.scene.ui.addChild(this.container, this.scene.ui.Layers.Base)
         
         this.towers.forEach((tower, index) => {
-            const display = utils.createTowerDisplay(tower, Math.PI * 0.9)
+            const display = createTowerDisplay(tower, Math.PI * 0.9)
             const button = new Button(display)
             
             button.x = 60 * index

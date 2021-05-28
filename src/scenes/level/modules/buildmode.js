@@ -1,4 +1,4 @@
-import utils from "game/utils"
+import { createTowerDisplay } from "game/utils"
 import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
@@ -57,7 +57,7 @@ export default class BuildMode extends IModule {
             this.highlight.parent.removeChild(this.highlight)
         }
 
-        this.highlight = utils.createTowerDisplay(this.selectedTower)
+        this.highlight = createTowerDisplay(this.selectedTower)
         this.highlight.alpha = 0.8
         this.highlight.pivot.copyFrom(this.selectedTower.size.divide(2))
 

@@ -1,4 +1,4 @@
-import utils from "game/utils"
+import { createRectTexture } from "game/utils"
 import { Rect, Vec2 } from "game/graphics"
 import { DisplayObject, Graphics, Sprite } from "pixi.js"
 import { ButtonBase } from "."
@@ -61,7 +61,7 @@ export default class Button extends ButtonBase {
         )
 
         if (this.options.pressedEnabled) {
-            this.sprite.texture = utils.createRectTexture(bounds, 0xffffff)
+            this.sprite.texture = createRectTexture(bounds, 0xffffff)
         }
 
         if (this.options.hoverEnabled) {
