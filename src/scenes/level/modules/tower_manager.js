@@ -1,5 +1,5 @@
 import { IModule } from "game/scenes"
-import { Rect } from "game/graphics"
+import { Color, Rect } from "game/graphics"
 import { Tile } from "game/core"
 import { Container, Sprite } from "pixi.js"
 
@@ -73,6 +73,8 @@ export default class TowerManager extends IModule {
     setup() {
         this.container = new Container()
         this.scene.addChild(this.container, this.scene.Layers.TowerBase)
+
+        console.log(Color.fromHex(0xff0000).toHex())
 
         game.on("build_tower", this.onBuildTower)
         game.on("upgrade_tower", this.onUpgradeTower)
