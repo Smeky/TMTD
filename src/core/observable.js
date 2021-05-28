@@ -1,22 +1,27 @@
-import EventEmitter from "eventemitter3"
 
-// Hacky solution but works
 export default function Observable(v = undefined) {
-    const emitter = new EventEmitter()
     let value = v
+    let callbacks = []
+
+    function runCallbacks() { 
+        callbacks.forEach(cb => cb(value))
+    }
     
     function observable() {
         if (arguments.length > 0) {
             value = arguments[0]
-            emitter.emit("change", value)
+            runCallbacks()
         }
         
         return value
     }
 
-    observable.on = (...args) => emitter.on(...args)
-    observable.once = (...args) => emitter.once(...args)
-    observable.removeListener = (...args) => emitter.removeListener(...args)
+    observable.subscribe = function(cb) { 
+        callbacks.push(cb) 
+    }
+    observable.removeListener = function(cb) { 
+        callbacks = callbacks.filter(other => other !== cb) 
+    }
 
     return observable
 }

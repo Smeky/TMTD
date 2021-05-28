@@ -55,7 +55,7 @@ export default class LevelScene extends SceneBase {
         this.addChild(this.grid, this.Layers.Grid)
 
         this.currency = new Observable(0)
-        this.currency.on("change", value => game.emit("currency_changed", value))
+        this.currency.subscribe(value => game.emit("currency_changed", value))
         
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.handleKeyUp)
