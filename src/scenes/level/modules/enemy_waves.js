@@ -52,6 +52,8 @@ export default class EnemyWaves extends IModule {
         console.log(`Wave ${this.sentWaveCount + 1} finished spawning`)
 
         this.sentWaveCount++
+        this.spawnCooldown.total = Math.max(1.0 - this.sentWaveCount / 100, 0.1)
+
         this.addWave()
     }
 
