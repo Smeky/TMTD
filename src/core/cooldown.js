@@ -9,7 +9,7 @@ export default class Cooldown {
 
     update(delta) {
         this.progress += delta
-        return this.ready()
+        return this.isReady()
     }
 
     stop() {
@@ -25,7 +25,7 @@ export default class Cooldown {
         this.running = true
     }
 
-    ready() {
+    isReady() {
         return this.progress >= this.total
     }
 }

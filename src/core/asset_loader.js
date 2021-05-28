@@ -10,10 +10,18 @@ export const AssetList = [
     { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
     { name: "TowerHead1", textureDef: [8,  35, 0xffff00] }, 
     { name: "TowerHead2", textureDef: [8,  35, 0x999999] }, 
+
+    { name: "EnemyMrPink", textureDef: [16, 16, 0xffc0cb] }, 
+    { name: "EnemyMrBlonde", textureDef: [16, 16, 0xfaf0be] }, 
+    { name: "EnemyMrOrange", textureDef: [16, 16, 0xffa500] }, 
+    { name: "EnemyMrWhite", textureDef: [16, 16, 0xffffff] }, 
+    { name: "EnemyMrBrown", textureDef: [16, 16, 0x964b00] }, 
+    { name: "EnemyEddie", textureDef: [16, 16, 0xadd8e6] }, 
+    { name: "EnemyJoeCabot", textureDef: [16, 16, 0x9370db] }, 
+    
     { name: "HealthBar", textureDef: [20, 4,  0xff0000] }, 
     { name: "BeamBase", textureDef: [4,  1,  0xffffff] }, 
     { name: "Bullet", textureDef: [6,  2,  0xffffff] }, 
-    { name: "EnemyBase", textureDef: [16, 16, 0xffffff] }, 
 
     { name: "TowerOptionsButton", textureDef: [50, 50, 0xffffff] },
 ]

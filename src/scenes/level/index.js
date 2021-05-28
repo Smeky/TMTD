@@ -12,7 +12,6 @@ import {
     TowerOptions, 
     TowerManager, 
     CurrencyDisplay, 
-    DamageModule,
 } from "./modules"
 
 const SceneLayers = {
@@ -26,6 +25,7 @@ const SceneLayers = {
     BuildmodeTiles: 50,
     BuildmodeHighlight: 51,
     
+    EnemyHealthBar: 53,
     TowerOptions: 55,
 }
 
@@ -36,8 +36,7 @@ const UILayers = {
 export default class LevelScene extends SceneBase {
     static Name = "level"
     static Modules = [ 
-        EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, 
-        DamageModule
+        EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay
     ]
 
     constructor() {

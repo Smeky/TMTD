@@ -10,7 +10,6 @@ export default class HealthComponent extends Component {
      * @param {Entity} entity 
      * @param {object} options 
      * @param {number} options.maximum   maximum amount of health
-     * @param {number} options.armor     0-1, 1 as total immunity
      * @param {number} [options.current] [optional] current amount of health
      * @param {number} [options.parent] [optional] parent for the displayObject. Otherwise falls under Entity
      */
@@ -19,7 +18,6 @@ export default class HealthComponent extends Component {
 
         this.useStatsComponent = options.useStatsComponent || false
         this.maximum = options.maximum || 0
-        this.armor = options.armor || 0
         this.current = options.current || this.maximum
         this.parent = options.parent || this.entity
         
@@ -74,7 +72,7 @@ export default class HealthComponent extends Component {
      * @returns {boolean} returns true if new health <= 0, false otherwise
      */
     reduce(value) {
-        this.current -= value * (1 - this.armor)
+        this.current -= value
 
         if (this.current <= 0) {
             this.current = 0

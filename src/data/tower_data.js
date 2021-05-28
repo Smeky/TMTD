@@ -1,4 +1,4 @@
-import { Rect, Vec2 } from "game/graphics"
+import { Vec2 } from "game/graphics"
 
 // Todo: get rid of us, please
 const TowerSize = 50 
