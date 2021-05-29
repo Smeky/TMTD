@@ -69,7 +69,7 @@ export class ITowerAction extends Component {
     }
 
     findTarget() {
-        const entities = this.entity.entities.getEntitiesInRadius(this.transform.pos, this.range, "enemy")
+        const entities = this.entity.entitySystem.getEntitiesInRadius(this.transform.pos, this.range, "enemy")
         const closest = entities.reduce((winner, entity) => {
             const distance = this.transform.pos.distance(entity.getComponent("transform").pos)
 

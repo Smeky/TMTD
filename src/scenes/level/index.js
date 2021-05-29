@@ -89,15 +89,15 @@ export default class LevelScene extends SceneBase {
         // Put down some towers right away
         const placements = [
             new Vec2(160, 64),
-            new Vec2(160, 160),
-            new Vec2(32, 160),
-            new Vec2(320, 128),
-            new Vec2(288, 32),
-            new Vec2(128, 256),
-            new Vec2(288, 256),
-            new Vec2(416, 224),
+            // new Vec2(160, 160),
+            // new Vec2(32, 160),
+            // new Vec2(320, 128),
+            // new Vec2(288, 32),
+            // new Vec2(128, 256),
+            // new Vec2(288, 256),
+            // new Vec2(416, 224),
         ].forEach((pos, index) => {
-            game.emit("build_tower", { pos, tower: TowerData[index % TowerData.length] })
+            game.emit("build_tower", { pos, tower: TowerData[1] })
         })
 
         // Calculate path

@@ -1,3 +1,5 @@
+import { Vec2 } from "."
+
 /** Rect class represents both 2D position and size */
 export default class Rect {
     /**

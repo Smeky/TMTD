@@ -31,7 +31,7 @@ export default [
         name: "Mk Two",
         size: new Vec2(TowerSize, TowerSize),
         stats: {
-            attackRate: 0.3,
+            attackRate: 1,
             damage: 18,
             range: 250,
         },

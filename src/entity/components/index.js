@@ -7,6 +7,7 @@ import TowerComponent from "./tower"
 import StatsComponent from "./stats"
 import PathFollowerComponent from "./path_follower"
 import OnClickComponent from "./on_click"
+import CollideableComponent from "./collideable"
 import { TowerBeamAttack, TowerBulletAttack } from "./tower_action"
 
 export default {
@@ -18,6 +19,7 @@ export default {
     "stats":     StatsComponent,
     "pathFollower": PathFollowerComponent,
     "onClick":   OnClickComponent,
+    "collideable": CollideableComponent,
 
     "towerBeamAttack": TowerBeamAttack,
     "towerBulletAttack": TowerBulletAttack,

@@ -1,20 +1,21 @@
 import Components from "./components"
 import { Container } from "pixi.js"
+import { EntitySystem } from "."
 
 export default class Entity extends Container {
     /**
      * 
      * @param {*} id 
-     * @param {Entities[]} entities 
+     * @param {EntitySystem} entitySystem 
      * @param {string|string[]} [tags]
      */
-    constructor(id, entities, tags) {
+    constructor(id, entitySystem, tags) {
         super()
 
         this.sortableChildren = true
 
         this.id = id
-        this.entities = entities
+        this.entitySystem = entitySystem
         this.components = []
         this.tags = Array.isArray(tags) ? [...tags] : [tags]
 

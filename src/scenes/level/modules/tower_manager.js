@@ -35,12 +35,36 @@ function handleBulletAction(actionComponent, entity, scene) {
             maxDistance: actionComponent.range,
             enableFacingDirection: true,
         },
+        "collideable": {
+            radius: Math.max(game.assets.Bullet.width, game.assets.Bullet.height),
+            static: false,
+            ignoreTags: ["bullet"],
+            onHit: (bulletEntity, targetEntity) => {
+                bulletEntity.despawn()
+
+                if (targetEntity.hasTag("enemy")) {
+                    handleDamageAction(actionComponent)
+                }
+            }
+        },
+        // "entityCollision": {
+        //     radial: true,
+        //     targetFlags: ["enemy"]
+        // }
     }
 
-    const bulletEntity = scene.entitySystem.createEntity(components)
+    const bulletEntity = scene.entitySystem.createEntity(components, "bullet")
     scene.addChild(bulletEntity, scene.Layers.Bullets)
 
     bulletEntity.on("movement.finished", (e) => e.despawn())
+}
+
+function handleBulletHit(bulletEntity, targetEntity) {
+    bulletEntity.despawn()
+
+    if (targetEntity.hasTag("enemy")) {
+
+    }
 }
 
 function createTowerActionHandler(scene) {

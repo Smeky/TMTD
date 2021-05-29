@@ -85,13 +85,14 @@ export default class EnemyWaves extends IModule {
 
     getEnemyComponents(enemyData) {
         const { textureId, speed, health } = enemyData
+        const texture = game.assets[textureId]
 
         return {
             "transform": {
                 pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
-                displayObject: new Sprite(game.assets[textureId]),
+                displayObject: new Sprite(texture),
             },
             "movement": {
                 speed,
@@ -102,6 +103,10 @@ export default class EnemyWaves extends IModule {
             "health": {
                 maximum: health,
                 parent: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
+            },
+            "collideable": {
+                radius: Math.max(texture.width, texture.height) / 2,
+                static: true,
             }
         }
     }

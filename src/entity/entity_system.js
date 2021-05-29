@@ -84,6 +84,10 @@ export default class EntitySystem {
         return this.entities.length
     }
 
+    getEntities() {
+        return this.entities
+    }
+
     /**
      * 
      * @param {Vec2} pos 
@@ -93,16 +97,28 @@ export default class EntitySystem {
     getEntitiesInRadius(pos, radius, tag) {
         return this.entities.filter((entity) => {
             if (tag && !entity.hasTag(tag)) {
-                return
+                return false
             }
             
+            const { width, height } = entity.getLocalBounds()
             const transform = entity.getComponent("transform")
     
             if (transform) {
+                const relative = pos.subtract(transform.pos)
+
                 return transform.pos.distance(pos) <= radius
             }
 
             return false
         })
     }
+}
+
+export function filterEntitiesByTags(tags) {
+    tags = Array.isArray(tags) ? [...tags] : [tags]
+    return (entity) => tags.some((tag) => entity.hasTag(tag))
+}
+
+export function filterEntitiesByComponent(name) {
+    return (entity) => entity.hasComponent(name)
 }
