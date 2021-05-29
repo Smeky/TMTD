@@ -104,9 +104,9 @@ export default class EntitySystem {
             const transform = entity.getComponent("transform")
     
             if (transform) {
-                const relative = pos.subtract(transform.pos)
+                const relative = pos.subtract(transform.position)
 
-                return transform.pos.distance(pos) <= radius
+                return transform.position.distance(pos) <= radius
             }
 
             return false

@@ -43,8 +43,8 @@ export default class DisplayComponent extends Component {
 
     updatePosition() {
         if (this.displayObject  && this.transform) {
-            this.displayObject.x = this.transform.pos.x
-            this.displayObject.y = this.transform.pos.y
+            this.displayObject.x = this.transform.position.x
+            this.displayObject.y = this.transform.position.y
         }
     }
 

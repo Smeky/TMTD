@@ -113,7 +113,7 @@ export function createTowerDisplay(tower, headAngle = 0) {
     const baseSprite = new Sprite(game.assets[tower.base.textureId])
     const headSprite = new Sprite(game.assets[tower.head.textureId])
 
-    headSprite.position.copyFrom(tower.head.pos.multiply(tower.size))
+    headSprite.position.copyFrom(tower.head.position.multiply(tower.size))
     headSprite.pivot.copyFrom(tower.head.pivot)
     headSprite.rotation = headAngle
 
@@ -128,4 +128,8 @@ export function partition(array, validateFunc) {
     return array.reduce(([pass, fail], item) => {
         return validateFunc(item) ? [[...pass, item], fail] : [pass, [...fail, item]];
     }, [[], []]);
+}
+
+export function intersects(first, second) {
+    return first.some(e => second.includes(e))
 }

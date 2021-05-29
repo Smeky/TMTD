@@ -61,8 +61,8 @@ export default class HealthComponent extends Component {
         this.sprite.width = this.maxWidth * (this.current / this.maximum)
 
         if (this.transform) {
-            this.sprite.x = this.transform.pos.x - this.maxWidth / 2
-            this.sprite.y = this.transform.pos.y
+            this.sprite.x = this.transform.position.x - this.maxWidth / 2
+            this.sprite.y = this.transform.position.y
         }
     }
 

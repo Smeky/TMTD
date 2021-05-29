@@ -47,15 +47,15 @@ export default class MovementComponent extends Component {
         if (this.movedDistance + deltaSpeed >= this.maxDistance) {
             const diff = this.maxDistance - this.movedDistance
 
-            this.transform.pos.x += this.velocity.x * (delta * diff / this.movedDistance)
-            this.transform.pos.y += this.velocity.y * (delta * diff / this.movedDistance)
+            this.transform.position.x += this.velocity.x * (delta * diff / this.movedDistance)
+            this.transform.position.y += this.velocity.y * (delta * diff / this.movedDistance)
 
             deltaSpeed = this.maxDistance - this.movedDistance
             finished = true
         }
         else {
-            this.transform.pos.x += this.velocity.x * delta
-            this.transform.pos.y += this.velocity.y * delta
+            this.transform.position.x += this.velocity.x * delta
+            this.transform.position.y += this.velocity.y * delta
         }
 
         this.movedDistance += deltaSpeed
@@ -66,8 +66,8 @@ export default class MovementComponent extends Component {
     }
 
     setTargetPosition(pos) {
-        this.maxDistance = this.movedDistance + this.transform.pos.distance(pos)
-        this.angle = this.transform.pos.angle(pos)
+        this.maxDistance = this.movedDistance + this.transform.position.distance(pos)
+        this.angle = this.transform.position.angle(pos)
         
         if (this.enableFacingDirection) {
             this.display.setRotation(this.angle)
@@ -82,7 +82,7 @@ export default class MovementComponent extends Component {
     }
 
     moveTowardsAngle(speed, angle) {
-        this.transform.pos.x += Math.cos(angle) * speed
-        this.transform.pos.y += Math.sin(angle) * speed
+        this.transform.position.x += Math.cos(angle) * speed
+        this.transform.position.y += Math.sin(angle) * speed
     }
 }

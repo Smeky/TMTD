@@ -53,7 +53,7 @@ export class ITowerAction extends Component {
             this.findTarget()
         }
         else {
-            const distance = this.transform.pos.distance(this.target.getComponent("transform").pos)
+            const distance = this.transform.position.distance(this.target.getComponent("transform").position)
 
             if(distance > this.range) {
                 this.clearTarget()
@@ -69,9 +69,9 @@ export class ITowerAction extends Component {
     }
 
     findTarget() {
-        const entities = this.entity.entitySystem.getEntitiesInRadius(this.transform.pos, this.range, "enemy")
+        const entities = this.entity.entitySystem.getEntitiesInRadius(this.transform.position, this.range, "enemy")
         const closest = entities.reduce((winner, entity) => {
-            const distance = this.transform.pos.distance(entity.getComponent("transform").pos)
+            const distance = this.transform.position.distance(entity.getComponent("transform").position)
 
             if (!winner.entity) {
                 winner.entity = entity
@@ -114,8 +114,8 @@ export class ITowerAction extends Component {
             return 0
         }
 
-        const targetPos = this.target.getComponent("transform").pos
-        const center = this.transform.pos.add(this.tower.size.divide(2))
+        const targetPos = this.target.getComponent("transform").position
+        const center = this.transform.position.add(this.tower.size.divide(2))
 
         return center.angle(targetPos)
     }
@@ -166,7 +166,7 @@ export class TowerBeamAttack extends ITowerAction {
 
     updateSprite() {
         const fromPos = this.tower.getHeadEndPosition()
-        const targetPos = this.target.getComponent("transform").pos
+        const targetPos = this.target.getComponent("transform").position
 
         this.sprite.position.copyFrom(fromPos)
         this.sprite.height = fromPos.distance(targetPos)

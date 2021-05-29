@@ -73,7 +73,7 @@ export default class TowerOptions extends IModule {
                 const cmpTranform = entity.getComponent("transform")
                 const cmpTower = entity.getComponent("tower")
     
-                const center = cmpTranform.pos.add(cmpTower.size.divide(2))
+                const center = cmpTranform.position.add(cmpTower.size.divide(2))
                 this.container.position.copyFrom(center)
             }
     }

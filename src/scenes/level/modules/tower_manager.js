@@ -24,7 +24,7 @@ function handleBulletAction(actionComponent, entity, scene) {
 
     const components = {
         "transform": {
-            pos: cmpTower.getHeadEndPosition()
+            position: cmpTower.getHeadEndPosition()
         },
         "display": {
             displayObject: new Sprite(game.assets.Bullet),
@@ -47,24 +47,12 @@ function handleBulletAction(actionComponent, entity, scene) {
                 }
             }
         },
-        // "entityCollision": {
-        //     radial: true,
-        //     targetFlags: ["enemy"]
-        // }
     }
 
     const bulletEntity = scene.entitySystem.createEntity(components, "bullet")
     scene.addChild(bulletEntity, scene.Layers.Bullets)
 
     bulletEntity.on("movement.finished", (e) => e.despawn())
-}
-
-function handleBulletHit(bulletEntity, targetEntity) {
-    bulletEntity.despawn()
-
-    if (targetEntity.hasTag("enemy")) {
-
-    }
 }
 
 function createTowerActionHandler(scene) {
@@ -160,7 +148,7 @@ export default class TowerManager extends IModule {
     onRemoveTower = (entityId) => {
         const entity = this.scene.entitySystem.getEntityById(entityId)
 
-        const pos = entity.getComponent("transform").pos
+        const pos = entity.getComponent("transform").position
         const snapped = this.scene.grid.snapPosToTile(pos)
         const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
         const tiles = this.scene.grid.getTilesByBounds(bounds)
@@ -174,12 +162,12 @@ export default class TowerManager extends IModule {
     getTowerComponents(towerData, position) {
         const components = {
             "transform": {
-                pos: position
+                position
             },
             "tower": {
                 baseSprite: new Sprite(game.assets[towerData.base.textureId]),
                 headSprite: new Sprite(game.assets[towerData.head.textureId]),
-                headPosition: towerData.head.pos,
+                headPosition: towerData.head.position,
                 headPivot: towerData.head.pivot
             },
             "stats": {

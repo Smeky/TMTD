@@ -22,7 +22,7 @@ export default [
         },
         head: {
             textureId: "TowerHead1",
-            pos: new Vec2(0.5), // relative to center
+            position: new Vec2(0.5), // relative to center
             pivot: new Vec2(4, 6),
         }
     },
@@ -44,7 +44,7 @@ export default [
         },
         head: {
             textureId: "TowerHead2",
-            pos: new Vec2(0.5), // relative to center
+            position: new Vec2(0.5), // relative to center
             pivot: new Vec2(4, 6),
         }
     },

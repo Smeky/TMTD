@@ -6,11 +6,11 @@ export default class TransformComponent extends Component {
      * 
      * @param {Entity} entity 
      * @param {object} options 
-     * @param {Vec2}   [options.pos] [optional] position
+     * @param {Vec2}   [options.position] [optional] position
      */
     constructor(entity, options) {
         super(entity) 
 
-        this.pos = options.pos || new Vec2(0, 0)
+        this.position = options.position || new Vec2(0, 0)
     }
 }

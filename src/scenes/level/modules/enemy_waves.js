@@ -89,7 +89,7 @@ export default class EnemyWaves extends IModule {
 
         return {
             "transform": {
-                pos: new Vec2(3 * Tile.Size, 2 * Tile.Size)
+                position: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
             "display": {
                 displayObject: new Sprite(texture),

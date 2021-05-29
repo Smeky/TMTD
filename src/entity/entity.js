@@ -90,4 +90,9 @@ export default class Entity extends Container {
     hasTag(tag) {
         return this.tags.includes(tag)
     }
+
+    getOtherEntities() {
+        const filter = (entity) => entity.id !== this.id
+        return this.entitySystem.getEntities().filter(filter)
+    }
 }

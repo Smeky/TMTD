@@ -37,11 +37,11 @@ export default class TowerComponent extends Component {
     setup() {
         const transform = this.entity.ensureComponent("transform")
 
-        this.baseSprite.position.copyFrom(transform.pos)
+        this.baseSprite.position.copyFrom(transform.position)
 
         const posOnTower = this.headPosition.multiply(this.size)
-        this.headSprite.x = transform.pos.x + posOnTower.x
-        this.headSprite.y = transform.pos.y + posOnTower.y
+        this.headSprite.x = transform.position.x + posOnTower.x
+        this.headSprite.y = transform.position.y + posOnTower.y
     }
 
     close() {

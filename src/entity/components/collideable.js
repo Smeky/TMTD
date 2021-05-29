@@ -1,6 +1,7 @@
 import { Rect } from "game/graphics"
+import { intersects } from "game/utils"
 import { Component } from "."
-import { filterEntitiesByComponent, filterEntitiesByTags } from "../entity_system"
+import { filterEntitiesByComponent } from "../entity_system"
 
 export default class CollideableComponent extends Component {
     constructor(entity, options) {
@@ -22,11 +23,10 @@ export default class CollideableComponent extends Component {
 
     update(delta) {
         if (!this.static) {
-            let entities = this.entity.entitySystem.getEntities()
+            let entities = this.entity.getOtherEntities()
 
-            entities = entities.filter(e => e.id !== this.entity.id)
             entities = entities.filter(filterEntitiesByComponent("collideable"))
-            entities = entities.filter(e => !this.ignoreTags.some(tag => e.tags.includes(tag)))
+            entities = entities.filter(e => !intersects(this.ignoreTags, e.tags))
             
             if (entities.length > 0) {
                 const [myCenter, _] = this.getEntityCenterAndRadius(this.entity)
@@ -46,7 +46,7 @@ export default class CollideableComponent extends Component {
 
     getEntityCenterAndRadius(entity) {
         const { width, height } = entity.getLocalBounds()
-        const position = entity.getComponent("transform").pos
+        const position = entity.getComponent("transform").position
         const radius = entity.getComponent("collideable").radius
 
         return [new Rect(position.x, position.y, width, height).center(), radius]
