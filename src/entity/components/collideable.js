@@ -12,7 +12,6 @@ export default class CollideableComponent extends Component {
 
         this.radius = options.radius ?? 0
         this.static = options.static ?? true
-        this.ignoreTags = options.ignoreTags || []
         this.onHit = options.onHit
 
         if (this.radius <= 0) {
@@ -25,7 +24,7 @@ export default class CollideableComponent extends Component {
             let entities = this.entity.getOtherEntities()
 
             entities = entities.filter(filterEntitiesByComponent("Collideable"))
-            entities = entities.filter(e => !intersects(this.ignoreTags, e.tags))
+            entities = entities.filter(target => !intersects(target.tags, this.entity.tags))
             
             if (entities.length > 0) {
                 const [myCenter, _] = this.getEntityCenterAndRadius(this.entity)

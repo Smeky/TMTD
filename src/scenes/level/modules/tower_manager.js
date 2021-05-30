@@ -39,7 +39,6 @@ function handleBulletAction(source, target, createEntity) {
         "Collideable": {
             radius: Math.max(game.assets.Bullet.width, game.assets.Bullet.height),
             static: false,
-            ignoreTags: ["bullet"],
             onHit: (bulletEntity, targetEntity) => {
                 bulletEntity.despawn()
 
