@@ -24,6 +24,7 @@ export default class HealthComponent extends Component {
         this.maximum = options.maximum || 0
         this.current = options.current || this.maximum
         this.parent = options.parent || this.entity
+        this.onZeroHealth = options.onZeroHealth || null
         
         this.maxWidth = 0
         this.sprite = new Sprite(game.assets.HealthBar)
@@ -72,7 +73,11 @@ export default class HealthComponent extends Component {
 
         if (this.current <= 0) {
             this.current = 0
-            this.entity.emit("entity_health_zero")
+
+            if (this.onZeroHealth) {
+                this.onZeroHealth(this.entity)
+            }
+            
             return true
         }
 

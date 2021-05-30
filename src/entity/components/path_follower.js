@@ -8,17 +8,14 @@ export default class PathFollowerComponent extends Component {
         super(entity)
 
         this.path = [...options.path]
+        this.onFinished = options.onFinished || null
     }
 
     setup() {
         this.shiftPathPosition()
-        this.entity.on("movement.finished", this.onMovementFinished)
+        this.dependencies.Movement.onFinished = this.onMovementFinished
     }
-
-    close() {
-        this.entity.removeListener("movement.finished", this.onMovementFinished)
-    }
-
+    
     update(delta) {
 
     }
@@ -28,8 +25,8 @@ export default class PathFollowerComponent extends Component {
     }
 
     onMovementFinished = () => {
-        if (this.path.length === 0) {
-            this.entity.emit("path_follower.finished")
+        if (this.path.length === 0 && this.onFinished) {
+            this.onFinished(this.entity)
         }
         else {
             this.shiftPathPosition()

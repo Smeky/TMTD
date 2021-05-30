@@ -34,6 +34,7 @@ function handleBulletAction(actionComponent, entity, scene) {
             angle: cmpTower.getHeadRotation(),
             maxDistance: actionComponent.range,
             enableFacingDirection: true,
+            onFinished: (entity) => entity.despawn()
         },
         "Collideable": {
             radius: Math.max(game.assets.Bullet.width, game.assets.Bullet.height),
@@ -51,8 +52,6 @@ function handleBulletAction(actionComponent, entity, scene) {
 
     const bulletEntity = scene.entitySystem.createEntity(components, "bullet")
     scene.addChild(bulletEntity, scene.Layers.Bullets)
-
-    bulletEntity.on("movement.finished", (e) => e.despawn())
 }
 
 function createTowerActionHandler(scene) {

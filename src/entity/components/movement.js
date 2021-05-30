@@ -21,6 +21,8 @@ export default class MovementComponent extends Component {
 
         this.speed = options.speed || 0
         this.angle = options.angle || 0
+        this.onFinished = options.onFinished || null
+
         this.velocity = new Vec2()
 
         this.movedDistance = 0
@@ -61,8 +63,8 @@ export default class MovementComponent extends Component {
 
         this.movedDistance += deltaSpeed
 
-        if (finished) {
-            this.entity.emit("movement.finished")
+        if (finished && this.onFinished) {
+            this.onFinished(this.entity)
         }
     }
 

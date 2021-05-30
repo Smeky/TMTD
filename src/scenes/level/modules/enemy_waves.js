@@ -78,9 +78,6 @@ export default class EnemyWaves extends IModule {
         const entity = this.scene.entitySystem.createEntity(components, "enemy")
         
         this.scene.addChild(entity, this.scene.Layers.TowerBase)
-
-        entity.on("path_follower.finished", (entity) => entity.despawn())
-        entity.on("entity_health_zero", (entity) => entity.despawn())
     }
 
     getEnemyComponents(enemyData) {
@@ -99,10 +96,12 @@ export default class EnemyWaves extends IModule {
             },
             "PathFollower": {
                 path: this.scene.path,
+                onFinished: (entity) => entity.despawn()
             },
             "Health": {
                 maximum: health,
                 parent: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
+                onZeroHealth: (entity) => entity.despawn()
             },
             "Collideable": {
                 radius: Math.max(texture.width, texture.height) / 2,
