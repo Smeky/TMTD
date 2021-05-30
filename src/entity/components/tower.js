@@ -1,8 +1,11 @@
 import { Vec2 } from "game/graphics"
-import { DisplayObject, Sprite } from "pixi.js"
+import { DisplayObject } from "pixi.js"
 import { Component } from "."
 
 export default class TowerComponent extends Component {
+    static ComponentName = "Tower"
+    static Dependencies = { required: ["Transform"] }
+
     /**
      * 
      * @param {Entity}        entity 
@@ -35,13 +38,13 @@ export default class TowerComponent extends Component {
     }
 
     setup() {
-        const transform = this.entity.ensureComponent("transform")
+        const cmpTransform = this.dependencies.Transform
 
-        this.baseSprite.position.copyFrom(transform.position)
+        this.baseSprite.position.copyFrom(cmpTransform.position)
 
         const posOnTower = this.headPosition.multiply(this.size)
-        this.headSprite.x = transform.position.x + posOnTower.x
-        this.headSprite.y = transform.position.y + posOnTower.y
+        this.headSprite.x = cmpTransform.position.x + posOnTower.x
+        this.headSprite.y = cmpTransform.position.y + posOnTower.y
     }
 
     close() {

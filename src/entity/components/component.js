@@ -2,7 +2,7 @@
 export default class Component {
     constructor(entity, options) {
         this.entity = entity
-        this.name = null
+        this.dependencies = {}
     }
 
     setup() {}
@@ -10,6 +10,10 @@ export default class Component {
 
     update(delta) {}
     postUpdate() {}
+
+    setDependencyComponents(dependencies) {
+        this.dependencies = { ...dependencies }
+    }
 
     setName(name) { this.name = name }
 }

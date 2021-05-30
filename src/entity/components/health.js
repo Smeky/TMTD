@@ -1,10 +1,14 @@
-import utils from "game/utils"
-import { Rect } from "game/graphics"
 import { Sprite } from "pixi.js"
 import { Entity } from ".."
 import { Component } from "."
 
 export default class HealthComponent extends Component {
+    static ComponentName = "Health"
+    static Dependencies = { 
+        required: ["Transform"],
+        optional: ["Display", "Stats"]
+    }
+
     /**
      * 
      * @param {Entity} entity 
@@ -27,18 +31,13 @@ export default class HealthComponent extends Component {
     }
 
     setup() {
-        this.transform = this.entity.ensureComponent("transform")
-
         if (this.useStatsComponent) {
-            this.stats = this.entity.ensureComponent("stats")
-            this.maximum = this.stats.current.health
+            this.maximum = this.dependencies.Stats.current.health
             this.current = this.current
         }
 
-        const display = this.entity.getComponent("display")
-
-        if (display) {
-            const {width, height} = display.displayObject.getLocalBounds()
+        if (this.dependencies.Display) {
+            const {width, height} = this.dependencies.Display.displayObject.getLocalBounds()
             
             this.sprite.width = width + width / 2.5
             this.sprite.pivot.y = height / 2 + 10
@@ -59,11 +58,8 @@ export default class HealthComponent extends Component {
 
     updateBar() {
         this.sprite.width = this.maxWidth * (this.current / this.maximum)
-
-        if (this.transform) {
-            this.sprite.x = this.transform.position.x - this.maxWidth / 2
-            this.sprite.y = this.transform.position.y
-        }
+        this.sprite.x = this.dependencies.Transform.position.x - this.maxWidth / 2
+        this.sprite.y = this.dependencies.Transform.position.y
     }
 
     /**

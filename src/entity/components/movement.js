@@ -2,6 +2,12 @@ import { Vec2 } from "game/graphics"
 import { Component } from "."
 
 export default class MovementComponent extends Component {
+    static ComponentName = "Movement"
+    static Dependencies = { 
+        required: ["Transform"],
+        optional: ["Stats", "Display"]
+    }
+
     /**
      * 
      * @param {Entity} entity 
@@ -24,21 +30,16 @@ export default class MovementComponent extends Component {
     }
 
     setup() {
-        this.transform = this.entity.ensureComponent("transform")
-
-        if (this.useStatsComponent) {
-            this.stats = this.entity.ensureComponent("stats")
-        }
-
         if (this.enableFacingDirection) {
-            this.display = this.entity.ensureComponent("display")        
-            this.display.setRotation(this.angle)
+            this.dependencies.Display.setRotation(this.angle)
         }
     }
 
     update(delta) {
+        const { Transform: cmpTransform, Stats: cmpStats } = this.dependencies
+
         if (this.useStatsComponent) {
-            this.speed = this.stats.current.movementSpeed
+            this.speed = cmpStats.current.movementSpeed
         }
 
         let finished = false
@@ -47,15 +48,15 @@ export default class MovementComponent extends Component {
         if (this.movedDistance + deltaSpeed >= this.maxDistance) {
             const diff = this.maxDistance - this.movedDistance
 
-            this.transform.position.x += this.velocity.x * (delta * diff / this.movedDistance)
-            this.transform.position.y += this.velocity.y * (delta * diff / this.movedDistance)
+            cmpTransform.position.x += this.velocity.x * (delta * diff / this.movedDistance)
+            cmpTransform.position.y += this.velocity.y * (delta * diff / this.movedDistance)
 
             deltaSpeed = this.maxDistance - this.movedDistance
             finished = true
         }
         else {
-            this.transform.position.x += this.velocity.x * delta
-            this.transform.position.y += this.velocity.y * delta
+            cmpTransform.position.x += this.velocity.x * delta
+            cmpTransform.position.y += this.velocity.y * delta
         }
 
         this.movedDistance += deltaSpeed
@@ -66,11 +67,13 @@ export default class MovementComponent extends Component {
     }
 
     setTargetPosition(pos) {
-        this.maxDistance = this.movedDistance + this.transform.position.distance(pos)
-        this.angle = this.transform.position.angle(pos)
+        const { Transform: cmpTransform, Display: cmpDisplay } = this.dependencies
+
+        this.maxDistance = this.movedDistance + cmpTransform.position.distance(pos)
+        this.angle = cmpTransform.position.angle(pos)
         
         if (this.enableFacingDirection) {
-            this.display.setRotation(this.angle)
+            cmpDisplay.setRotation(this.angle)
         }
 
         this.updateVelocity()
@@ -82,7 +85,7 @@ export default class MovementComponent extends Component {
     }
 
     moveTowardsAngle(speed, angle) {
-        this.transform.position.x += Math.cos(angle) * speed
-        this.transform.position.y += Math.sin(angle) * speed
+        this.dependencies.Transform.position.x += Math.cos(angle) * speed
+        this.dependencies.Transform.position.y += Math.sin(angle) * speed
     }
 }

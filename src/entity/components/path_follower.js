@@ -1,6 +1,9 @@
 import { Component } from "."
 
 export default class PathFollowerComponent extends Component {
+    static ComponentName = "PathFollower"
+    static Dependencies = { required: ["Movement"] }
+
     constructor(entity, options) {
         super(entity)
 
@@ -8,11 +11,7 @@ export default class PathFollowerComponent extends Component {
     }
 
     setup() {
-        this.transform = this.entity.ensureComponent("transform")
-        this.movement = this.entity.ensureComponent("movement")
-
         this.shiftPathPosition()
-
         this.entity.on("movement.finished", this.onMovementFinished)
     }
 
@@ -25,7 +24,7 @@ export default class PathFollowerComponent extends Component {
     }
 
     shiftPathPosition() {
-        this.movement.setTargetPosition(this.path.shift())
+        this.dependencies.Movement.setTargetPosition(this.path.shift())
     }
 
     onMovementFinished = () => {

@@ -4,6 +4,9 @@ import { Entity } from ".."
 import { Component } from "."
 
 export default class DisplayComponent extends Component {
+    static ComponentName = "Display"
+    static Dependencies = { optional: ["Transform"] }
+
     /**
      * 
      * @param {Entity} entity 
@@ -15,7 +18,6 @@ export default class DisplayComponent extends Component {
     constructor(entity, options) {
         super(entity) 
 
-        this.transform = null
         this.displayObject = null
 
         this.parent = options.parent || this.entity
@@ -27,7 +29,6 @@ export default class DisplayComponent extends Component {
     }
 
     setup() {
-        this.transform = this.entity.getComponent("transform")
         this.updatePosition()
     }
 
@@ -42,9 +43,8 @@ export default class DisplayComponent extends Component {
     }
 
     updatePosition() {
-        if (this.displayObject  && this.transform) {
-            this.displayObject.x = this.transform.position.x
-            this.displayObject.y = this.transform.position.y
+        if (this.displayObject  && this.dependencies.Transform) {
+            this.displayObject.position.copyFrom(this.dependencies.Transform.position)
         }
     }
 

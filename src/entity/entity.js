@@ -1,4 +1,4 @@
-import Components from "./components"
+import { Components } from "./components"
 import { Container } from "pixi.js"
 import { EntitySystem } from "."
 
@@ -42,19 +42,22 @@ export default class Entity extends Container {
         const Component = Components[name]
 
         if (!Component) {
-            throw `Invalid component name "${name}"`
+            throw new Error(`Invalid component name "${name}"`)
         }
 
-        const len = this.components.push(new Component(this, options))
-        this.components[len - 1].setName(name)
+        this.components.push(new Component(this, options))
     }
 
     removeComponent(name) {
         // Todo
     }
 
-    getComponent(name) {
-        return this.components.find(c => c.name === name)   
+    getComponent(name) { 
+        return this.components.find(cmp => cmp.constructor.ComponentName === name) 
+    }
+    // It's important to return components in the same order as the names array
+    getComponents(names) { 
+        return names.map(name => this.getComponent(name)) 
     }
 
     ensureComponent(name) {
@@ -68,10 +71,35 @@ export default class Entity extends Container {
     }
 
     hasComponent(name) {
-        return this.components.some(c => c.name === name)
+        return this.components.some(cmp => cmp.constructor.ComponentName === name)
     }
 
     setupComponents() {
+
+        {   // Setup components' dependencies
+            for (const component of this.components) {
+                const dependencies = component.constructor.Dependencies
+                if (!dependencies) continue
+
+                let requiredCmps = dependencies.required ? this.getComponents(dependencies.required) : []
+                let optionalCmps = dependencies.optional ? this.getComponents(dependencies.optional) : []
+
+                optionalCmps = optionalCmps.filter(cmp => !!cmp)
+                requiredCmps.forEach((cmp, index) => {
+                    if (!cmp) {
+                        throw new Error(`Missing component dependency "${dependencies.required[index]}" for "${component.constructor.ComponentName}"`)
+                    }
+                })
+
+                const dependencyRefs = [...requiredCmps, ...optionalCmps].reduce((acc, cmp) => {
+                    acc[cmp.constructor.ComponentName] = cmp
+                    return acc
+                }, {})
+
+                component.setDependencyComponents(dependencyRefs)
+            }
+        }
+
         for (const component of this.components) {
             component.setup()
         }

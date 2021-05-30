@@ -15,7 +15,7 @@ export default [
         },
         action: {
             type: "direct_damage",
-            component: "towerBeamAttack",
+            component: "TowerBeamAttack",
         },
         base: {
             textureId: "TowerBase1",
@@ -37,7 +37,7 @@ export default [
         },
         action: {
             type: "create_bullet",
-            component: "towerBulletAttack",
+            component: "TowerBulletAttack",
         },
         base: {
             textureId: "TowerBase2",

@@ -101,7 +101,7 @@ export default class EntitySystem {
             }
             
             const { width, height } = entity.getLocalBounds()
-            const transform = entity.getComponent("transform")
+            const transform = entity.getComponent("Transform")
     
             if (transform) {
                 const relative = pos.subtract(transform.position)

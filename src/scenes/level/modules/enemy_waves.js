@@ -88,23 +88,23 @@ export default class EnemyWaves extends IModule {
         const texture = game.assets[textureId]
 
         return {
-            "transform": {
+            "Transform": {
                 position: new Vec2(3 * Tile.Size, 2 * Tile.Size)
             },
-            "display": {
+            "Display": {
                 displayObject: new Sprite(texture),
             },
-            "movement": {
+            "Movement": {
                 speed,
             },
-            "pathFollower": {
+            "PathFollower": {
                 path: this.scene.path,
             },
-            "health": {
+            "Health": {
                 maximum: health,
                 parent: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
             },
-            "collideable": {
+            "Collideable": {
                 radius: Math.max(texture.width, texture.height) / 2,
                 static: true,
             }

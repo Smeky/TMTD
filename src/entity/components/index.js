@@ -1,26 +1,36 @@
-export {default as Component} from "./component"
-import TransformComponent from "./transform"
-import DisplayComponent from "./display"
-import MovementComponent from "./movement"
-import HealthComponent from "./health"
-import TowerComponent from "./tower"
-import StatsComponent from "./stats"
-import PathFollowerComponent from "./path_follower"
-import OnClickComponent from "./on_click"
-import CollideableComponent from "./collideable"
+export { default as Component } from "./component"
+
 import { TowerBeamAttack, TowerBulletAttack } from "./tower_action"
+import CollideableComponent from "./collideable"
+import DisplayComponent from "./display"
+import HealthComponent from "./health"
+import MovementComponent from "./movement"
+import OnClickComponent from "./on_click"
+import PathFollowerComponent from "./path_follower"
+import StatsComponent from "./stats"
+import TowerComponent from "./tower"
+import TransformComponent from "./transform"
 
-export default {
-    "transform": TransformComponent,
-    "display":   DisplayComponent,
-    "movement":  MovementComponent,
-    "health":    HealthComponent,
-    "tower":     TowerComponent,
-    "stats":     StatsComponent,
-    "pathFollower": PathFollowerComponent,
-    "onClick":   OnClickComponent,
-    "collideable": CollideableComponent,
+const CmpArray = [
+    CollideableComponent,
+    DisplayComponent,
+    HealthComponent,
+    MovementComponent,
+    OnClickComponent,
+    PathFollowerComponent,
+    StatsComponent,
+    TowerBeamAttack,
+    TowerBulletAttack,
+    TowerComponent,
+    TransformComponent,
+]
 
-    "towerBeamAttack": TowerBeamAttack,
-    "towerBulletAttack": TowerBulletAttack,
-}
+export const Components = CmpArray.reduce((acc, Cmp) => {
+    acc[Cmp.ComponentName] = Cmp
+    return acc
+}, {})
+
+export const ComponentNames = CmpArray.reduce((acc, Cmp) => {
+    acc[Cmp.ComponentName] = Cmp.ComponentName
+    return acc
+}, {})

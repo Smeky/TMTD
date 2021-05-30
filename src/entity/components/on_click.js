@@ -1,6 +1,8 @@
 import { Component } from "."
 
 export default class OnClickComponent extends Component {
+    static ComponentName = "OnClick"
+
     constructor(entity, options) {
         super(entity)
 

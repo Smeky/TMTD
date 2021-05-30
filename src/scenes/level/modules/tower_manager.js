@@ -1,5 +1,5 @@
 import { IModule } from "game/scenes"
-import { Color, Rect } from "game/graphics"
+import { Rect } from "game/graphics"
 import { Tile } from "game/core"
 import { Container, Sprite } from "pixi.js"
 
@@ -7,7 +7,7 @@ const TowerSize = 50    // Todo: get rid of me, please
 
 function handleDamageAction(actionComponent, entity) {
     const target = actionComponent.getTarget()
-    const health = target.getComponent("health")
+    const health = target.getComponent("Health")
 
     if (health) {
         if (health.isAlive() && health.reduce(actionComponent.damage)) {
@@ -20,22 +20,22 @@ function handleDamageAction(actionComponent, entity) {
 }
 
 function handleBulletAction(actionComponent, entity, scene) {
-    const cmpTower = entity.getComponent("tower")
+    const cmpTower = entity.getComponent("Tower")
 
     const components = {
-        "transform": {
+        "Transform": {
             position: cmpTower.getHeadEndPosition()
         },
-        "display": {
+        "Display": {
             displayObject: new Sprite(game.assets.Bullet),
         },
-        "movement": {
+        "Movement": {
             speed: 500,
             angle: cmpTower.getHeadRotation(),
             maxDistance: actionComponent.range,
             enableFacingDirection: true,
         },
-        "collideable": {
+        "Collideable": {
             radius: Math.max(game.assets.Bullet.width, game.assets.Bullet.height),
             static: false,
             ignoreTags: ["bullet"],
@@ -120,8 +120,8 @@ export default class TowerManager extends IModule {
         const entity = this.scene.entitySystem.getEntityById(entityId)
 
         if (entity) {
-            const cmpTower = entity.getComponent("tower")
-            const cmpStats = entity.getComponent("stats")
+            const cmpTower = entity.getComponent("Tower")
+            const cmpStats = entity.getComponent("Stats")
             
             const basePrice = 20    // Todo: handle purchases / currency manipulation elsewhere
             const price = cmpTower.level
@@ -148,7 +148,7 @@ export default class TowerManager extends IModule {
     onRemoveTower = (entityId) => {
         const entity = this.scene.entitySystem.getEntityById(entityId)
 
-        const pos = entity.getComponent("transform").position
+        const pos = entity.getComponent("Transform").position
         const snapped = this.scene.grid.snapPosToTile(pos)
         const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
         const tiles = this.scene.grid.getTilesByBounds(bounds)
@@ -161,19 +161,19 @@ export default class TowerManager extends IModule {
     
     getTowerComponents(towerData, position) {
         const components = {
-            "transform": {
+            "Transform": {
                 position
             },
-            "tower": {
+            "Tower": {
                 baseSprite: new Sprite(game.assets[towerData.base.textureId]),
                 headSprite: new Sprite(game.assets[towerData.head.textureId]),
                 headPosition: towerData.head.position,
                 headPivot: towerData.head.pivot
             },
-            "stats": {
+            "Stats": {
                 ...towerData.stats
             },
-            "onClick": {
+            "OnClick": {
                 onClick: (entity) => { game.emit("tower_clicked", entity.id) }
             },
         }

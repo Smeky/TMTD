@@ -1,11 +1,14 @@
-import utils from "game/utils"
-import { Rect, Vec2 } from "game/graphics"
 import { AdvancedBloomFilter } from "pixi-filters"
 import { BLEND_MODES, Sprite } from "pixi.js"
 import { Cooldown } from "game/core"
 import { Component } from "."
 
-export class ITowerAction extends Component {
+export class TowerAction extends Component {
+    static ComponentName = "TowerAction"
+    static Dependencies = { 
+        required: ["Transform", "Tower", "Stats"] 
+    }
+
     constructor(entity, options) {
         super(entity)
 
@@ -15,24 +18,20 @@ export class ITowerAction extends Component {
         this.handler = options.handler
 
         if (!this.handler) {
-            throw new Error("ITowerAction - Missing required param 'handler'")
+            throw new Error("TowerAction - Missing required param 'handler'")
         }
     }
 
     set range(v) {}
-    get range() { return this.stats.current.range }
+    get range() { return this.dependencies.Stats.current.range }
 
     set attackRate(v) {}
-    get attackRate() { return this.stats.current.attackRate }
+    get attackRate() { return this.dependencies.Stats.current.attackRate }
 
     set damage(v) {}
-    get damage() { return this.stats.current.damage }
+    get damage() { return this.dependencies.Stats.current.damage }
 
     setup() {
-        this.transform = this.entity.ensureComponent("transform")
-        this.tower = this.entity.ensureComponent("tower")
-        this.stats = this.entity.ensureComponent("stats")
-
         this.cooldown = new Cooldown(this.attackRate)
     }
 
@@ -53,13 +52,13 @@ export class ITowerAction extends Component {
             this.findTarget()
         }
         else {
-            const distance = this.transform.position.distance(this.target.getComponent("transform").position)
+            const distance = this.dependencies.Transform.position.distance(this.target.getComponent("Transform").position)
 
             if(distance > this.range) {
                 this.clearTarget()
             }
             else {
-                this.tower.setHeadRotation(this.getAngleToTarget())
+                this.dependencies.Tower.setHeadRotation(this.getAngleToTarget())
             }
         }
     }
@@ -69,9 +68,9 @@ export class ITowerAction extends Component {
     }
 
     findTarget() {
-        const entities = this.entity.entitySystem.getEntitiesInRadius(this.transform.position, this.range, "enemy")
+        const entities = this.entity.entitySystem.getEntitiesInRadius(this.dependencies.Transform.position, this.range, "enemy")
         const closest = entities.reduce((winner, entity) => {
-            const distance = this.transform.position.distance(entity.getComponent("transform").position)
+            const distance = this.dependencies.Transform.position.distance(entity.getComponent("Transform").position)
 
             if (!winner.entity) {
                 winner.entity = entity
@@ -114,8 +113,8 @@ export class ITowerAction extends Component {
             return 0
         }
 
-        const targetPos = this.target.getComponent("transform").position
-        const center = this.transform.position.add(this.tower.size.divide(2))
+        const targetPos = this.target.getComponent("Transform").position
+        const center = this.dependencies.Transform.position.add(this.dependencies.Tower.size.divide(2))
 
         return center.angle(targetPos)
     }
@@ -124,7 +123,9 @@ export class ITowerAction extends Component {
     onTargetCleared() {}
 }
 
-export class TowerBeamAttack extends ITowerAction {
+export class TowerBeamAttack extends TowerAction {
+    static ComponentName = "TowerBeamAttack"
+
     setup() {
         super.setup()
 
@@ -165,8 +166,8 @@ export class TowerBeamAttack extends ITowerAction {
     }
 
     updateSprite() {
-        const fromPos = this.tower.getHeadEndPosition()
-        const targetPos = this.target.getComponent("transform").position
+        const fromPos = this.dependencies.Tower.getHeadEndPosition()
+        const targetPos = this.target.getComponent("Transform").position
 
         this.sprite.position.copyFrom(fromPos)
         this.sprite.height = fromPos.distance(targetPos)
@@ -183,28 +184,14 @@ export class TowerBeamAttack extends ITowerAction {
     }
 }
 
+export class TowerBulletAttack extends TowerAction {
+    static ComponentName = "TowerBulletAttack"
 
-export class TowerBulletAttack extends ITowerAction {
     setup() {
         super.setup()
-
-        this.bulletTexture = game.assets.Bullet
     }
 
     close() {
         super.close()
     }
-
-    // trigger() {
-    //     if (this.target) {
-    //         this.handler("create_bullet", { 
-    //             texture: this.bulletTexture,
-    //             source: this.entity,
-    //             pos: this.tower.getHeadEndPosition(),
-    //             angle: this.tower.getHeadRotation(),
-    //             speed: 500,
-    //             range: this.range
-    //         })
-    //     }
-    // }
 }

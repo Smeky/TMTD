@@ -14,7 +14,7 @@ export default class DamageModule extends IModule {
     onDealDamage = (event) => {
         const { target, source, amount } = event
 
-        const health = target.getComponent("health")
+        const health = target.getComponent("Health")
 
         if (health) {
             if (health.isAlive() && health.reduce(amount)) {

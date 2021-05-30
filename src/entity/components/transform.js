@@ -2,6 +2,8 @@ import { Vec2 } from "game/graphics"
 import { Component } from "."
 
 export default class TransformComponent extends Component {
+    static ComponentName = "Transform"
+
     /**
      * 
      * @param {Entity} entity 

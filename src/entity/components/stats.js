@@ -15,6 +15,8 @@ export const DefaultStats = {
 }
 
 export default class StatsComponent extends Component {
+    static ComponentName = "Stats"
+
     constructor(entity, options = {}) {
         super(entity)
 
