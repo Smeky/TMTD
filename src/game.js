@@ -9,7 +9,7 @@ import AssetLoader, { AssetList } from "./core/asset_loader"
 pixi.utils.skipHello()
 
 export default class Game extends EventEmitter {
-    FPS = 60
+    FPS = 120
     SPF = 1 / this.FPS
 
     get assets() { return this.loader.assets }

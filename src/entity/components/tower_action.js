@@ -64,7 +64,7 @@ export class TowerAction extends Component {
     }
 
     trigger() {
-        this.handler(this.actionType, this, this.entity)
+        this.handler(this.actionType, this.entity, this.target)
     }
 
     findTarget() {

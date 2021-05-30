@@ -5,12 +5,12 @@ import { Container, Sprite } from "pixi.js"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
-function handleDamageAction(actionComponent, entity) {
-    const target = actionComponent.getTarget()
+function handleDamageAction(source, target) {
+    const [ cmpStats ] = source.getComponents(["Stats"])
     const health = target.getComponent("Health")
 
     if (health) {
-        if (health.isAlive() && health.reduce(actionComponent.damage)) {
+        if (health.isAlive() && health.reduce(cmpStats.current.damage)) {
             game.emit("enemy_killed", target.id)
         }
     }
@@ -19,8 +19,8 @@ function handleDamageAction(actionComponent, entity) {
     }
 }
 
-function handleBulletAction(actionComponent, entity, scene) {
-    const cmpTower = entity.getComponent("Tower")
+function handleBulletAction(source, target, createEntity) {
+    const [ cmpTower, cmpStats ] = source.getComponents(["Tower", "Stats"])
 
     const components = {
         "Transform": {
@@ -32,9 +32,9 @@ function handleBulletAction(actionComponent, entity, scene) {
         "Movement": {
             speed: 500,
             angle: cmpTower.getHeadRotation(),
-            maxDistance: actionComponent.range,
+            maxDistance: cmpStats.current.range,
             enableFacingDirection: true,
-            onFinished: (entity) => entity.despawn()
+            onFinished: (source) => source.despawn()
         },
         "Collideable": {
             radius: Math.max(game.assets.Bullet.width, game.assets.Bullet.height),
@@ -44,21 +44,20 @@ function handleBulletAction(actionComponent, entity, scene) {
                 bulletEntity.despawn()
 
                 if (targetEntity.hasTag("enemy")) {
-                    handleDamageAction(actionComponent)
+                    handleDamageAction(source, targetEntity)
                 }
             }
         },
     }
 
-    const bulletEntity = scene.entitySystem.createEntity(components, "bullet")
-    scene.addChild(bulletEntity, scene.Layers.Bullets)
+    createEntity(components)
 }
 
-function createTowerActionHandler(scene) {
-    return (actionType, actionComponent, entity) => {
+function createTowerActionHandler(createEntity) {
+    return (actionType, source, target) => {
         switch(actionType) {
-            case "direct_damage": handleDamageAction(actionComponent, entity); break;
-            case "create_bullet": handleBulletAction(actionComponent, entity, scene); break;
+            case "direct_damage": handleDamageAction(source, target); break;
+            case "create_bullet": handleBulletAction(source, target, createEntity); break;
             default: new Error("Undefined actionType")
         }
     }
@@ -177,14 +176,22 @@ export default class TowerManager extends IModule {
             },
         }
 
+        const bulletContainer = this.scene.getLayer(this.scene.Layers.Bullets)
+
         if (towerData.action) {
             components[towerData.action.component] = {
                 parent: this.scene.getLayer(30),
-                handler: createTowerActionHandler(this.scene),
+                handler: createTowerActionHandler(this.getCreateEntity(bulletContainer, "bullet")),
                 actionType: towerData.action.type
             }
         }
 
         return components
+    }
+
+    getCreateEntity = (container, tags) => {
+        return (components) => {
+            container.addChild(this.scene.entitySystem.createEntity(components, tags))
+        }
     }
 }
