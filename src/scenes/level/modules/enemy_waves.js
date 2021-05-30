@@ -101,7 +101,10 @@ export default class EnemyWaves extends IModule {
             "Health": {
                 maximum: health,
                 parent: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
-                onZeroHealth: (entity) => entity.despawn()
+                onZeroHealth: (entity) => {
+                    game.emit("enemy_killed", entity.id)
+                    entity.despawn()
+                }
             },
             "Collideable": {
                 radius: Math.max(texture.width, texture.height) / 2,

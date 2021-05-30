@@ -4,7 +4,6 @@ export { default as TowerBar } from "./towerbar"
 export { default as TowerOptions } from "./tower_options"
 export { default as TowerManager } from "./tower_manager"
 export { default as CurrencyDisplay } from "./currency_display"
-export { default as DamageModule } from "./damage_module"
 
 export function createModulesStore(scene, Modules = []) {
     return Modules.reduce((acc, Module) => {

@@ -6,16 +6,11 @@ import { Container, Sprite } from "pixi.js"
 const TowerSize = 50    // Todo: get rid of me, please
 
 function handleDamageAction(source, target) {
-    const [ cmpStats ] = source.getComponents(["Stats"])
-    const health = target.getComponent("Health")
+    const cmpStats = source.getComponent("Stats")
+    const cmpHealth = target.getComponent("Health")
 
-    if (health) {
-        if (health.isAlive() && health.reduce(cmpStats.current.damage)) {
-            game.emit("enemy_killed", target.id)
-        }
-    }
-    else {
-        throw new Error(`Unable to deal damage. Target entity is missing "health" component.`)
+    if (cmpHealth && cmpHealth.isAlive()) {
+        cmpHealth.reduce(cmpStats.current.damage)
     }
 }
 
