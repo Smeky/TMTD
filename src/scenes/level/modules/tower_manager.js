@@ -2,6 +2,7 @@ import { IModule } from "game/scenes"
 import { Rect } from "game/graphics"
 import { Tile } from "game/core"
 import { Container, Sprite } from "pixi.js"
+import { TowerData } from "game/data"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
@@ -78,8 +79,12 @@ export default class TowerManager extends IModule {
     }
 
     onBuildTower = (event) => {
-        const { pos, tower } = event
+        const { pos, towerId } = event
         const { grid } = this.scene
+
+        if (!TowerData.hasOwnProperty(towerId)) {
+            return console.error(`Failed to build tower - invalid towerId ${towerId}`)
+        }
 
         const snapped = grid.snapPosToTile(pos)
         const bounds = new Rect(snapped.x + 1, snapped.y + 1, TowerSize, TowerSize)
@@ -95,7 +100,8 @@ export default class TowerManager extends IModule {
         grid.setTilesBlocked(tiles, true)
 
         const topLeft = grid.getTopLeftTile(tiles).pos
-        const components = this.getTowerComponents(tower, topLeft.add(Tile.Size - TowerSize / 2))
+        const towerData = TowerData[towerId]
+        const components = this.getTowerComponents(towerData, topLeft.add(Tile.Size - TowerSize / 2))
 
         try {
             const entity = this.scene.entitySystem.createEntity(components, "tower")
@@ -160,10 +166,11 @@ export default class TowerManager extends IModule {
                 baseSprite: new Sprite(game.assets[towerData.base.textureId]),
                 headSprite: new Sprite(game.assets[towerData.head.textureId]),
                 headPosition: towerData.head.position,
-                headPivot: towerData.head.pivot
+                headPivot: towerData.head.pivot,
+                perLevelStatsMultipliers: towerData.stats.perLevelMultiplier
             },
             "Stats": {
-                ...towerData.stats
+                ...towerData.stats.base
             },
             "OnClick": {
                 onClick: (entity) => { game.emit("tower_clicked", entity.id) }

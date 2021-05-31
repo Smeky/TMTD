@@ -3,7 +3,6 @@ import { EntitySystem } from "game/entity"
 import { Vec2, Layers } from "game/graphics"
 import { findPath, Grid, Tile } from "game/core"
 import { Observable } from "game/core"
-import TowerData from "game/data/tower_data"
 
 import {
     EnemyWaves, 
@@ -97,7 +96,7 @@ export default class LevelScene extends SceneBase {
             // new Vec2(288, 256),
             // new Vec2(416, 224),
         ].forEach((pos, index) => {
-            game.emit("build_tower", { pos, tower: TowerData[1] })
+            game.emit("build_tower", { pos, towerId: "Bullet Turret" })
         })
 
         // Calculate path

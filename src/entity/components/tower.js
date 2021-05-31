@@ -17,8 +17,9 @@ export default class TowerComponent extends Component {
         super(entity) 
 
         this.parent = options.parent || this.entity
+        this.perLevelStatsMultipliers = options.perLevelStatsMultipliers || {}
         this.headPosition = options.headPosition || new Vec2(0.5, 0.5)
-
+        
         this.baseSprite = options.baseSprite
         this.headSprite = options.headSprite
         this.headSprite.zIndex = 5

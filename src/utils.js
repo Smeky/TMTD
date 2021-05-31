@@ -104,17 +104,20 @@ export function round(number, decimals = 1) {
 /**
  * Creates a container of sprites that yield a visual display
  * of the tower.
- * @param {object} tower        Tower data // Todo: give tower data a type and use it here
+ * @param {object} towerData    Tower data // Todo: give tower data a type and use it here
  * @param {number} [headAngle]  [optional] Angle of the head sprite   
  */
 // Todo: Replace be with some proper impl, please!
-export function createTowerDisplay(tower, headAngle = 0) {
+export function createTowerDisplay(towerData, headAngle = 0) {
     const container = new Container()
-    const baseSprite = new Sprite(game.assets[tower.base.textureId])
-    const headSprite = new Sprite(game.assets[tower.head.textureId])
+    const baseSprite = new Sprite(game.assets[towerData.base.textureId])
+    const headSprite = new Sprite(game.assets[towerData.head.textureId])
 
-    headSprite.position.copyFrom(tower.head.position.multiply(tower.size))
-    headSprite.pivot.copyFrom(tower.head.pivot)
+    const { width, height } = baseSprite.texture
+    const size = new Vec2(width, height)
+
+    headSprite.position.copyFrom(towerData.head.position.multiply(size))
+    headSprite.pivot.copyFrom(towerData.head.pivot)
     headSprite.rotation = headAngle
 
     container.addChild(baseSprite)

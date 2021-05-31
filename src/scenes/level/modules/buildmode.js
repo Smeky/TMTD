@@ -3,6 +3,7 @@ import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
 import IModule from "game/scenes/imodule"
+import { TowerData } from "game/data"
 
 export default class BuildMode extends IModule {
     static Name = "buildMode"
@@ -52,17 +53,21 @@ export default class BuildMode extends IModule {
 
     }
 
-    setSelectedTower(tower) {
-        this.selectedTower = tower
+    setSelectedTower(towerId) {
+        this.selectedTower = towerId
 
         // Setup highlight
         if (this.highlight) {
             this.highlight.parent.removeChild(this.highlight)
         }
 
-        this.highlight = createTowerDisplay(this.selectedTower)
+        const data = TowerData[this.selectedTower]
+        const { width, height } = game.assets[data.base.textureId]
+
+        this.highlight = createTowerDisplay(data)
         this.highlight.alpha = 0.8
-        this.highlight.pivot.copyFrom(this.selectedTower.size.divide(2))
+        this.highlight.pivot.x = width / 2
+        this.highlight.pivot.y = height / 2
 
         this.scene.addChild(this.highlight, this.scene.Layers.BuildmodeHighlight)
     }
@@ -133,7 +138,7 @@ export default class BuildMode extends IModule {
             const { x, y, pivot } = this.highlight
             
             game.emit("build_tower", { 
-                tower: this.selectedTower,
+                towerId: this.selectedTower,
                 pos: new Vec2(x - pivot.x, y - pivot.y), 
             })
         }
@@ -148,8 +153,8 @@ export default class BuildMode extends IModule {
         }
     }
 
-    onTowerSelected = tower => {
-        this.setSelectedTower(tower)
+    onTowerSelected = towerId => {
+        this.setSelectedTower(towerId)
         this.updateHighlightPosition(game.camera.getMousePos())
 
         if (!this.enabled) {

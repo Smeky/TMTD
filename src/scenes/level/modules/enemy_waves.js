@@ -1,7 +1,7 @@
 import { Cooldown, Tile } from "game/core"
 import { Vec2 } from "game/graphics"
+import { EnemyData } from "game/data"
 import { Sprite } from "pixi.js"
-import EnemyData from "game/data/enemy_data"
 
 import IModule from "game/scenes/imodule"
 

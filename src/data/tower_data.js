@@ -1,17 +1,17 @@
 import { Vec2 } from "game/graphics"
 
-// Todo: get rid of us, please
-const TowerSize = 50 
-
-export default [
-    {
-        id: 1,
-        name: "The Ancient One",
-        size: new Vec2(TowerSize, TowerSize),
+export default {
+    "Beam Turret": {
         stats: {
-            attackRate: 0.05,
-            damage: 1,
-            range: 150,
+            base: {
+                attackRate: 0.05,
+                damage: 1,
+                range: 150,
+            },
+            perLevelMultiplier: {
+                damage: 1.05,   // 5%
+                range: 1.05,   // 5%
+            },
         },
         action: {
             type: "direct_damage",
@@ -26,14 +26,17 @@ export default [
             pivot: new Vec2(4, 6),
         }
     },
-    {
-        id: 2,
-        name: "Mk Two",
-        size: new Vec2(TowerSize, TowerSize),
+    "Bullet Turret": {
         stats: {
-            attackRate: 1,
-            damage: 18,
-            range: 250,
+            base: {
+                attackRate: 1,
+                damage: 18,
+                range: 250,
+            },
+            perLevelMultiplier: {
+                attackRate: 0.95,   
+                damage: 1.05,
+            },
         },
         action: {
             type: "create_bullet",
@@ -48,4 +51,4 @@ export default [
             pivot: new Vec2(4, 6),
         }
     },
-]
+}

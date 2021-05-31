@@ -2,7 +2,7 @@ import { createTowerDisplay } from "game/utils"
 import IModule from "game/scenes/imodule"
 import { Button } from "game/ui"
 import { Container } from "pixi.js"
-import TowerData from "game/data/tower_data"
+import { TowerData } from "game/data"
 
 export default class TowerBar extends IModule {
     static Name = "towerBar"
@@ -13,15 +13,16 @@ export default class TowerBar extends IModule {
         this.container = new Container()
         this.scene.ui.addChild(this.container, this.scene.ui.Layers.Base)
         
-        TowerData.forEach((tower, index) => {
+        let offset = 0
+        for (const [id, tower] of Object.entries(TowerData)) {
             const display = createTowerDisplay(tower, Math.PI * 0.9)
             const button = new Button(display)
             
-            button.x = 60 * index
-            button.on("click", () => this.selectTower(index))
+            button.x = (offset += 60)
+            button.on("click", () => this.selectTower(id))
 
             this.container.addChild(button)
-        })
+        }
 
         this.updateContainerPosition()
 
@@ -37,7 +38,13 @@ export default class TowerBar extends IModule {
     }
 
     onSelectTower = (index) => {
-        this.selectTower(index)
+        const ids = Object.keys(TowerData)
+
+        if (ids.length - 1 < index) {
+            return console.error(`Failed to select tower by index ${index}. Index out of bounds of TowerData`)
+        }
+
+        this.selectTower(ids[index])
     }
 
     onUnselectTower = () => {
@@ -48,25 +55,25 @@ export default class TowerBar extends IModule {
         this.updateContainerPosition()
     }
 
-    selectTower(index) {
-        if (this.selected === index) {
-            this.selected = -1
-            game.emit("tower_unselected")
+    selectTower(id) {
+        if (this.selected !== id) {
+            this.selected = id
+            game.emit("tower_selected", id)
         }
         else {
-            this.selected = index
-            game.emit("tower_selected", this.getSelectedTower())
+            this.clearSelection()
         }
     }
 
     clearSelection() {
-        if (this.selected >= 0) {
-            this.selectTower(this.selected)
+        if (this.selected) {
+            this.selected = null
+            game.emit("tower_unselected")
         }
     }
 
     getSelectedTower() {
-        return TowerData[this.selected]
+        return this.selected
     }
 
     updateContainerPosition() {
