@@ -28,6 +28,9 @@ export default class BuildMode extends IModule {
         game.on("tower_built", this.updateBuildTiles)
         game.on("tower_selected", this.onTowerSelected)
         game.on("tower_unselected", this.onTowerUnselected)
+
+        this.inputProxy.on("pointerup", this.handleMouseUp)
+        this.inputProxy.on("pointermove", this.handleMouseMove)
     }
 
     close() {
@@ -82,16 +85,10 @@ export default class BuildMode extends IModule {
 
             this.highlight.x = worldPos.x
             this.highlight.y = worldPos.y
-
-            this.inputProxy.on("mouseup", this.handleMouseUp)
-            this.inputProxy.on("mousemove", this.handleMouseMove)
         }
         else {
             this.selectedTower = null
             this.buildTiles.clear()
-
-            this.inputProxy.leave(this.handleMouseUp)
-            this.inputProxy.leave(this.handleMouseMove)
         }
     }
 
@@ -122,29 +119,38 @@ export default class BuildMode extends IModule {
         this.buildTiles.endFill()
     }
 
-    handleMouseUp = (event) => {
-        const { x, y, pivot } = this.highlight
-        
-        game.emit("build_tower", { 
-            tower: this.selectedTower,
-            pos: new Vec2(x - pivot.x, y - pivot.y), 
-        })
-    }
+    updateHighlightPosition(position) {
+        this.mask.x = position.x - (this.mask.width) / 2
+        this.mask.y = position.y - (this.mask.height) / 2
 
-    handleMouseMove = (event) => {
-        const { x, y } = event
-        const pos = game.camera.correctMousePos(new Vec2(x, y))
-
-        this.mask.x = pos.x - (this.mask.width) / 2
-        this.mask.y = pos.y - (this.mask.height) / 2
-
-        const snapped = this.scene.grid.snapPosToTile(pos.add(Tile.Size / 2))
+        const snapped = this.scene.grid.snapPosToTile(position.add(Tile.Size / 2))
         this.highlight.x = snapped.x
         this.highlight.y = snapped.y
     }
 
+    handleMouseUp = (event) => {
+        if (this.enabled) {
+            const { x, y, pivot } = this.highlight
+            
+            game.emit("build_tower", { 
+                tower: this.selectedTower,
+                pos: new Vec2(x - pivot.x, y - pivot.y), 
+            })
+        }
+    }
+
+    handleMouseMove = (event) => {
+        if (this.enabled) {
+            const { x, y } = event
+            const pos = game.camera.correctMousePos(new Vec2(x, y))
+    
+            this.updateHighlightPosition(pos)
+        }
+    }
+
     onTowerSelected = tower => {
         this.setSelectedTower(tower)
+        this.updateHighlightPosition(game.camera.getMousePos())
 
         if (!this.enabled) {
             this.toggle()

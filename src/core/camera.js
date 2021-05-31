@@ -148,4 +148,8 @@ export default class Camera extends Container {
     correctMousePos(pos) {
         return new Vec2(this.toLocal(pos))
     }
+
+    getMousePos() {
+        return new Vec2(this.toLocal(game.renderer.plugins.interaction.mouse.global))
+    }
 }
