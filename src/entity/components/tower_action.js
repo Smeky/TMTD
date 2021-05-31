@@ -91,7 +91,7 @@ export class TowerAction extends Component {
 
         if (closest.entity) {
             this.target = closest.entity
-            this.target.on("close", this.clearTarget)
+            this.target.on("is_closing", this.clearTarget)
 
             this.onTargetFound()
         }
@@ -100,7 +100,7 @@ export class TowerAction extends Component {
 
     clearTarget = () => {
         if (this.target) {
-            this.target.removeListener("close", this.clearTarget)
+            this.target.removeListener("is_closing", this.clearTarget)
             this.target = null
 
             this.onTargetCleared()

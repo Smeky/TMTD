@@ -92,7 +92,9 @@ export default class EnemyWaves extends IModule {
                 displayObject: new Sprite(texture),
             },
             "Movement": {
-                speed,
+                useStatsComponent: {
+                    speed: "movementSpeed"
+                }
             },
             "PathFollower": {
                 path: this.scene.path,
@@ -105,6 +107,10 @@ export default class EnemyWaves extends IModule {
                     game.emit("enemy_killed", entity.id)
                     entity.despawn()
                 }
+            },
+            "Stats": {
+                movementSpeed: speed,
+                
             },
             "Collideable": {
                 radius: Math.max(texture.width, texture.height) / 2,

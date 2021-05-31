@@ -16,7 +16,7 @@ export default class MovementComponent extends Component {
     constructor(entity, options) {
         super(entity)
 
-        this.useStatsComponent = !!options.useStatsComponent
+        this.useStatsComponent = options.useStatsComponent || null
         this.enableFacingDirection = !!options.enableFacingDirection
 
         this.speed = options.speed || 0
@@ -41,7 +41,7 @@ export default class MovementComponent extends Component {
         const { Transform: cmpTransform, Stats: cmpStats } = this.dependencies
 
         if (this.useStatsComponent) {
-            this.speed = cmpStats.current.movementSpeed
+            this.speed = cmpStats.current[this.useStatsComponent.speed]
         }
 
         let finished = false

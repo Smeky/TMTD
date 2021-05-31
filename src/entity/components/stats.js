@@ -20,10 +20,7 @@ export default class StatsComponent extends Component {
     constructor(entity, options = {}) {
         super(entity)
         
-        this.base = {
-            ...DefaultStats,
-            ...options,
-        }
+        this.base = { ...options }
         this.current = { ...this.base }
     }
 }

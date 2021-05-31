@@ -1,6 +1,7 @@
 import { Components } from "./components"
 import { Container } from "pixi.js"
 import { EntitySystem } from "."
+import { intersection, intersects } from "game/utils"
 
 export default class Entity extends Container {
     /**
@@ -13,17 +14,16 @@ export default class Entity extends Container {
         super()
 
         this.sortableChildren = true
+        this.shouldDespawn = false
 
         this.id = id
         this.entitySystem = entitySystem
-        this.components = []
         this.tags = Array.isArray(tags) ? [...tags] : [tags]
-
-        this.shouldDespawn = false
+        this.components = []
     }
 
     close() {
-        this.emit("close")
+        this.emit("is_closing")
 
         for (const component of this.components) {
             component.close()
@@ -37,6 +37,29 @@ export default class Entity extends Container {
     emit(name, ...args) {
         super.emit(name, this, ...args)
     }
+
+    update(delta) {
+        for (const component of this.components) {
+            component.update(delta)
+        }
+
+        for (const component of this.components) {
+            component.postUpdate()
+        }
+    }
+
+    hasTag(tag) {
+        return this.tags.includes(tag)
+    }
+
+    getOtherEntities() {
+        const filter = (entity) => entity.id !== this.id
+        return this.entitySystem.getEntities().filter(filter)
+    }
+
+    /* ------------------------------------------------------ */
+    /*                  Component Management                  */
+    /* ------------------------------------------------------ */
     
     addComponent(name, options) {
         const Component = Components[name]
@@ -75,52 +98,31 @@ export default class Entity extends Container {
     }
 
     setupComponents() {
-
-        {   // Setup components' dependencies
-            for (const component of this.components) {
-                const dependencies = component.constructor.Dependencies
-                if (!dependencies) continue
-
-                let requiredCmps = dependencies.required ? this.getComponents(dependencies.required) : []
-                let optionalCmps = dependencies.optional ? this.getComponents(dependencies.optional) : []
-
-                optionalCmps = optionalCmps.filter(cmp => !!cmp)
-                requiredCmps.forEach((cmp, index) => {
-                    if (!cmp) {
-                        throw new Error(`Missing component dependency "${dependencies.required[index]}" for "${component.constructor.ComponentName}"`)
-                    }
-                })
-
-                const dependencyRefs = [...requiredCmps, ...optionalCmps].reduce((acc, cmp) => {
-                    acc[cmp.constructor.ComponentName] = cmp
-                    return acc
-                }, {})
-
-                component.setDependencyComponents(dependencyRefs)
-            }
-        }
-
         for (const component of this.components) {
+            this.setupComponentDependencies(component)
             component.setup()
         }
     }
 
-    update(delta) {
-        for (const component of this.components) {
-            component.update(delta)
-        }
+    setupComponentDependencies(component) {
+        const dependencies = component.constructor.Dependencies
+        if (!dependencies) return
 
-        for (const component of this.components) {
-            component.postUpdate()
-        }
-    }
+        let requiredCmps = dependencies.required ? this.getComponents(dependencies.required) : []
+        let optionalCmps = dependencies.optional ? this.getComponents(dependencies.optional) : []
 
-    hasTag(tag) {
-        return this.tags.includes(tag)
-    }
+        optionalCmps = optionalCmps.filter(cmp => !!cmp)
+        requiredCmps.forEach((cmp, index) => {
+            if (!cmp) {
+                throw new Error(`Missing component dependency "${dependencies.required[index]}" for "${component.constructor.ComponentName}"`)
+            }
+        })
 
-    getOtherEntities() {
-        const filter = (entity) => entity.id !== this.id
-        return this.entitySystem.getEntities().filter(filter)
+        const dependencyRefs = [...requiredCmps, ...optionalCmps].reduce((acc, cmp) => {
+            acc[cmp.constructor.ComponentName] = cmp
+            return acc
+        }, {})
+
+        component.setDependencyComponents(dependencyRefs)
     }
 }

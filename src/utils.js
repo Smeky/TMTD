@@ -133,6 +133,10 @@ export function partition(array, validateFunc) {
     }, [[], []]);
 }
 
+export function intersection(first, second) {
+    return first.filter(item => second.includes(item))
+}
+
 export function intersects(first, second) {
-    return first.some(e => second.includes(e))
+    return first.some(item => second.includes(item))
 }
