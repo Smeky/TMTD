@@ -163,6 +163,8 @@ export default class BuildMode extends IModule {
     }
     
     onTowerUnselected = () => {
-        this.toggle()
+        if (this.enabled) {
+            this.toggle()
+        }
     }
 }

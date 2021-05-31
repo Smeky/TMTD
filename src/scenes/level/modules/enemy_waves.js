@@ -24,7 +24,7 @@ export default class EnemyWaves extends IModule {
         game.removeListener("enemy_killed", this.onEnemyKilled)
     }
 
-    onEnemyKilled = (enemyId) => {
+    onEnemyKilled = (entityId) => {
         this.scene.currency(this.scene.currency() + 20)
     }
 

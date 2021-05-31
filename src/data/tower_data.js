@@ -10,7 +10,7 @@ export default {
             },
             perLevelMultiplier: {
                 damage: 1.05,
-                range: 1.02,
+                range: 1.001,
             },
         },
         action: {
@@ -35,7 +35,7 @@ export default {
             },
             perLevelMultiplier: {
                 attackRate: 0.98,
-                damage: 1.05,
+                damage: 1.015,
             },
         },
         action: {
