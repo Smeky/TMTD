@@ -45,7 +45,7 @@ export default {
     "Joe Cabot": {
         textureId: "EnemyJoeCabot",
         speed: 15,
-        health: 1200,
-        weight: 500
+        health: 800,
+        weight: 450
     },
 }

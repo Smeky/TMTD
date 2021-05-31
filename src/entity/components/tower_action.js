@@ -40,6 +40,9 @@ export class TowerAction extends Component {
     }
 
     update(delta) {
+        const { Stats: cmpStats, Transform: cmpTransform, Tower: cmpTower } = this.dependencies
+
+        this.cooldown.total = cmpStats.current.attackRate
         if (this.cooldown.update(delta)) {
             this.cooldown.reset()
 
@@ -52,13 +55,13 @@ export class TowerAction extends Component {
             this.findTarget()
         }
         else {
-            const distance = this.dependencies.Transform.position.distance(this.target.getComponent("Transform").position)
+            const distance = cmpTransform.position.distance(this.target.getComponent("Transform").position)
 
             if(distance > this.range) {
                 this.clearTarget()
             }
             else {
-                this.dependencies.Tower.setHeadRotation(this.getAngleToTarget())
+                cmpTower.setHeadRotation(this.getAngleToTarget())
             }
         }
     }

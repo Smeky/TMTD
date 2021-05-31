@@ -4,7 +4,7 @@ import { Component } from "."
 
 export default class TowerComponent extends Component {
     static ComponentName = "Tower"
-    static Dependencies = { required: ["Transform"] }
+    static Dependencies = { required: ["Transform", "Stats"] }
 
     /**
      * 
@@ -78,5 +78,10 @@ export default class TowerComponent extends Component {
     setLevel(level) {
         this.level = level
         this.headSprite.tint = 0xffffff - Math.min((0x001515 * level), 0x00ffff)
+
+        const { Stats: cmpStats } = this.dependencies
+        for (const [statKey, multiplier] of Object.entries(this.perLevelStatsMultipliers)) {
+            cmpStats.current[statKey] = cmpStats.base[statKey] * (multiplier ** this.level)
+        }
     }
 }
