@@ -39,8 +39,10 @@ export default {
             },
         },
         action: {
-            type: "create_bullet",
-            component: "TowerBulletAttack",
+            type: "ShootBullet",
+            data: {
+                bulletId: "SimpleOne" 
+            }
         },
         base: {
             textureId: "TowerBase2",

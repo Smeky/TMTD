@@ -12,11 +12,14 @@ import {
     TowerManager, 
     CurrencyDisplay, 
 } from "./modules"
+import { ECSController } from "game/ecs"
+import { Sprite } from "pixi.js"
 
 const SceneLayers = {
     Grid: 10,
 
     TowerBase: 15,
+    EnemyBase: 15,
     TowerSelection: 18,
 
     Bullets: 20,
@@ -34,7 +37,7 @@ const UILayers = {
 
 export default class LevelScene extends SceneBase {
     static Name = "level"
-    static Modules = [ 
+    static Modules = [
         EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay
     ]
 
@@ -45,6 +48,7 @@ export default class LevelScene extends SceneBase {
 
         this.grid = new Grid()
         this.entitySystem = new EntitySystem()
+        this.ecs = new ECSController()
 
         this.ui = new Layers()
         this.ui.Layers = UILayers
@@ -108,12 +112,14 @@ export default class LevelScene extends SceneBase {
 
         this.path = findPath({ cells: pathTiles, start, end })
             .map(cell => cell.multiply(Tile.Size))
+            .slice(1)
     }
 
     update(delta) {
         if (!this.started) return
 
         this.entitySystem.update(delta)
+        this.ecs.update(delta)
 
         for (const module of this.moduleList) {
             module.update(delta)

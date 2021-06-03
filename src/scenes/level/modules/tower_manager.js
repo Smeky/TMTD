@@ -1,62 +1,10 @@
 import { IModule } from "game/scenes"
-import { Rect } from "game/graphics"
-import { Tile } from "game/core"
+import { Rect, Vec2 } from "game/graphics"
+// import { Tile } from "game/core"
+import { TowerData, BulletData } from "game/data"
 import { Container, Sprite } from "pixi.js"
-import { TowerData } from "game/data"
 
 const TowerSize = 50    // Todo: get rid of me, please
-
-function handleDamageAction(source, target) {
-    const cmpStats = source.getComponent("Stats")
-    const cmpHealth = target.getComponent("Health")
-
-    if (cmpHealth && cmpHealth.isAlive()) {
-        cmpHealth.reduce(cmpStats.current.damage)
-    }
-}
-
-function handleBulletAction(source, target, createEntity) {
-    const [ cmpTower, cmpStats ] = source.getComponents(["Tower", "Stats"])
-
-    const components = {
-        "Transform": {
-            position: cmpTower.getHeadEndPosition()
-        },
-        "Display": {
-            displayObject: new Sprite(game.assets.Bullet),
-        },
-        "Movement": {
-            speed: 500,
-            angle: cmpTower.getHeadRotation(),
-            maxDistance: cmpStats.current.range,
-            enableFacingDirection: true,
-            onFinished: (source) => source.despawn()
-        },
-        "Collideable": {
-            radius: Math.max(game.assets.Bullet.width, game.assets.Bullet.height),
-            static: false,
-            onHit: (bulletEntity, targetEntity) => {
-                bulletEntity.despawn()
-
-                if (targetEntity.hasTag("enemy")) {
-                    handleDamageAction(source, targetEntity)
-                }
-            }
-        },
-    }
-
-    createEntity(components)
-}
-
-function createTowerActionHandler(createEntity) {
-    return (actionType, source, target) => {
-        switch(actionType) {
-            case "direct_damage": handleDamageAction(source, target); break;
-            case "create_bullet": handleBulletAction(source, target, createEntity); break;
-            default: new Error("Undefined actionType")
-        }
-    }
-}
 
 export default class TowerManager extends IModule {
     static Name = "towerManager"
@@ -99,19 +47,24 @@ export default class TowerManager extends IModule {
 
         grid.setTilesBlocked(tiles, true)
 
-        const topLeft = grid.getTopLeftTile(tiles).pos
+        // const topLeft = grid.getTopLeftTile(tiles).pos
         const towerData = TowerData[towerId]
-        const components = this.getTowerComponents(towerData, topLeft.add(Tile.Size - TowerSize / 2))
 
-        try {
-            const entity = this.scene.entitySystem.createEntity(components, "tower")
-            this.container.addChild(entity)
+         // tiles[3].pos is basically center if tiles.length == 4.. I cheated a little, Todo :D 
+        const components = this.getTowerComponents(towerData, tiles[3].pos)
+        this.scene.ecs.createEntity(components, "Tower")
 
-            game.emit("tower_built")
-        }
-        catch (e) {
-            return console.error(e)
-        }
+        // const components = this.getTowerComponents(towerData, topLeft.add(Tile.Size - TowerSize / 2))
+
+        // try {
+            // const entity = this.scene.entitySystem.createEntity(components, "tower")
+            // this.container.addChild(entity)
+
+            // game.emit("tower_built")
+        // }
+        // catch (e) {
+        //     return console.error(e)
+        // }
     }
 
     onUpgradeTower = (entityId) => {
@@ -156,43 +109,186 @@ export default class TowerManager extends IModule {
 
         game.emit("tower_removed", entityId)
     }
-    
+
     getTowerComponents(towerData, position) {
-        const components = {
-            "Transform": {
-                position
-            },
-            "Tower": {
-                baseSprite: new Sprite(game.assets[towerData.base.textureId]),
-                headSprite: new Sprite(game.assets[towerData.head.textureId]),
-                headPosition: towerData.head.position,
-                headPivot: towerData.head.pivot,
-                perLevelStatsMultipliers: towerData.stats.perLevelMultiplier
-            },
-            "Stats": {
-                ...towerData.stats.base
-            },
-            "OnClick": {
-                onClick: (entity) => { game.emit("tower_clicked", entity.id) }
+        const baseSprite = new Sprite(game.assets[towerData.base.textureId])
+        const headSprite = new Sprite(game.assets[towerData.head.textureId])
+        const container = new Container()
+
+        container.addChild(baseSprite)
+        container.addChild(headSprite)
+
+        baseSprite.anchor.set(0.5, 0.5)
+        headSprite.anchor.set(0.5, 0.2)
+
+        this.scene.addChild(container, this.scene.Layers.TowerBase)
+
+        return {
+            "transform": { position },
+            "display": { displayObject: container },
+            "tower": {
+                range: 100,
+                headSprite,
+                action: this.resolveTowerAction(towerData),
+                actionCd: 1.0,
             },
         }
+    }
 
-        const bulletContainer = this.scene.getLayer(this.scene.Layers.Bullets)
-
-        if (towerData.action) {
-            components[towerData.action.component] = {
-                parent: this.scene.getLayer(30),
-                handler: createTowerActionHandler(this.getCreateEntity(bulletContainer, "bullet")),
-                actionType: towerData.action.type
+    resolveTowerAction(towerData) {
+        return (towerEntity) => {
+            switch (towerData.action.type) {
+                case "ShootBullet": this.shootBulletAction(towerEntity, towerData); break;
+                default: throw new Error(`Unknown action type "${towerData.action.type}"`)
             }
         }
-
-        return components
     }
 
-    getCreateEntity = (container, tags) => {
-        return (components) => {
-            container.addChild(this.scene.entitySystem.createEntity(components, tags))
+    shootBulletAction(towerEntity, towerData) {
+        const { transform, tower } = towerEntity.components
+        const targetPos = tower.target.components.transform.position
+
+        const offset = tower.headSprite.height * (1.0 - tower.headSprite.anchor.y)
+        const angle = transform.position.angle(targetPos)
+        const position = new Vec2(
+            transform.position.x + tower.headSprite.x + Math.cos(angle) * offset,
+            transform.position.y + tower.headSprite.y + Math.sin(angle) * offset,
+        )
+
+        const components = this.getBulletComponents({
+            data: BulletData[towerData.action.data.bulletId],
+            position,
+            rotation: angle,
+            range: tower.range,
+        })
+
+        this.scene.ecs.createEntity(components, "Bullet")
+    }
+
+    getBulletComponents({ data, position, rotation, range }) {
+        const sprite = new Sprite(game.assets[data.textureId])
+        const velocity = new Vec2(data.speed).velocity(rotation)
+
+        sprite.anchor.set(0.5, 0.5)
+
+        this.scene.addChild(sprite, this.scene.Layers.Bullets)
+
+        return {
+            "transform": { position, rotation },
+            "velocity": { velocity },
+            "display": { displayObject: sprite },
+            "collideable": { 
+                type: "active",
+                solid: false,
+                radius: sprite.width / 2,
+                onCollision: (source, target) => {
+                    this.handleDamage(source, target)
+                    source.despawn()
+                }
+            },
+            "travelLimit": {
+                maxDistance: range * 1.5,
+                onLimitReached: (entity) => entity.despawn()
+            },
         }
     }
+
+    handleDamage(source, target) {
+        const { health: targetHealth } = target.components
+        targetHealth.current -= 10
+    }
 }
+
+
+    
+    // getTowerComponents(towerData, position) {
+    //     const components = {
+    //         "Transform": {
+    //             position
+    //         },
+    //         "Tower": {
+    //             baseSprite: new Sprite(game.assets[towerData.base.textureId]),
+    //             headSprite: new Sprite(game.assets[towerData.head.textureId]),
+    //             headPosition: towerData.head.position,
+    //             headPivot: towerData.head.pivot,
+    //             perLevelStatsMultipliers: towerData.stats.perLevelMultiplier
+    //         },
+    //         "Stats": {
+    //             ...towerData.stats.base
+    //         },
+    //         "OnClick": {
+    //             onClick: (entity) => { game.emit("tower_clicked", entity.id) }
+    //         },
+    //     }
+
+    //     const bulletContainer = this.scene.getLayer(this.scene.Layers.Bullets)
+
+    //     if (towerData.action) {
+    //         components[towerData.action.component] = {
+    //             parent: this.scene.getLayer(30),
+    //             handler: createTowerActionHandler(this.getCreateEntity(bulletContainer, "bullet")),
+    //             actionType: towerData.action.type
+    //         }
+    //     }
+
+    //     return components
+    // }
+
+    // getCreateEntity = (container, tags) => {
+    //     return (components) => {
+    //         container.addChild(this.scene.entitySystem.createEntity(components, tags))
+    //     }
+    // }
+
+    
+// function handleDamageAction(source, target) {
+//     const cmpStats = source.getComponent("Stats")
+//     const cmpHealth = target.getComponent("Health")
+
+//     if (cmpHealth && cmpHealth.isAlive()) {
+//         cmpHealth.reduce(cmpStats.current.damage)
+//     }
+// }
+
+// function handleBulletAction(source, target, createEntity) {
+//     const [ cmpTower, cmpStats ] = source.getComponents(["Tower", "Stats"])
+
+//     const components = {
+//         "Transform": {
+//             position: cmpTower.getHeadEndPosition()
+//         },
+//         "Display": {
+//             displayObject: new Sprite(game.assets.Bullet),
+//         },
+//         "Movement": {
+//             speed: 500,
+//             angle: cmpTower.getHeadRotation(),
+//             maxDistance: cmpStats.current.range,
+//             enableFacingDirection: true,
+//             onFinished: (source) => source.despawn()
+//         },
+//         "Collideable": {
+//             radius: Math.max(game.assets.Bullet.width, game.assets.Bullet.height),
+//             static: false,
+//             onHit: (bulletEntity, targetEntity) => {
+//                 bulletEntity.despawn()
+
+//                 if (targetEntity.hasTag("enemy")) {
+//                     handleDamageAction(source, targetEntity)
+//                 }
+//             }
+//         },
+//     }
+
+//     createEntity(components)
+// }
+
+// function createTowerActionHandler(createEntity) {
+//     return (actionType, source, target) => {
+//         switch(actionType) {
+//             case "direct_damage": handleDamageAction(source, target); break;
+//             case "create_bullet": handleBulletAction(source, target, createEntity); break;
+//             default: new Error("Undefined actionType")
+//         }
+//     }
+// }
