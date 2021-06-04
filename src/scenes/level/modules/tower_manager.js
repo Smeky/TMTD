@@ -3,6 +3,8 @@ import { Rect, Vec2 } from "game/graphics"
 // import { Tile } from "game/core"
 import { TowerData, BulletData } from "game/data"
 import { Container, Sprite } from "pixi.js"
+import { TowerEffects } from "game/graphics/effects.js"
+import { getTowerHeadEndPosition } from "game/ecs"
 
 const TowerSize = 50    // Todo: get rid of me, please
 
@@ -130,7 +132,8 @@ export default class TowerManager extends IModule {
                 range: 100,
                 headSprite,
                 action: this.resolveTowerAction(towerData),
-                actionCd: 1.0,
+                actionCd: towerData.stats.base.attackRate,
+                actionEffect: this.resolveTowerEffect(towerData),
             },
         }
     }
@@ -139,24 +142,29 @@ export default class TowerManager extends IModule {
         return (towerEntity) => {
             switch (towerData.action.type) {
                 case "ShootBullet": this.shootBulletAction(towerEntity, towerData); break;
+                case "DirectDamage": this.handleDamage(towerEntity, towerEntity.components.tower.target); break;
                 default: throw new Error(`Unknown action type "${towerData.action.type}"`)
             }
         }
     }
 
-    shootBulletAction(towerEntity, towerData) {
-        const { transform, tower } = towerEntity.components
-        const targetPos = tower.target.components.transform.position
+    resolveTowerEffect(towerData) {
+        if (towerData.action.effectId) {
+            const effect = new TowerEffects[towerData.action.effectId]()
+            this.scene.addChild(effect, this.scene.Layers.Beams)
 
-        const offset = tower.headSprite.height * (1.0 - tower.headSprite.anchor.y)
-        const angle = transform.position.angle(targetPos)
-        const position = new Vec2(
-            transform.position.x + tower.headSprite.x + Math.cos(angle) * offset,
-            transform.position.y + tower.headSprite.y + Math.sin(angle) * offset,
-        )
+            return effect
+        }
+    }
+
+    shootBulletAction(towerEntity, towerData) {
+        const { tower } = towerEntity.components
+
+        const angle = tower.headSprite.rotation + Math.PI / 2
+        const position = getTowerHeadEndPosition(towerEntity)
 
         const components = this.getBulletComponents({
-            data: BulletData[towerData.action.data.bulletId],
+            data: BulletData[towerData.action.bulletId],
             position,
             rotation: angle,
             range: tower.range,

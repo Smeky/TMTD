@@ -1,33 +1,37 @@
 import { ECSSystem } from "."
-import { filterEntitiesByTags } from ".."
+import { Entity, filterEntitiesByTags } from ".."
 
 export default class TowerControl extends ECSSystem {
     static Dependencies = ["transform", "tower"]
 
     updateEntity(delta, entity, entities) {
         const { tower } = entity.components
+        
+        tower.target = this.ensureTowerTarget(entity, entities)
+        this.updateTowerAction(delta, entity)
+        this.updateTowerHead(delta, entity)
 
-        tower.actionCd.update(delta)
-
-        if (tower.target && tower.target.isActive()) {
-            if (this.isTargetInRange(entity)) {
-                this.updateTowerHead(entity)
-
-                if (tower.actionCd.isReady()) {
-                    tower.actionCd.reset()
-                    tower.action(entity)
-                }
-            }
-            else {
-                this.clearTowerTarget(entity)
-            }
-        }
-        else {
-            this.findEnemyTarget(entity, entities)
+        if (tower.target) {
         }
     }
 
-    findEnemyTarget(entity, entities) {
+    /**
+     * Ensure the tower's target is valid by all requirements, otherwise returns a null
+     * @param {*} entity 
+     * @param {*} entities 
+     * @returns {Entity | null}
+     */
+    ensureTowerTarget(entity, entities) {
+        const { tower } = entity.components
+
+        if (tower.target && tower.target.isActive() && this.isTargetInRange(entity)) {
+            return tower.target
+        }
+
+        return this.findTowerTarget(entity, entities)
+    }
+
+    findTowerTarget(entity, entities) {
         const { transform, tower } = entity.components
 
         const enemies = entities.filter(filterEntitiesByTags("Enemy"))
@@ -51,9 +55,7 @@ export default class TowerControl extends ECSSystem {
             return winner
         }, { enemy: null, distance: null })
 
-        if (closest.enemy) {
-            tower.target = closest.enemy
-        }
+        return closest.enemy
     }
 
     isTargetInRange(entity) {
@@ -63,12 +65,35 @@ export default class TowerControl extends ECSSystem {
         return transform.position.distance(enemyPos) <= tower.range
     }
 
-    updateTowerHead(entity) {
+    updateTowerHead(delta, entity) {
         const { transform, tower } = entity.components
 
         if (tower.target) {
             const targetPos = tower.target.components.transform.position
             tower.headSprite.rotation = transform.position.angle(targetPos) - Math.PI / 2
+        }
+    }
+
+    updateTowerAction(delta, entity) {
+        const { tower } = entity.components
+
+        if (tower.actionCd.update(delta)) {
+            if (tower.target) {
+                tower.actionCd.reset()
+                tower.action(entity)
+                
+                if (tower.actionEffect) {
+                    tower.actionEffect.start(entity)
+                }
+            }
+        }
+    }
+
+    updateTowerEffect(delta, entity) {
+        const { tower } = entity.components
+
+        if (tower.actionEffect) {
+            tower.actionEffect.update(delta, entity)
         }
     }
 

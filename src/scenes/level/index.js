@@ -23,6 +23,7 @@ const SceneLayers = {
     TowerSelection: 18,
 
     Bullets: 20,
+    Beams: 21,
 
     BuildmodeTiles: 50,
     BuildmodeHighlight: 51,
