@@ -1,3 +1,4 @@
+import { Vec2 } from "game/graphics"
 import { intersects } from "game/utils"
 
 export { default as Components } from "./components"
@@ -21,4 +22,16 @@ export function filterEntitiesByComponent(name) {
 
 export function filterOutEntityById(id) {
     return (entity) => entity.id !== id
+}
+
+export function getTowerHeadEndPosition(entity) {
+    const { transform, tower } = entity.components
+
+    const offset = tower.headSprite.height * (1.0 - tower.headSprite.anchor.y)
+    const angle = tower.headSprite.rotation + Math.PI / 2
+    
+    return new Vec2(
+        transform.position.x + tower.headSprite.x + Math.cos(angle) * offset,
+        transform.position.y + tower.headSprite.y + Math.sin(angle) * offset,
+    )
 }

@@ -14,8 +14,8 @@ export default {
             },
         },
         action: {
-            type: "direct_damage",
-            component: "TowerBeamAttack",
+            type: "DirectDamage",
+            effectId: "BeamEffect"
         },
         base: {
             textureId: "TowerBase1",
@@ -40,9 +40,7 @@ export default {
         },
         action: {
             type: "ShootBullet",
-            data: {
-                bulletId: "SimpleOne" 
-            }
+            bulletId: "SimpleOne",
         },
         base: {
             textureId: "TowerBase2",

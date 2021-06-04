@@ -34,13 +34,14 @@ export default {
             sprite: null
         }
     },
-    "tower": function({ range, headSprite, action, actionCd }) {
+    "tower": function({ range, headSprite, action, actionCd, actionEffect }) {
         return {
             range: range ?? 0,
             headSprite,
             target: null,
             action,
             actionCd: new Cooldown(actionCd),
+            actionEffect,
         }
     },
     "travelLimit": function({ maxDistance, onLimitReached }) {
