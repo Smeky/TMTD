@@ -128,6 +128,11 @@ export default class TowerManager extends IModule {
         return {
             "transform": { position },
             "display": { displayObject: container },
+            "stats": {
+                offsense: {
+                    damage: towerData.stats.base.damage,
+                }
+            },
             "tower": {
                 range: 100,
                 headSprite,
@@ -168,12 +173,13 @@ export default class TowerManager extends IModule {
             position,
             rotation: angle,
             range: tower.range,
+            source: towerEntity
         })
 
         this.scene.ecs.createEntity(components, "Bullet")
     }
 
-    getBulletComponents({ data, position, rotation, range }) {
+    getBulletComponents({ data, position, rotation, range, source }) {
         const sprite = new Sprite(game.assets[data.textureId])
         const velocity = new Vec2(data.speed).velocity(rotation)
 
@@ -185,13 +191,16 @@ export default class TowerManager extends IModule {
             "transform": { position, rotation },
             "velocity": { velocity },
             "display": { displayObject: sprite },
+            "bullet": { source },
             "collideable": { 
                 type: "active",
                 solid: false,
                 radius: sprite.width / 2,
-                onCollision: (source, target) => {
-                    this.handleDamage(source, target)
-                    source.despawn()
+                onCollision: (entity, target) => {
+                    const { bullet } = entity.components
+                    this.handleDamage(bullet.source, target)
+
+                    entity.despawn()
                 }
             },
             "travelLimit": {
@@ -202,8 +211,10 @@ export default class TowerManager extends IModule {
     }
 
     handleDamage(source, target) {
-        const { health: targetHealth } = target.components
-        targetHealth.current -= 1
+        const sourceStats = source.components.stats
+        const targetHealth = target.components.health
+
+        targetHealth.current -= sourceStats.offsense.damage
     }
 }
 

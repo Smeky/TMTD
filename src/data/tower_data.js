@@ -4,8 +4,8 @@ export default {
     "Beam Turret": {
         stats: {
             base: {
-                attackRate: 0.05,
                 damage: 1,
+                attackRate: 0.05,
                 range: 150,
             },
             perLevelMultiplier: {

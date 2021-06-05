@@ -14,8 +14,8 @@ export default class TowerControl extends ECSSystem {
             this.stopTowerEffect(entity)
         }
 
-        this.updateTowerAction(delta, entity)
         this.updateTowerHead(delta, entity)
+        this.updateTowerAction(delta, entity)
         this.updateTowerEffect(delta, entity)
     }
 

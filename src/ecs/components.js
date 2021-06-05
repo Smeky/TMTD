@@ -1,6 +1,5 @@
 import { Cooldown } from "game/core";
-
-const { Vec2 } = require("game/graphics");
+import { Vec2 } from "game/graphics";
 
 export default {
     "transform": function({ position, rotation, scale }) {
@@ -58,16 +57,33 @@ export default {
             radius: radius ?? 0,
             onCollision,
         }
-    }
-    
-    // /**
-    //  * 
-    //  * @param {object} props 
-    //  * @param {function} props.action 
-    //  * @returns 
-    //  */
-    // "tower_action": function({ action, cooldown }) {
-    //     return {
-    //     }
-    // }
+    },
+    "bullet": function({ source }) {
+        return { source }
+    },
+    /**
+     * @param {object} stats
+     * @param {number} stats.health 
+     * @param {number} stats.speed 
+     * @param {object} stats.offense 
+     * @param {object} stats.defense 
+     */
+    "stats": function(stats) {
+        const defaultStats = {
+            health: 0,
+            speed: 0,
+            offsense: {
+                damage: 0,
+                attackRate: 0,
+            },
+            defense: {
+                armor: 0,
+            },
+        }
+
+        return {
+            ...defaultStats,
+            ...stats,
+        }
+    },
 }
