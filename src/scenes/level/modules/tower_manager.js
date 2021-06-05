@@ -203,7 +203,7 @@ export default class TowerManager extends IModule {
 
     handleDamage(source, target) {
         const { health: targetHealth } = target.components
-        targetHealth.current -= 10
+        targetHealth.current -= 1
     }
 }
 

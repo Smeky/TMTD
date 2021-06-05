@@ -2,19 +2,14 @@ import { getTowerHeadEndPosition } from "game/ecs";
 import { AdvancedBloomFilter } from "pixi-filters";
 import { BLEND_MODES, Container, Sprite } from "pixi.js";
 
-/**
- * @abstract
- */
 class ActionEffect extends Container {
-    /**
-     * @abstract
-     */
-    update(delta, entity) {}
+    start(entity) {}
+    stop(entity) {}
 
     /**
      * @abstract
      */
-    stop() {}
+    update(delta, entity) {}
 }
 
 class TowerBeamEffect extends ActionEffect {
@@ -41,22 +36,26 @@ class TowerBeamEffect extends ActionEffect {
         this.sprite.filters = [bloom]
     }
 
+    start() {
+        this.sprite.visible = true
+    }
+
+    stop() {
+        this.sprite.visible = false
+    }
+
     update(delta, entity) {
-        const { tower } = entity.components
-
-        if (tower.target) {
-            const fromPos = getTowerHeadEndPosition(entity)
-            const targetPos = tower.target.components.transform.position
-
-            this.sprite.visible = true
-            this.sprite.position.copyFrom(fromPos)
-            this.sprite.height = fromPos.distance(targetPos)
-            this.sprite.rotation = tower.headSprite.rotation
-
-            // this.sprite.rotation = fromPos.angle(targetPos) - Math.PI / 2
-        }
-        else {
-            this.sprite.visible = false
+        if (this.sprite.visible) {
+            const { tower } = entity.components
+    
+            if (tower.target) {
+                const fromPos = getTowerHeadEndPosition(entity)
+                const targetPos = tower.target.components.transform.position
+    
+                this.sprite.position.copyFrom(fromPos)
+                this.sprite.height = fromPos.distance(targetPos)
+                this.sprite.rotation = tower.headSprite.rotation
+            }
         }
     }
 }

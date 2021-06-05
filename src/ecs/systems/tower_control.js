@@ -7,12 +7,16 @@ export default class TowerControl extends ECSSystem {
     updateEntity(delta, entity, entities) {
         const { tower } = entity.components
         
+        const hadTarget = !!tower.target
         tower.target = this.ensureTowerTarget(entity, entities)
+
+        if (hadTarget && !tower.target) {
+            this.stopTowerEffect(entity)
+        }
+
         this.updateTowerAction(delta, entity)
         this.updateTowerHead(delta, entity)
-
-        if (tower.target) {
-        }
+        this.updateTowerEffect(delta, entity)
     }
 
     /**
@@ -94,6 +98,14 @@ export default class TowerControl extends ECSSystem {
 
         if (tower.actionEffect) {
             tower.actionEffect.update(delta, entity)
+        }
+    }
+
+    stopTowerEffect(entity) {
+        const { tower } = entity.components
+
+        if (tower.actionEffect) {
+            tower.actionEffect.stop(entity)
         }
     }
 
