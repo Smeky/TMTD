@@ -17,11 +17,11 @@ export default class TowerOptions extends IModule {
 
         const texture = game.assets.TowerOptionsButton
         const buttons = [
-            { icon: createUpgradeIcon(0xffeb74, 4), callback: () => game.emit("upgrade_tower", this.selectedId) },
+            // { icon: createUpgradeIcon(0xffeb74, 4), callback: () => game.emit("upgrade_tower", this.selectedId) },
             { icon: createCrossIcon(0xa20e0e, 4),   callback: () => game.emit("remove_tower",  this.selectedId) },
         ]
         .forEach((data, index) => {
-            const angle = Math.PI * 1.9 + index * (Math.PI * 0.32)
+            const angle = index * (Math.PI * 0.32)
             const button = new OptionsButton(data.icon, texture)
 
             button.pivot.x = texture.width / 2

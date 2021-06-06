@@ -13,7 +13,6 @@ export default class TowerManager extends IModule {
         this.scene.addChild(this.container, this.scene.Layers.TowerBase)
 
         game.on("build_tower", this.onBuildTower)
-        game.on("upgrade_tower", this.onUpgradeTower)
         game.on("remove_tower", this.onRemoveTower)
     }
 
@@ -21,7 +20,6 @@ export default class TowerManager extends IModule {
         this.scene.removeChild(this.container)
 
         game.removeListener("build_tower", this.onBuildTower)       
-        game.removeListener("upgrade_tower", this.onUpgradeTower)
         game.removeListener("remove_tower", this.onRemoveTower)
     }
 
@@ -51,36 +49,7 @@ export default class TowerManager extends IModule {
         const components = this.getTowerComponents(towerData, tiles[3].pos)
         this.scene.ecs.createEntity(components, "Tower")
     }
-
-    onUpgradeTower = (entityId) => {
-        const entity = this.scene.entitySystem.getEntityById(entityId)
-
-        if (entity) {
-            const cmpTower = entity.getComponent("Tower")
-            const cmpStats = entity.getComponent("Stats")
-            
-            const basePrice = 20    // Todo: handle purchases / currency manipulation elsewhere
-            const price = cmpTower.level
-            // const price = Math.round((cmpTower.level * basePrice) * 0.9)
-            const currency = this.scene.currency
-
-            if (currency() >= price) {
-                currency(currency() - price)
-
-                cmpTower.setLevel(cmpTower.level + 1)
-                cmpStats.current.damage += 1
     
-                game.emit("tower_upgraded", entityId)
-            }
-            else {
-                console.warn(`not enough currency! (price: ${price})`)
-            }
-        }
-        else {
-            throw new Error(`Unable to find entity (tower) id: ${entityId} for upgrade`)
-        }
-    }
-
     onRemoveTower = (entityId) => {
         const entity = this.scene.ecs.getEntity(entityId)
         const { transform, display } = entity.components
