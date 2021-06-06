@@ -8,6 +8,7 @@ import { Entity } from ".."
  * @param {number} stats.speed
  * @param {number} stats.damage
  * @param {number} stats.attackRate
+ * @param {number} stats.range
  * @param {number} stats.armor
  */
 export default function createStatsComponent(stats, entity) {

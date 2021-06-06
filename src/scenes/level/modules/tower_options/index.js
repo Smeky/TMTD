@@ -1,5 +1,4 @@
 import IModule from "game/scenes/imodule"
-import { Vec2 } from "game/graphics"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
 

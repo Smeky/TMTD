@@ -24,6 +24,10 @@ export function filterOutEntityById(id) {
     return (entity) => entity.id !== id
 }
 
+export function isEntityInRadius(entity, position, radius) {
+    return position.distance(entity.components.transform.position) <= radius
+}
+
 export function getTowerHeadEndPosition(entity) {
     const { transform, tower } = entity.components
 

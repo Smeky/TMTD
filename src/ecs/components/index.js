@@ -34,13 +34,12 @@ export default {
             sprite: null
         }
     },
-    "tower": function({ range, headSprite, action, actionCd, actionEffect }) {
+    "tower": function({ headSprite, action, actionEffect }) {
         return {
-            range: range ?? 0,
             headSprite,
             target: null,
             action,
-            actionCd: new Cooldown(actionCd),
+            actionCd: new Cooldown(),
             actionEffect,
         }
     },

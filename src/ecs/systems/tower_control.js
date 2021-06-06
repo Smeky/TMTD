@@ -1,8 +1,14 @@
 import { ECSSystem } from "."
-import { Entity, filterEntitiesByTags } from ".."
+import { Entity, filterEntitiesByTags, isEntityInRadius } from ".."
 
 export default class TowerControl extends ECSSystem {
-    static Dependencies = ["transform", "tower"]
+    static Dependencies = ["transform", "tower", "stats"]
+
+    setupEntity(entity) {
+        const { tower, stats } = entity.components
+
+        tower.actionCd.total = stats.attackRate || Number.POSITIVE_INFINITY
+    }
 
     updateEntity(delta, entity, entities) {
         const { tower } = entity.components
@@ -28,7 +34,7 @@ export default class TowerControl extends ECSSystem {
     ensureTowerTarget(entity, entities) {
         const { tower } = entity.components
 
-        if (tower.target && tower.target.isActive() && this.isTargetInRange(entity)) {
+        if (tower.target && tower.target.isActive() && this.isEnemyInRange(entity, tower.target)) {
             return tower.target
         }
 
@@ -36,14 +42,14 @@ export default class TowerControl extends ECSSystem {
     }
 
     findTowerTarget(entity, entities) {
-        const { transform, tower } = entity.components
+        const { transform, stats } = entity.components
 
         const enemies = entities.filter(filterEntitiesByTags("Enemy"))
         const closest = enemies.reduce((winner, enemy) => {
             const enemyPos = enemy.components.transform.position
             const distance = transform.position.distance(enemyPos)
 
-            if (distance <= tower.range) {
+            if (distance <= stats.range) {
                 if (!winner.enemy) {
                     winner.enemy = enemy
                     winner.distance = distance
@@ -62,11 +68,9 @@ export default class TowerControl extends ECSSystem {
         return closest.enemy
     }
 
-    isTargetInRange(entity) {
-        const { transform, tower } = entity.components
-        const enemyPos = tower.target.components.transform.position
-
-        return transform.position.distance(enemyPos) <= tower.range
+    isEnemyInRange(eTower, eEnemy) {
+        const { transform, stats } = eTower.components
+        return isEntityInRadius(eEnemy, transform.position, stats.range)
     }
 
     updateTowerHead(delta, entity) {

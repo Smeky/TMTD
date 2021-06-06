@@ -128,14 +128,10 @@ export default class TowerManager extends IModule {
         return {
             "transform": { position },
             "display": { displayObject: container },
-            "stats": {
-                damage: towerData.stats.base.damage,
-            },
+            "stats": { ...towerData.stats.base },
             "tower": {
-                range: 100,
                 headSprite,
                 action: this.resolveTowerAction(towerData),
-                actionCd: towerData.stats.base.attackRate,
                 actionEffect: this.resolveTowerEffect(towerData),
             },
         }
