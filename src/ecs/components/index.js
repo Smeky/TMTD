@@ -1,5 +1,6 @@
 import { Cooldown } from "game/core";
 import { Vec2 } from "game/graphics";
+import createStatsComponent from "./stats"
 
 export default {
     "transform": function({ position, rotation, scale }) {
@@ -61,29 +62,5 @@ export default {
     "bullet": function({ source }) {
         return { source }
     },
-    /**
-     * @param {object} stats
-     * @param {number} stats.health 
-     * @param {number} stats.speed 
-     * @param {object} stats.offense 
-     * @param {object} stats.defense 
-     */
-    "stats": function(stats) {
-        const defaultStats = {
-            health: 0,
-            speed: 0,
-            offsense: {
-                damage: 0,
-                attackRate: 0,
-            },
-            defense: {
-                armor: 0,
-            },
-        }
-
-        return {
-            ...defaultStats,
-            ...stats,
-        }
-    },
+    "stats": createStatsComponent
 }

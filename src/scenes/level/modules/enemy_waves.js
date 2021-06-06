@@ -80,7 +80,7 @@ export default class EnemyWaves extends IModule {
         return {
             "transform": { position: this.scene.path[0] },
             "velocity": {},
-            "speed": { speed },
+            "speed": {},
             "display": { displayObject: sprite },
             "collideable": { 
                 type: "passive",
@@ -92,12 +92,15 @@ export default class EnemyWaves extends IModule {
                 onFinished: (entity) => entity.despawn(),
             },
             "health": {
-                maximum: health,
                 container: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
                 onZeroHealth: (entity) => {
                     entity.despawn()
                     this.scene.currency(this.scene.currency() + 20)
                 }
+            },
+            "stats": {
+                speed,
+                health,
             }
         }
     }

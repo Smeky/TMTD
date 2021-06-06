@@ -129,9 +129,7 @@ export default class TowerManager extends IModule {
             "transform": { position },
             "display": { displayObject: container },
             "stats": {
-                offsense: {
-                    damage: towerData.stats.base.damage,
-                }
+                damage: towerData.stats.base.damage,
             },
             "tower": {
                 range: 100,
@@ -214,7 +212,7 @@ export default class TowerManager extends IModule {
         const sourceStats = source.components.stats
         const targetHealth = target.components.health
 
-        targetHealth.current -= sourceStats.offsense.damage
+        targetHealth.current -= sourceStats.damage
     }
 }
 

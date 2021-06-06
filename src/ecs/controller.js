@@ -30,7 +30,7 @@ export default class ECSController {
                     throw new Error(`Invalid entity component name "${cmpName}"`)
                 }
 
-                entity.addComponent(cmpName, Components[cmpName](cmpProps))
+                entity.addComponent(cmpName, Components[cmpName](cmpProps, entity))
             }
         }
         
