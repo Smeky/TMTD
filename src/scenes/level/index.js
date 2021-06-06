@@ -1,5 +1,4 @@
 import { SceneBase } from "game/scenes"
-import { EntitySystem } from "game/entity"
 import { Vec2, Layers } from "game/graphics"
 import { findPath, Grid, Tile } from "game/core"
 import { Observable } from "game/core"
@@ -48,7 +47,6 @@ export default class LevelScene extends SceneBase {
         this.Layers = SceneLayers
 
         this.grid = new Grid()
-        this.entitySystem = new EntitySystem()
         this.ecs = new ECSController()
 
         this.ui = new Layers()
@@ -75,7 +73,6 @@ export default class LevelScene extends SceneBase {
     }
 
     closeScene() {
-        this.entitySystem.clear()
         this.inputProxy.close()
 
         game.stage.removeChild(this.ui)
@@ -119,7 +116,6 @@ export default class LevelScene extends SceneBase {
     update(delta) {
         if (!this.started) return
 
-        this.entitySystem.update(delta)
         this.ecs.update(delta)
 
         for (const module of this.moduleList) {
