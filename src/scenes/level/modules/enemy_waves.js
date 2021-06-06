@@ -16,16 +16,6 @@ export default class EnemyWaves extends IModule {
 
         this.waves = []
         this.addWave()
-
-        game.on("enemy_killed", this.onEnemyKilled)
-    }
-
-    close() {
-        game.removeListener("enemy_killed", this.onEnemyKilled)
-    }
-
-    onEnemyKilled = (entityId) => {
-        this.scene.currency(this.scene.currency() + 20)
     }
 
     update(delta) {
@@ -74,49 +64,82 @@ export default class EnemyWaves extends IModule {
     }
 
     createEnemy(enemyData) {
-        const components = this.getEnemyComponents(enemyData)
-        const entity = this.scene.entitySystem.createEntity(components, "enemy")
+        const { textureId } = enemyData
+        const sprite = new Sprite(game.assets[textureId])
+        sprite.anchor.set(0.5, 0.5)
+
+        const components = this.getEnemyComponents(enemyData, sprite)
+        this.scene.ecs.createEntity(components, "Enemy")
         
-        this.scene.addChild(entity, this.scene.Layers.TowerBase)
+        this.scene.addChild(sprite, this.scene.Layers.EnemyBase)
     }
 
-    getEnemyComponents(enemyData) {
-        const { textureId, speed, health } = enemyData
-        const texture = game.assets[textureId]
+    getEnemyComponents(enemyData, sprite) {
+        const { speed, health } = enemyData
 
         return {
-            "Transform": {
-                position: new Vec2(3 * Tile.Size, 2 * Tile.Size)
+            "transform": { position: this.scene.path[0] },
+            "velocity": {},
+            "speed": {},
+            "display": { displayObject: sprite },
+            "collideable": { 
+                type: "passive",
+                solid: true,
+                radius: sprite.width / 2
             },
-            "Display": {
-                displayObject: new Sprite(texture),
+            "path": { 
+                points: this.scene.path,
+                onFinished: (entity) => entity.despawn(),
             },
-            "Movement": {
-                useStatsComponent: {
-                    speed: "movementSpeed"
-                }
-            },
-            "PathFollower": {
-                path: this.scene.path,
-                onFinished: (entity) => entity.despawn()
-            },
-            "Health": {
-                maximum: health,
-                parent: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
+            "health": {
+                container: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
                 onZeroHealth: (entity) => {
-                    game.emit("enemy_killed", entity.id)
                     entity.despawn()
+                    this.scene.currency(this.scene.currency() + 20)
                 }
             },
-            "Stats": {
-                movementSpeed: speed,
-                
-            },
-            "Collideable": {
-                radius: Math.max(texture.width, texture.height) / 2,
-                static: true,
+            "stats": {
+                speed,
+                health,
             }
         }
     }
+
+    // getEnemyComponents(enemyData) {
+        // const { textureId, speed, health } = enemyData
+        // const texture = game.assets[textureId]
+
+    //     return {
+    //         "Transform": {
+    //             position: new Vec2(3 * Tile.Size, 2 * Tile.Size)
+    //         },
+    //         "Display": {
+    //             displayObject: new Sprite(texture),
+    //         },
+    //         "Movement": {
+    //             speed
+    //         },
+    //         "PathFollower": {
+    //             path: this.scene.path,
+    //             onFinished: (entity) => entity.despawn()
+    //         },
+    //         "Health": {
+    //             maximum: health,
+    //             parent: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
+    //             onZeroHealth: (entity) => {
+    //                 game.emit("enemy_killed", entity.id)
+    //                 entity.despawn()
+    //             }
+    //         },
+    //         "Stats": {
+    //             movementSpeed: speed,
+                
+    //         },
+    //         "Collideable": {
+    //             radius: Math.max(texture.width, texture.height) / 2,
+    //             static: true,
+    //         }
+    //     }
+    // }
 }
 

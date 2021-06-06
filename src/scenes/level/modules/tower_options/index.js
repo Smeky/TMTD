@@ -1,29 +1,27 @@
 import IModule from "game/scenes/imodule"
-import { Vec2 } from "game/graphics"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
 import { Container } from "pixi.js";
 
-import EntitySelection from "./entity_selection"
 import OptionsButton from "./options_button"
 
 export default class TowerOptions extends IModule {
     static Name = "towerOptions"
 
     setup() {
-        this.entitySelection = new EntitySelection()
+        this.selectedId = null
+
         this.container = new Container()
         this.container.visible = false
 
-        this.scene.addChild(this.entitySelection, this.scene.Layers.TowerSelection)
         this.scene.addChild(this.container, this.scene.Layers.TowerOptions)
 
         const texture = game.assets.TowerOptionsButton
         const buttons = [
-            { icon: createUpgradeIcon(0xffeb74, 4), callback: this.emitUpgradeTower },
-            { icon: createCrossIcon(0xa20e0e, 4), callback: this.emitRemoveTower },
+            // { icon: createUpgradeIcon(0xffeb74, 4), callback: () => game.emit("upgrade_tower", this.selectedId) },
+            { icon: createCrossIcon(0xa20e0e, 4),   callback: () => game.emit("remove_tower",  this.selectedId) },
         ]
         .forEach((data, index) => {
-            const angle = Math.PI * 1.9 + index * (Math.PI * 0.32)
+            const angle = index * (Math.PI * 0.32)
             const button = new OptionsButton(data.icon, texture)
 
             button.pivot.x = texture.width / 2
@@ -41,7 +39,6 @@ export default class TowerOptions extends IModule {
     }
 
     close() {
-        this.scene.removeChild(this.entitySelection)
         this.scene.removeChild(this.container)
 
         game.removeListener("tower_clicked", this.onTowerClicked)
@@ -49,33 +46,12 @@ export default class TowerOptions extends IModule {
         game.removeListener("tower_removed", this.onTowerRemoved)
     }
 
-    emitUpgradeTower = () => {
-        game.emit("upgrade_tower", this.entitySelection.selected.id)
-    }
-
-    emitRemoveTower = () => {
-        game.emit("remove_tower", this.entitySelection.selected.id)
-    }
-
     onTowerClicked = (entityId) => {
-            const entity = this.scene.entitySystem.getEntityById(entityId)
+        if (entityId === this.selectedId) {
+            return this.clearTowerSelection()
+        }
 
-            if (!entity || !entity.hasTag("tower")) {
-                return
-            }
-
-            this.entitySelection.selectEntity(entity)
-            const isSelected = this.entitySelection.hasSelected()
-
-            this.container.visible = isSelected
-            
-            if (isSelected) {
-                const cmpTranform = entity.getComponent("Transform")
-                const cmpTower = entity.getComponent("Tower")
-    
-                const center = cmpTranform.position.add(cmpTower.size.divide(2))
-                this.container.position.copyFrom(center)
-            }
+        this.selectTower(entityId)
     }
 
     onUnselectTower = () => {
@@ -83,13 +59,23 @@ export default class TowerOptions extends IModule {
     }
 
     onTowerRemoved = (entityId) => {
-        if (this.entitySelection.hasSelected() && this.entitySelection.selected.id === entityId) {
+        if (this.selectedId === entityId) {
             this.clearTowerSelection()
         }
     }
 
+    selectTower(entityId) {
+        const entity = this.scene.ecs.getEntity(entityId)
+        const position = entity.components.transform.position
+
+
+        this.selectedId = entityId
+        this.container.visible = true
+        this.container.position.copyFrom(position)
+    }
+
     clearTowerSelection() {
-        this.entitySelection.clearSelection()
+        this.selectedId = null
         this.container.visible = false
     }
 }

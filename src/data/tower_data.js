@@ -4,8 +4,8 @@ export default {
     "Beam Turret": {
         stats: {
             base: {
-                attackRate: 0.05,
                 damage: 1,
+                attackRate: 0.05,
                 range: 150,
             },
             perLevelMultiplier: {
@@ -14,8 +14,8 @@ export default {
             },
         },
         action: {
-            type: "direct_damage",
-            component: "TowerBeamAttack",
+            type: "DirectDamage",
+            effectId: "BeamEffect"
         },
         base: {
             textureId: "TowerBase1",
@@ -39,8 +39,8 @@ export default {
             },
         },
         action: {
-            type: "create_bullet",
-            component: "TowerBulletAttack",
+            type: "ShootBullet",
+            bulletId: "SimpleOne",
         },
         base: {
             textureId: "TowerBase2",

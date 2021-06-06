@@ -1,7 +1,6 @@
 import { Components } from "./components"
 import { Container } from "pixi.js"
 import { EntitySystem } from "."
-import { intersection, intersects } from "game/utils"
 
 export default class Entity extends Container {
     /**

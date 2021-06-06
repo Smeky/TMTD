@@ -17,7 +17,7 @@ export const AssetList = [
     { name: "EnemyMrWhite", textureDef: [16, 16, 0xffffff] }, 
     { name: "EnemyMrBrown", textureDef: [16, 16, 0x964b00] }, 
     { name: "EnemyEddie", textureDef: [16, 16, 0xadd8e6] }, 
-    { name: "EnemyJoeCabot", textureDef: [16, 16, 0x9370db] }, 
+    { name: "EnemyJoeCabot", textureDef: [32, 32, 0x9370db] }, 
     
     { name: "HealthBar", textureDef: [20, 4,  0xff0000] }, 
     { name: "BeamBase", textureDef: [4,  1,  0xffffff] }, 
