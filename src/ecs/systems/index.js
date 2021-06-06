@@ -6,6 +6,7 @@ import PhysicsSystem from "./physics_system"
 import TransformDisplaySync from "./transform_display_sync"
 import TowerControl from "./tower_control"
 import CollisionSystem from "./collision_system"
+import ClickSetup from "./click_setup"
 
 export default [
     HealthSystem,
@@ -14,4 +15,5 @@ export default [
     PathFollowingAI,
     TowerControl,
     CollisionSystem,
+    ClickSetup,
 ]

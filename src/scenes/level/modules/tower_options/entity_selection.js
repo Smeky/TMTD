@@ -14,7 +14,7 @@ export default class EntitySelection extends Container {
 
             if (this.selected.id === entity.id) {
                 this.selected = null
-                return // clicked the same entity, just unselecte
+                return // clicked the same entity, just unselect
             }
         }
 

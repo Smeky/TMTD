@@ -72,4 +72,8 @@ export default class ECSController {
             this.entities.splice(index, 1)
         }
     }
+
+    getEntity(entityId) {
+        return this.entities.find(entity => entity.id === entityId)
+    }
 }

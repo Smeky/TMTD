@@ -58,6 +58,11 @@ export default {
             onCollision,
         }
     },
+    "clickable": function({ onClick }) {
+        return {
+            onClick
+        }
+    },
     "bullet": function({ source }) {
         return { source }
     },

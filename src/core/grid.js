@@ -43,8 +43,15 @@ export default class Grid extends Container {
         return this.tiles.find((tile) => new Rect(tile.pos.x, tile.pos.y, Tile.Size, Tile.Size).isPointInside(pos))
     }
 
-    getTilesByBounds(bounds){ 
-        return this.tiles.filter((tile) => new Rect(tile.pos.x, tile.pos.y, Tile.Size, Tile.Size).intersects(bounds))
+    getTilesByBounds(bounds) {
+        const expectedCount = Math.ceil(bounds.w / Tile.Size) * Math.ceil(bounds.h / Tile.Size)
+        const filtered = this.tiles.filter((tile) => new Rect(tile.pos.x, tile.pos.y, Tile.Size, Tile.Size).intersects(bounds))
+
+        if (filtered.length !== expectedCount) {
+            return null
+        }
+
+        return filtered
     }
 
     isTileObstructed(tile) {

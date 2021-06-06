@@ -25,6 +25,14 @@ export default class TowerControl extends ECSSystem {
         this.updateTowerEffect(delta, entity)
     }
 
+    closeEntity(entity) {
+        const { tower } = entity.components
+
+        if (tower.actionEffect && tower.actionEffect.parent) {
+            tower.actionEffect.parent.removeChild(tower.actionEffect)
+        }
+    }
+
     /**
      * Ensure the tower's target is valid by all requirements, otherwise returns a null
      * @param {*} entity 
