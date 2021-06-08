@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-      "baseUrl": "./",
-      "paths": {
-        "game/*": ["src/*"],
-        "media/*": ["media/*"]
-      }
+        "baseUrl": "./",
+        "paths": {
+            "game/*": ["src/*"],
+            "media/*": ["media/*"]
+        }
     }
-  }
+}
