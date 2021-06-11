@@ -1,8 +1,8 @@
 import { SceneBase } from "game/scenes"
-import { Vec2, Layers } from "game/graphics"
+import { Vec2 } from "game/graphics"
 import { findPath, Tile } from "game/core"
 import { Observable } from "game/core"
-import { EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay } from "./modules"
+import { EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, UserInputModule } from "./modules"
 
 const SceneLayers = {
     Grid: 10,
@@ -21,14 +21,10 @@ const SceneLayers = {
     TowerOptions: 55,
 }
 
-const UILayers = {
-    Base: 10,
-}
-
 export default class LevelScene extends SceneBase {
     static Name = "level"
     static Modules = [
-        EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay
+        EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, UserInputModule
     ]
 
     constructor() {
@@ -36,16 +32,8 @@ export default class LevelScene extends SceneBase {
 
         this.Layers = SceneLayers
 
-        this.ui = new Layers()
-        this.ui.Layers = UILayers
-
-        game.stage.addChild(this.ui)
-
         this.currency = new Observable(0)
         this.currency.subscribe(value => game.emit("currency_changed", value))
-        
-        this.inputProxy = game.input.getProxy()
-        this.inputProxy.on("keyup", this.handleKeyUp)
     }
 
     async load() {
@@ -58,11 +46,7 @@ export default class LevelScene extends SceneBase {
         this.positionCamera()
     }
 
-    closeScene() {
-        this.inputProxy.close()
-
-        game.stage.removeChild(this.ui)
-    }
+    closeScene() {}
 
     positionCamera() {
         const gridSize = game.world.grid.sizeInPixels()
@@ -90,18 +74,6 @@ export default class LevelScene extends SceneBase {
 
         for (const module of this.moduleList) {
             module.update(delta)
-        }
-    }
-
-    handleKeyUp = (event) => {
-        if (event.key === "1") {
-            game.emit("select_tower", 0)
-        }
-        else if (event.key === "2") {
-            game.emit("select_tower", 1)
-        }
-        else if (event.key === "Escape") {
-            game.emit("unselect_tower")
         }
     }
 }

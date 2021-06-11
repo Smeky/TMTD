@@ -27,6 +27,7 @@ export default class Game extends EventEmitter {
 
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
+        this.uiContainer = new pixi.Container()
         
         this.sceneManager = new SceneManager()
         this.world = new World({
@@ -36,7 +37,9 @@ export default class Game extends EventEmitter {
         })
 
         this.stage.addChild(this.world)
+        this.stage.addChild(this.uiContainer)
         this.stage.addChild(this.debug)
+        
         this.world.addChild(this.sceneManager)  // Todo: scene & its modules shouldn't render anything. Use World it self
 
         window.addEventListener("resize", this.handleResize)

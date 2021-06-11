@@ -11,7 +11,7 @@ export default class TowerBar extends IModule {
         this.selected = -1
         
         this.container = new Container()
-        this.scene.ui.addChild(this.container, this.scene.ui.Layers.Base)
+        game.uiContainer.addChild(this.container)
         
         let offset = 0
         for (const [id, tower] of Object.entries(TowerData)) {
