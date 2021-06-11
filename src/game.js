@@ -17,12 +17,18 @@ export default class Game extends EventEmitter {
     get isPaused() { return !this.ticker.started }
 
     beforeLoad() {
+        this.deltaBuffer = 0
+
         this.input = new InputModule()
-        this.renderer = new Renderer()
-        this.stage = new pixi.Container()
-        this.sceneManager = new SceneManager()
         this.debug = new Debug()
         this.loader = new AssetLoader()
+        this.ticker = new pixi.Ticker()
+        this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
+
+        this.renderer = new Renderer()
+        this.stage = new pixi.Container()
+        
+        this.sceneManager = new SceneManager()
         this.world = new World({
             size: new Vec2(this.renderer.width, this.renderer.height),
             zoomEnabled: true,
@@ -33,14 +39,7 @@ export default class Game extends EventEmitter {
         this.stage.addChild(this.debug)
         this.world.addChild(this.sceneManager)  // Todo: scene & its modules shouldn't render anything. Use World it self
 
-        this.deltaBuffer = 0
-
-        this.ticker = new pixi.Ticker()
-        this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
-
         window.addEventListener("resize", this.handleResize)
-        this.on("change_scene", this.onChangeScene)
-
         document.addEventListener("visibilitychange", this.onVisibilityChange);
     }
 
@@ -53,14 +52,6 @@ export default class Game extends EventEmitter {
         this.ticker.start()
     }
     
-    close() {
-        this.removeListener("change_scene", this.onChangeScene)
-    }
-
-    onChangeScene = (sceneId) => {
-        this.sceneManager.setScene(sceneId)
-    }
-
     onVisibilityChange = (event) => {
         const isPaused = event.target.visibilityState === "hidden"
 
