@@ -14,6 +14,7 @@ export default class Game extends EventEmitter {
 
     get assets() { return this.loader.assets }
     get scene() { return this.sceneManager.scene }
+    get isPaused() { return !this.ticker.started }
 
     beforeLoad() {
         this.input = new InputModule()
@@ -32,15 +33,15 @@ export default class Game extends EventEmitter {
         this.stage.addChild(this.debug)
         this.camera.addChild(this.sceneManager)
 
-        this.firstUpdate = true
         this.deltaBuffer = 0
 
         this.ticker = new pixi.Ticker()
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
-        this.ticker.start()
 
         window.addEventListener("resize", this.handleResize)
         this.on("change_scene", this.onChangeScene)
+
+        document.addEventListener("visibilitychange", this.onVisibilityChange);
     }
 
     async load() {
@@ -49,6 +50,7 @@ export default class Game extends EventEmitter {
 
     afterLoad() {
         this.sceneManager.setScene("level")
+        this.ticker.start()
     }
     
     close() {
@@ -59,12 +61,16 @@ export default class Game extends EventEmitter {
         this.sceneManager.setScene(sceneId)
     }
 
-    update = () => {
-        if (this.firstUpdate) {
-            this.firstUpdate = false
-            return
-        }
+    onVisibilityChange = (event) => {
+        const isPaused = event.target.visibilityState === "hidden"
 
+        if (isPaused) this.ticker.stop()
+        else          this.ticker.start()
+
+        this.emit("pause_change", isPaused)
+    }
+
+    update = () => {
         // We don't use delta, since we want option (B)
         //  A) pixi.Ticker.delta * velocity is "pixels per frame"
         //  B) pixi.Ticker.elapsedMS / 1000 * velocity is "pixels per second"
