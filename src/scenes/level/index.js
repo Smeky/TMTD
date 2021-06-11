@@ -1,8 +1,6 @@
 import { SceneBase } from "game/scenes"
-import { Vec2 } from "game/graphics"
-import { findPath, Tile } from "game/core"
 import { Observable } from "game/core"
-import { EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, UserInputModule } from "./modules"
+import { EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, UserInputModule, LevelSetupModule } from "./modules"
 
 const SceneLayers = {
     Grid: 10,
@@ -24,7 +22,8 @@ const SceneLayers = {
 export default class LevelScene extends SceneBase {
     static Name = "level"
     static Modules = [
-        EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, UserInputModule
+        EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, 
+        CurrencyDisplay, UserInputModule, LevelSetupModule
     ]
 
     constructor() {
@@ -34,39 +33,6 @@ export default class LevelScene extends SceneBase {
 
         this.currency = new Observable(0)
         this.currency.subscribe(value => game.emit("currency_changed", value))
-    }
-
-    async load() {
-        await game.world.grid.loadFromFile("dev.json")
-        return await super.load()
-    }
-
-    setupScene() {
-        this.setupLevel()
-        this.positionCamera()
-    }
-
-    closeScene() {}
-
-    positionCamera() {
-        const gridSize = game.world.grid.sizeInPixels()
-        const centered = game.getCanvasSize().subtract(gridSize).divide(2)
-
-        game.world.resetZoom()
-        game.world.moveTo(centered.round())
-    }
-
-    setupLevel() {
-        // Calculate path
-        const pathTiles = game.world.grid.getPathTiles()
-            .map(tile => new Vec2(tile.pos).divide(Tile.Size))
-
-        const start = new Vec2(3, 2)
-        const end = new Vec2(14, 11)
-
-        this.path = findPath({ cells: pathTiles, start, end })
-            .map(cell => cell.multiply(Tile.Size))
-            .slice(1)
     }
 
     update(delta) {

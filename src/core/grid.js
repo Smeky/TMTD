@@ -13,11 +13,15 @@ export default class Grid extends Container {
         // Todo: copy pixi's way of dynamic imports.. or find better than this
         //       because here we have to specify folder path (webpack's dynamic import)
         const file = await import("media/levels/" + filename)
-        const palette = new TilePalette(file.meta.paletteFile)
-        
-        this.size = new Vec2(file.meta.width, file.meta.height)
+        this.loadFromJson(file)
+    }
 
-        for (const tileData of file.tiles) {
+    loadFromJson(json) {
+        const palette = new TilePalette(json.meta.paletteFile)
+        
+        this.size = new Vec2(json.meta.width, json.meta.height)
+
+        for (const tileData of json.tiles) {
             palette.selectTile(tileData.index)
 
             const sprite = new Sprite(palette.getSelectedTileTexture())

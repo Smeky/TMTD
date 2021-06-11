@@ -4,7 +4,8 @@ export { default as TowerBar } from "./towerbar"
 export { default as TowerOptions } from "./tower_options"
 export { default as TowerManager } from "./tower_manager"
 export { default as CurrencyDisplay } from "./currency_display"
-export { default as UserInputModule } from "./currency_display"
+export { default as UserInputModule } from "./user_input"
+export { default as LevelSetupModule } from "./level_setup"
 
 export function createModulesStore(scene, Modules = []) {
     return Modules.reduce((acc, Module) => {

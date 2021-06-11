@@ -26,7 +26,7 @@ export default class SceneBase extends Layers {
     /**
      * @override
      */
-    setupScene() { throw "setupScene requires an override" }
+    setupScene() {}
     setup() {
         for (const module of this.moduleList) {
             module.setup()
@@ -38,7 +38,7 @@ export default class SceneBase extends Layers {
     /**
      * @override
      */
-    closeScene() { throw "closeScene requires an override" }
+    closeScene() {}
     close() {
         for (const module of this.moduleList) {
             module.close()
