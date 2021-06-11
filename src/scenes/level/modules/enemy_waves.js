@@ -95,7 +95,7 @@ export default class EnemyWaves extends IModule {
                 container: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
                 onZeroHealth: (entity) => {
                     entity.despawn()
-                    this.scene.currency(this.scene.currency() + 20)
+                    game.currency(game.currency() + 20)
                 }
             },
             "stats": {

@@ -1,7 +1,7 @@
 import { Layers } from "game/graphics"
 import { createModulesStore } from "./level/modules"
 
-export default class SceneBase extends Layers {
+export default class IScene extends Layers {
     static Name = null
 
     constructor() {
@@ -22,33 +22,4 @@ export default class SceneBase extends Layers {
     async load() {
         await Promise.all(this.moduleList.map(async (module) => await module.load()))
     }
-    
-    /**
-     * @override
-     */
-    setupScene() {}
-    setup() {
-        for (const module of this.moduleList) {
-            module.setup()
-        }
-
-        this.setupScene()
-    }
-
-    /**
-     * @override
-     */
-    closeScene() {}
-    close() {
-        for (const module of this.moduleList) {
-            module.close()
-        }
-
-        this.closeScene()        
-    }
-
-    /**
-     * @override
-     */
-    update(delta) {}
 }

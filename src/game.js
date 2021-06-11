@@ -1,10 +1,10 @@
-import { World, InputModule } from "game/core"
+import { World, InputModule, Observable } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
 import { Renderer, Vec2 } from "game/graphics"
 import * as pixi from "pixi.js"
-import AssetLoader, { AssetList } from "./core/asset_loader"
+import AssetLoader, { AssetList } from "game/core/asset_loader"
 
 pixi.utils.skipHello()
 
@@ -43,7 +43,12 @@ export default class Game extends EventEmitter {
         this.world.addChild(this.sceneManager)  // Todo: scene & its modules shouldn't render anything. Use World it self
 
         window.addEventListener("resize", this.handleResize)
-        document.addEventListener("visibilitychange", this.onVisibilityChange);
+        document.addEventListener("visibilitychange", this.onVisibilityChange)
+
+
+        // Temporarly here, need data store 
+        this.currency = new Observable(0)
+        this.currency.subscribe(value => game.emit("currency_changed", value))
     }
 
     async load() {

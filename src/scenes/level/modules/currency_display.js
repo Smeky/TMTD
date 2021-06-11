@@ -30,7 +30,7 @@ export default class CurrencyDisplay extends IModule {
     }
 
     updateText() {
-        this.textObject.text = `$ ${this.scene.currency()}`
+        this.textObject.text = `$ ${game.currency()}`
     }
 
     updatePosition() {

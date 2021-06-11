@@ -1,5 +1,5 @@
 export { default as IModule } from "./imodule"
-export { default as SceneBase } from "./scene_base"
+export { default as IScene } from "./iscene"
 export { default as SceneManager } from "./scene_manager"
 
 import LevelScene from "./level"

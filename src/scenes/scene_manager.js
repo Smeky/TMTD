@@ -9,7 +9,7 @@ export default class SceneManager extends Container {
 
     setScene(name) {
         if (this.scene) {
-            this.scene.close()
+            this.closeScene(this.scene)
             this.removeChild(this.scene)
         }
 
@@ -18,16 +18,30 @@ export default class SceneManager extends Container {
 
         this.scene.load()
                   .then(() => {
-                        this.scene.setup()
+                        this.setupScene(this.scene)
                         game.emit("scene_changed", name)
                         
                         this.scene.started = true
                   })
     }
 
+    setupScene(scene) {
+        for (const module of scene.moduleList) {
+            module.setup()
+        }
+    }
+
+    closeScene(scene) {
+        for (const module of scene.moduleList) {
+            module.close()
+        }
+    }
+
     update(delta) {
         if (this.scene && this.scene.started) {
-            this.scene.update(delta)
+            for (const module of this.scene.moduleList) {
+                module.update(delta)
+            }
         }
     }
 }

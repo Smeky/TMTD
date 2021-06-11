@@ -1,4 +1,4 @@
-import { SceneBase } from "game/scenes"
+import { IScene } from "game/scenes"
 import { EditorLevelManager } from "./modules/editor_level_manager"
 // import utils from "game/utils"
 // import { Tile, TilePalette } from "game/core"
@@ -7,7 +7,7 @@ import { EditorLevelManager } from "./modules/editor_level_manager"
 // import { Button } from "game/ui"
 // import { Container, Sprite, Text } from "pixi.js"
 
-export default class EditorScene extends SceneBase {
+export default class EditorScene extends IScene {
     static Name = "editor"
     static Modules = [EditorLevelManager]
 

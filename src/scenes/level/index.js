@@ -1,5 +1,4 @@
-import { SceneBase } from "game/scenes"
-import { Observable } from "game/core"
+import { IScene } from "game/scenes"
 import { EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay, UserInputModule, LevelSetupModule } from "./modules"
 
 const SceneLayers = {
@@ -19,7 +18,7 @@ const SceneLayers = {
     TowerOptions: 55,
 }
 
-export default class LevelScene extends SceneBase {
+export default class LevelScene extends IScene {
     static Name = "level"
     static Modules = [
         EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, 
@@ -30,16 +29,5 @@ export default class LevelScene extends SceneBase {
         super()
 
         this.Layers = SceneLayers
-
-        this.currency = new Observable(0)
-        this.currency.subscribe(value => game.emit("currency_changed", value))
-    }
-
-    update(delta) {
-        if (!this.started) return
-
-        for (const module of this.moduleList) {
-            module.update(delta)
-        }
     }
 }
