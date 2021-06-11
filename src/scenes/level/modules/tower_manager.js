@@ -25,7 +25,7 @@ export default class TowerManager extends IModule {
 
     onBuildTower = (event) => {
         const { pos, towerId } = event
-        const { grid } = this.scene
+        const { grid } = game.world
 
         if (!TowerData.hasOwnProperty(towerId)) {
             return console.error(`Failed to build tower - invalid towerId ${towerId}`)
@@ -47,20 +47,20 @@ export default class TowerManager extends IModule {
         const towerData = TowerData[towerId]
         // tiles[3].pos is basically center if tiles.length == 4.. I cheated a little, Todo :D 
         const components = this.getTowerComponents(towerData, tiles[3].pos)
-        this.scene.ecs.createEntity(components, "Tower")
+        game.world.ecs.createEntity(components, "Tower")
     }
     
     onRemoveTower = (entityId) => {
-        const entity = this.scene.ecs.getEntity(entityId)
+        const entity = game.world.ecs.getEntity(entityId)
         const { transform, display } = entity.components
         const { width, height } = display.getLocalBounds()
         const { position } = transform
 
         const bounds = new Rect(position.x - width / 2, position.y - height / 2, width, height)
-        const tiles = this.scene.grid.getTilesByBounds(bounds)
+        const tiles = game.world.grid.getTilesByBounds(bounds)
 
-        this.scene.grid.setTilesBlocked(tiles, false)
-        this.scene.ecs.removeEntity(entityId)
+        game.world.grid.setTilesBlocked(tiles, false)
+        game.world.ecs.removeEntity(entityId)
 
         game.emit("tower_removed", entityId)
     }
@@ -124,7 +124,7 @@ export default class TowerManager extends IModule {
             source: towerEntity
         })
 
-        this.scene.ecs.createEntity(components, "Bullet")
+        game.world.ecs.createEntity(components, "Bullet")
     }
 
     getBulletComponents({ data, position, rotation, range, source }) {

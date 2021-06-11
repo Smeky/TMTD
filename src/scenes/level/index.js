@@ -1,18 +1,8 @@
 import { SceneBase } from "game/scenes"
 import { Vec2, Layers } from "game/graphics"
-import { findPath, Grid, Tile } from "game/core"
+import { findPath, Tile } from "game/core"
 import { Observable } from "game/core"
-
-import {
-    EnemyWaves, 
-    BuildMode, 
-    TowerBar, 
-    TowerOptions, 
-    TowerManager, 
-    CurrencyDisplay, 
-} from "./modules"
-import { ECSController } from "game/ecs"
-import { Sprite } from "pixi.js"
+import { EnemyWaves, BuildMode, TowerBar, TowerOptions, TowerManager, CurrencyDisplay } from "./modules"
 
 const SceneLayers = {
     Grid: 10,
@@ -46,14 +36,10 @@ export default class LevelScene extends SceneBase {
 
         this.Layers = SceneLayers
 
-        this.grid = new Grid()
-        this.ecs = new ECSController()
-
         this.ui = new Layers()
         this.ui.Layers = UILayers
 
         game.stage.addChild(this.ui)
-        this.addChild(this.grid, this.Layers.Grid)
 
         this.currency = new Observable(0)
         this.currency.subscribe(value => game.emit("currency_changed", value))
@@ -63,7 +49,7 @@ export default class LevelScene extends SceneBase {
     }
 
     async load() {
-        await this.grid.loadFromFile("dev.json")
+        await game.world.grid.loadFromFile("dev.json")
         return await super.load()
     }
 
@@ -79,30 +65,16 @@ export default class LevelScene extends SceneBase {
     }
 
     positionCamera() {
-        const gridSize = this.grid.sizeInPixels()
+        const gridSize = game.world.grid.sizeInPixels()
         const centered = game.getCanvasSize().subtract(gridSize).divide(2)
 
-        game.camera.resetZoom()
-        game.camera.moveTo(centered.round())
+        game.world.resetZoom()
+        game.world.moveTo(centered.round())
     }
 
     setupLevel() {
-        // Put down some towers right away
-        const placements = [
-            new Vec2(160, 64),
-            // new Vec2(160, 160),
-            // new Vec2(32, 160),
-            // new Vec2(320, 128),
-            // new Vec2(288, 32),
-            // new Vec2(128, 256),
-            // new Vec2(288, 256),
-            // new Vec2(416, 224),
-        ].forEach((pos, index) => {
-            game.emit("build_tower", { pos, towerId: "Bullet Turret" })
-        })
-
         // Calculate path
-        const pathTiles = this.grid.getPathTiles()
+        const pathTiles = game.world.grid.getPathTiles()
             .map(tile => new Vec2(tile.pos).divide(Tile.Size))
 
         const start = new Vec2(3, 2)
@@ -115,8 +87,6 @@ export default class LevelScene extends SceneBase {
 
     update(delta) {
         if (!this.started) return
-
-        this.ecs.update(delta)
 
         for (const module of this.moduleList) {
             module.update(delta)

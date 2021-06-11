@@ -65,7 +65,7 @@ export default class TowerOptions extends IModule {
     }
 
     selectTower(entityId) {
-        const entity = this.scene.ecs.getEntity(entityId)
+        const entity = game.world.ecs.getEntity(entityId)
         const position = entity.components.transform.position
 
 

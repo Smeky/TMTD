@@ -1,4 +1,4 @@
-import { Camera, InputModule } from "game/core"
+import { World, InputModule } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
@@ -23,15 +23,15 @@ export default class Game extends EventEmitter {
         this.sceneManager = new SceneManager()
         this.debug = new Debug()
         this.loader = new AssetLoader()
-        this.camera = new Camera({
+        this.world = new World({
             size: new Vec2(this.renderer.width, this.renderer.height),
             zoomEnabled: true,
             dragEnabled: true,
         })
 
-        this.stage.addChild(this.camera)
+        this.stage.addChild(this.world)
         this.stage.addChild(this.debug)
-        this.camera.addChild(this.sceneManager)
+        this.world.addChild(this.sceneManager)  // Todo: scene & its modules shouldn't render anything. Use World it self
 
         this.deltaBuffer = 0
 
@@ -79,6 +79,7 @@ export default class Game extends EventEmitter {
         while (delta > 0) {
             delta -= this.SPF
 
+            this.world.update(this.SPF)
             this.sceneManager.update(this.SPF)
             this.debug.update(this.SPF)
         }
@@ -118,7 +119,7 @@ export default class Game extends EventEmitter {
 
         this.renderer.resize(meta.after.x, meta.after.y)
 
-        this.camera.handleViewResize(meta.after) // Todo: move this to camera, listen to event?
+        this.world.handleViewResize(meta.after) // Todo: move this to camera, listen to event?
         this.emit("window_resized", meta)
     }
 }

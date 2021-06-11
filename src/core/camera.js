@@ -1,9 +1,9 @@
 import { createRectTexture } from "game/utils"
-import { Rect, Vec2 } from "game/graphics"
-import { Container, Sprite } from "pixi.js"
+import { Rect, Vec2, Layers } from "game/graphics"
+import { Sprite } from "pixi.js"
 
 
-export default class Camera extends Container {
+export default class Camera extends Layers {
     /**
      * 
      * @param {object} options 
