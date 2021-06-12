@@ -1,10 +1,10 @@
-import { Camera, InputModule } from "game/core"
+import { World, InputModule, Observable } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
 import { Renderer, Vec2 } from "game/graphics"
 import * as pixi from "pixi.js"
-import AssetLoader, { AssetList } from "./core/asset_loader"
+import AssetLoader, { AssetList } from "game/core/asset_loader"
 
 pixi.utils.skipHello()
 
@@ -17,31 +17,38 @@ export default class Game extends EventEmitter {
     get isPaused() { return !this.ticker.started }
 
     beforeLoad() {
+        this.deltaBuffer = 0
+
         this.input = new InputModule()
-        this.renderer = new Renderer()
-        this.stage = new pixi.Container()
-        this.sceneManager = new SceneManager()
         this.debug = new Debug()
         this.loader = new AssetLoader()
-        this.camera = new Camera({
+        this.ticker = new pixi.Ticker()
+        this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
+
+        this.renderer = new Renderer()
+        this.stage = new pixi.Container()
+        this.uiContainer = new pixi.Container()
+        
+        this.sceneManager = new SceneManager()
+        this.world = new World({
             size: new Vec2(this.renderer.width, this.renderer.height),
             zoomEnabled: true,
             dragEnabled: true,
         })
 
-        this.stage.addChild(this.camera)
+        this.stage.addChild(this.world)
+        this.stage.addChild(this.uiContainer)
         this.stage.addChild(this.debug)
-        this.camera.addChild(this.sceneManager)
-
-        this.deltaBuffer = 0
-
-        this.ticker = new pixi.Ticker()
-        this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
+        
+        this.world.addChild(this.sceneManager)  // Todo: scene & its modules shouldn't render anything. Use World it self
 
         window.addEventListener("resize", this.handleResize)
-        this.on("change_scene", this.onChangeScene)
+        document.addEventListener("visibilitychange", this.onVisibilityChange)
 
-        document.addEventListener("visibilitychange", this.onVisibilityChange);
+
+        // Temporarly here, need data store 
+        this.currency = new Observable(0)
+        this.currency.subscribe(value => game.emit("currency_changed", value))
     }
 
     async load() {
@@ -49,18 +56,10 @@ export default class Game extends EventEmitter {
     }
 
     afterLoad() {
-        this.sceneManager.setScene("level")
+        this.sceneManager.setScene("Level")
         this.ticker.start()
     }
     
-    close() {
-        this.removeListener("change_scene", this.onChangeScene)
-    }
-
-    onChangeScene = (sceneId) => {
-        this.sceneManager.setScene(sceneId)
-    }
-
     onVisibilityChange = (event) => {
         const isPaused = event.target.visibilityState === "hidden"
 
@@ -79,6 +78,7 @@ export default class Game extends EventEmitter {
         while (delta > 0) {
             delta -= this.SPF
 
+            this.world.update(this.SPF)
             this.sceneManager.update(this.SPF)
             this.debug.update(this.SPF)
         }
@@ -118,7 +118,7 @@ export default class Game extends EventEmitter {
 
         this.renderer.resize(meta.after.x, meta.after.y)
 
-        this.camera.handleViewResize(meta.after) // Todo: move this to camera, listen to event?
+        this.world.handleViewResize(meta.after) // Todo: move this to camera, listen to event?
         this.emit("window_resized", meta)
     }
 }

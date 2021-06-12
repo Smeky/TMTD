@@ -10,6 +10,11 @@
         "dev": "webpack --config config/webpack-dev.js",
         "start": "webpack serve --config config/webpack-dev.js"
     },
+    "eslintConfig": {
+        "env": {
+            "es6": true
+        }
+    },
     "dependencies": {
         "eventemitter3": "^4.0.7",
         "pixi-filters": "^3.2.2",

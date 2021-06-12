@@ -2,12 +2,11 @@ import { createTowerDisplay } from "game/utils"
 import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 import { TowerData } from "game/data"
+import LevelLayers from "game/scenes/level/layers"
 
 export default class BuildMode extends IModule {
-    static Name = "buildMode"
-
     setup() {
         this.enabled = false
         this.selectedTower = null
@@ -23,8 +22,8 @@ export default class BuildMode extends IModule {
         this.buildTiles.mask = this.mask
         this.buildTiles.visible = false
 
-        this.scene.addChild(this.buildTiles, this.scene.BuildmodeTiles)
-        this.scene.addChild(this.mask, this.scene.BuildmodeTiles)
+        game.world.addChild(this.buildTiles, LevelLayers.BuildmodeTiles)
+        game.world.addChild(this.mask, LevelLayers.BuildmodeTiles)
 
         game.on("tower_built", this.updateBuildTiles)
         game.on("tower_selected", this.onTowerSelected)
@@ -35,11 +34,11 @@ export default class BuildMode extends IModule {
     }
 
     close() {
-        this.scene.removeChild(this.buildTiles)
-        this.scene.removeChild(this.mask)
+        game.world.removeChild(this.buildTiles)
+        game.world.removeChild(this.mask)
 
         if (this.highlight) {
-            this.scene.removeChild(this.highlight)
+            game.world.removeChild(this.highlight)
         }
 
         this.inputProxy.close()
@@ -69,7 +68,7 @@ export default class BuildMode extends IModule {
         this.highlight.pivot.x = width / 2
         this.highlight.pivot.y = height / 2
 
-        this.scene.addChild(this.highlight, this.scene.Layers.BuildmodeHighlight)
+        game.world.addChild(this.highlight, LevelLayers.BuildmodeHighlight)
     }
 
     toggle() {
@@ -83,7 +82,7 @@ export default class BuildMode extends IModule {
 
             // Mouse pos
             const screenPos = game.renderer.plugins.interaction.mouse.global
-            const worldPos = game.camera.correctMousePos(screenPos)
+            const worldPos = game.world.correctMousePos(screenPos)
 
             this.mask.x = worldPos.x - (this.mask.width) / 2
             this.mask.y = worldPos.y - (this.mask.height) / 2
@@ -101,7 +100,7 @@ export default class BuildMode extends IModule {
         this.buildTiles.clear()
 
         const padding = 4
-        const tiles = this.scene.grid.getAllGroundTiles()
+        const tiles = game.world.grid.getAllGroundTiles()
 
         for (const tile of tiles) {
             if (!tile.isBlocked) {
@@ -128,7 +127,7 @@ export default class BuildMode extends IModule {
         this.mask.x = position.x - (this.mask.width) / 2
         this.mask.y = position.y - (this.mask.height) / 2
 
-        const snapped = this.scene.grid.snapPosToTile(position.add(Tile.Size / 2))
+        const snapped = game.world.grid.snapPosToTile(position.add(Tile.Size / 2))
         this.highlight.x = snapped.x
         this.highlight.y = snapped.y
     }
@@ -147,7 +146,7 @@ export default class BuildMode extends IModule {
     handleMouseMove = (event) => {
         if (this.enabled) {
             const { x, y } = event
-            const pos = game.camera.correctMousePos(new Vec2(x, y))
+            const pos = game.world.correctMousePos(new Vec2(x, y))
     
             this.updateHighlightPosition(pos)
         }
@@ -155,7 +154,7 @@ export default class BuildMode extends IModule {
 
     onTowerSelected = towerId => {
         this.setSelectedTower(towerId)
-        this.updateHighlightPosition(game.camera.getMousePos())
+        this.updateHighlightPosition(game.world.getMousePos())
 
         if (!this.enabled) {
             this.toggle()

@@ -1,23 +1,22 @@
 import { IModule } from "game/scenes"
 import { Rect, Vec2 } from "game/graphics"
 import { TowerData, BulletData } from "game/data"
-import { Container, Sprite } from "pixi.js"
-import { TowerEffects } from "game/graphics/effects.js"
 import { getTowerHeadEndPosition } from "game/ecs"
+import { TowerEffects } from "game/graphics/effects"
+import LevelLayers from "game/scenes/level/layers"
+import { Container, Sprite } from "pixi.js"
 
 export default class TowerManager extends IModule {
-    static Name = "towerManager"
-
     setup() {
         this.container = new Container()
-        this.scene.addChild(this.container, this.scene.Layers.TowerBase)
+        game.world.addChild(this.container, LevelLayers.TowerBase)
 
         game.on("build_tower", this.onBuildTower)
         game.on("remove_tower", this.onRemoveTower)
     }
 
     close() {
-        this.scene.removeChild(this.container)
+        game.world.removeChild(this.container)
 
         game.removeListener("build_tower", this.onBuildTower)       
         game.removeListener("remove_tower", this.onRemoveTower)
@@ -25,7 +24,7 @@ export default class TowerManager extends IModule {
 
     onBuildTower = (event) => {
         const { pos, towerId } = event
-        const { grid } = this.scene
+        const { grid } = game.world
 
         if (!TowerData.hasOwnProperty(towerId)) {
             return console.error(`Failed to build tower - invalid towerId ${towerId}`)
@@ -47,20 +46,20 @@ export default class TowerManager extends IModule {
         const towerData = TowerData[towerId]
         // tiles[3].pos is basically center if tiles.length == 4.. I cheated a little, Todo :D 
         const components = this.getTowerComponents(towerData, tiles[3].pos)
-        this.scene.ecs.createEntity(components, "Tower")
+        game.world.ecs.createEntity(components, "Tower")
     }
     
     onRemoveTower = (entityId) => {
-        const entity = this.scene.ecs.getEntity(entityId)
+        const entity = game.world.ecs.getEntity(entityId)
         const { transform, display } = entity.components
         const { width, height } = display.getLocalBounds()
         const { position } = transform
 
         const bounds = new Rect(position.x - width / 2, position.y - height / 2, width, height)
-        const tiles = this.scene.grid.getTilesByBounds(bounds)
+        const tiles = game.world.grid.getTilesByBounds(bounds)
 
-        this.scene.grid.setTilesBlocked(tiles, false)
-        this.scene.ecs.removeEntity(entityId)
+        game.world.grid.setTilesBlocked(tiles, false)
+        game.world.ecs.removeEntity(entityId)
 
         game.emit("tower_removed", entityId)
     }
@@ -76,7 +75,7 @@ export default class TowerManager extends IModule {
         baseSprite.anchor.set(0.5, 0.5)
         headSprite.anchor.set(0.5, 0.2)
 
-        this.scene.addChild(container, this.scene.Layers.TowerBase)
+        game.world.addChild(container, LevelLayers.TowerBase)
 
         return {
             "transform": { position },
@@ -104,7 +103,7 @@ export default class TowerManager extends IModule {
     resolveTowerEffect(towerData) {
         if (towerData.action.effectId) {
             const effect = new TowerEffects[towerData.action.effectId]()
-            this.scene.addChild(effect, this.scene.Layers.Beams)
+            game.world.addChild(effect, LevelLayers.Beams)
 
             return effect
         }
@@ -124,7 +123,7 @@ export default class TowerManager extends IModule {
             source: towerEntity
         })
 
-        this.scene.ecs.createEntity(components, "Bullet")
+        game.world.ecs.createEntity(components, "Bullet")
     }
 
     getBulletComponents({ data, position, rotation, range, source }) {
@@ -133,7 +132,7 @@ export default class TowerManager extends IModule {
 
         sprite.anchor.set(0.5, 0.5)
 
-        this.scene.addChild(sprite, this.scene.Layers.Bullets)
+        game.world.addChild(sprite, LevelLayers.Bullets)
 
         return {
             "transform": { position, rotation },

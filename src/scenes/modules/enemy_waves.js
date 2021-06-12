@@ -1,13 +1,11 @@
-import { Cooldown, Tile } from "game/core"
-import { Vec2 } from "game/graphics"
+import { IModule } from "."
+import { Cooldown } from "game/core"
 import { EnemyData } from "game/data"
+import LevelLayers from "game/scenes/level/layers"
 import { Sprite } from "pixi.js"
 
-import IModule from "game/scenes/imodule"
 
 export default class EnemyWaves extends IModule {
-    static Name = "enemyWaves"
-
     setup() {
         this.spawnCooldown = new Cooldown(1.0)
 
@@ -69,9 +67,9 @@ export default class EnemyWaves extends IModule {
         sprite.anchor.set(0.5, 0.5)
 
         const components = this.getEnemyComponents(enemyData, sprite)
-        this.scene.ecs.createEntity(components, "Enemy")
+        game.world.ecs.createEntity(components, "Enemy")
         
-        this.scene.addChild(sprite, this.scene.Layers.EnemyBase)
+        game.world.addChild(sprite, LevelLayers.EnemyBase)
     }
 
     getEnemyComponents(enemyData, sprite) {
@@ -92,10 +90,10 @@ export default class EnemyWaves extends IModule {
                 onFinished: (entity) => entity.despawn(),
             },
             "health": {
-                container: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
+                container: game.world.getLayer(LevelLayers.EnemyHealthBar),
                 onZeroHealth: (entity) => {
                     entity.despawn()
-                    this.scene.currency(this.scene.currency() + 20)
+                    game.currency(game.currency() + 20)
                 }
             },
             "stats": {
@@ -125,7 +123,7 @@ export default class EnemyWaves extends IModule {
     //         },
     //         "Health": {
     //             maximum: health,
-    //             parent: this.scene.getLayer(this.scene.Layers.EnemyHealthBar),
+    //             parent: this.scene.getLayer(LevelLayers.EnemyHealthBar),
     //             onZeroHealth: (entity) => {
     //                 game.emit("enemy_killed", entity.id)
     //                 entity.despawn()

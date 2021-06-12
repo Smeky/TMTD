@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "baseUrl": "./",
+        "target": "es6",
         "paths": {
             "game/*": ["src/*"],
             "media/*": ["media/*"]

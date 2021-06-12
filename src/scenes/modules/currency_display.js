@@ -1,12 +1,10 @@
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 import { Text } from "pixi.js"
 
 export default class CurrencyDisplay extends IModule {
-    static Name = "currencyDisplay"
-
     setup() {
         this.textObject = new Text("", { fill: 0xffffff, fontSize: 22 })
-        this.scene.ui.addChild(this.textObject, this.scene.ui.Layers.Base)
+        game.uiContainer.addChild(this.textObject)
 
         this.updateText()
         this.updatePosition()
@@ -16,7 +14,7 @@ export default class CurrencyDisplay extends IModule {
     }
     
     close() {
-        this.scene.removeChild(this.textObject)
+        game.uiContainer.removeChild(this.textObject)
         game.removeListener("currency_changed", this.onCurrencyChanged)
         game.removeListener("window_resized", this.onWindowResized)
     }
@@ -30,7 +28,7 @@ export default class CurrencyDisplay extends IModule {
     }
 
     updateText() {
-        this.textObject.text = `$ ${this.scene.currency()}`
+        this.textObject.text = `$ ${game.currency()}`
     }
 
     updatePosition() {
