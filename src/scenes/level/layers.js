@@ -1,17 +1,22 @@
 
-export default {
-    Grid: 10,
+const Layers = [
+    "Grid",
+    "TowerBase",
+    "EnemyBase",
+    "TowerSelection",
+    "Bullets",
+    "Beams",
+    "BuildmodeTiles",
+    "BuildmodeHighlight",
+    "EnemyHealthBar",
+    "TowerOptions",
+]
 
-    TowerBase: 15,
-    EnemyBase: 15,
-    TowerSelection: 18,
-
-    Bullets: 20,
-    Beams: 21,
-
-    BuildmodeTiles: 50,
-    BuildmodeHighlight: 51,
-    
-    EnemyHealthBar: 53,
-    TowerOptions: 55,
+function getNumberedLayers(layers) {
+    return layers.reduce((acc, name, index) => {
+        acc[name] = index
+        return acc
+    }, {})
 }
+
+export default getNumberedLayers(Layers)
