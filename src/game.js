@@ -3,8 +3,9 @@ import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
 import { Renderer, Vec2 } from "game/graphics"
-import * as pixi from "pixi.js"
+import { StoreManager, DefaultBaseState } from "game/store"
 import AssetLoader, { AssetList } from "game/core/asset_loader"
+import * as pixi from "pixi.js"
 
 pixi.utils.skipHello()
 
@@ -13,6 +14,7 @@ export default class Game extends EventEmitter {
     SPF = 1 / this.FPS
 
     get assets() { return this.loader.assets }
+    get stores() { return this.storeManager.stores }
     get scene() { return this.sceneManager.scene }
     get isPaused() { return !this.ticker.started }
 
@@ -24,11 +26,14 @@ export default class Game extends EventEmitter {
         this.loader = new AssetLoader()
         this.ticker = new pixi.Ticker()
         this.ticker.add(this.update, pixi.UPDATE_PRIORITY.LOW)
-
+        
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
         this.uiContainer = new pixi.Container()
         
+        this.storeManager = new StoreManager()
+        this.storeManager.addStore("base", DefaultBaseState)
+
         this.sceneManager = new SceneManager()
         this.world = new World({
             size: new Vec2(this.renderer.width, this.renderer.height),
@@ -44,11 +49,6 @@ export default class Game extends EventEmitter {
 
         window.addEventListener("resize", this.handleResize)
         document.addEventListener("visibilitychange", this.onVisibilityChange)
-
-
-        // Temporarly here, need data store 
-        this.currency = new Observable(0)
-        this.currency.subscribe(value => game.emit("currency_changed", value))
     }
 
     async load() {

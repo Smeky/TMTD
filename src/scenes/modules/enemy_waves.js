@@ -73,7 +73,7 @@ export default class EnemyWaves extends IModule {
     }
 
     getEnemyComponents(enemyData, sprite) {
-        const { speed, health } = enemyData
+        const { speed, health, weight } = enemyData
 
         return {
             "transform": { position: this.scene.path[0] },
@@ -93,7 +93,7 @@ export default class EnemyWaves extends IModule {
                 container: game.world.getLayer(LevelLayers.EnemyHealthBar),
                 onZeroHealth: (entity) => {
                     entity.despawn()
-                    game.currency(game.currency() + 20)
+                    this.handleEnemyDeath(weight)
                 }
             },
             "stats": {
@@ -103,41 +103,11 @@ export default class EnemyWaves extends IModule {
         }
     }
 
-    // getEnemyComponents(enemyData) {
-        // const { textureId, speed, health } = enemyData
-        // const texture = game.assets[textureId]
-
-    //     return {
-    //         "Transform": {
-    //             position: new Vec2(3 * Tile.Size, 2 * Tile.Size)
-    //         },
-    //         "Display": {
-    //             displayObject: new Sprite(texture),
-    //         },
-    //         "Movement": {
-    //             speed
-    //         },
-    //         "PathFollower": {
-    //             path: this.scene.path,
-    //             onFinished: (entity) => entity.despawn()
-    //         },
-    //         "Health": {
-    //             maximum: health,
-    //             parent: this.scene.getLayer(LevelLayers.EnemyHealthBar),
-    //             onZeroHealth: (entity) => {
-    //                 game.emit("enemy_killed", entity.id)
-    //                 entity.despawn()
-    //             }
-    //         },
-    //         "Stats": {
-    //             movementSpeed: speed,
-                
-    //         },
-    //         "Collideable": {
-    //             radius: Math.max(texture.width, texture.height) / 2,
-    //             static: true,
-    //         }
-    //     }
-    // }
+    handleEnemyDeath(weight) {
+        game.stores.base.update((state) => {
+            return {
+                currency: state.currency + parseInt(weight / 10)
+            }
+        })
+    }
 }
-
