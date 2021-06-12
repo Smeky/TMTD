@@ -1,16 +1,17 @@
 import { IModule } from "game/scenes"
 import { Rect, Vec2 } from "game/graphics"
 import { TowerData, BulletData } from "game/data"
-import { Container, Sprite } from "pixi.js"
-import { TowerEffects } from "game/graphics/effects.js"
 import { getTowerHeadEndPosition } from "game/ecs"
+import { TowerEffects } from "game/graphics/effects"
+import LevelLayers from "game/scenes/level/layers"
+import { Container, Sprite } from "pixi.js"
 
 export default class TowerManager extends IModule {
     static Name = "towerManager"
 
     setup() {
         this.container = new Container()
-        this.scene.addChild(this.container, this.scene.Layers.TowerBase)
+        this.scene.addChild(this.container, LevelLayers.TowerBase)
 
         game.on("build_tower", this.onBuildTower)
         game.on("remove_tower", this.onRemoveTower)
@@ -76,7 +77,7 @@ export default class TowerManager extends IModule {
         baseSprite.anchor.set(0.5, 0.5)
         headSprite.anchor.set(0.5, 0.2)
 
-        this.scene.addChild(container, this.scene.Layers.TowerBase)
+        this.scene.addChild(container, LevelLayers.TowerBase)
 
         return {
             "transform": { position },
@@ -104,7 +105,7 @@ export default class TowerManager extends IModule {
     resolveTowerEffect(towerData) {
         if (towerData.action.effectId) {
             const effect = new TowerEffects[towerData.action.effectId]()
-            this.scene.addChild(effect, this.scene.Layers.Beams)
+            this.scene.addChild(effect, LevelLayers.Beams)
 
             return effect
         }
@@ -133,7 +134,7 @@ export default class TowerManager extends IModule {
 
         sprite.anchor.set(0.5, 0.5)
 
-        this.scene.addChild(sprite, this.scene.Layers.Bullets)
+        this.scene.addChild(sprite, LevelLayers.Bullets)
 
         return {
             "transform": { position, rotation },

@@ -4,6 +4,7 @@ import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
 import IModule from "game/scenes/imodule"
 import { TowerData } from "game/data"
+import LevelLayers from "game/scenes/level/layers"
 
 export default class BuildMode extends IModule {
     static Name = "buildMode"
@@ -69,7 +70,7 @@ export default class BuildMode extends IModule {
         this.highlight.pivot.x = width / 2
         this.highlight.pivot.y = height / 2
 
-        this.scene.addChild(this.highlight, this.scene.Layers.BuildmodeHighlight)
+        this.scene.addChild(this.highlight, LevelLayers.BuildmodeHighlight)
     }
 
     toggle() {
