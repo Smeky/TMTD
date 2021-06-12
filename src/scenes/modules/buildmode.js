@@ -2,13 +2,11 @@ import { createTowerDisplay } from "game/utils"
 import { Tile } from "game/core"
 import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 import { TowerData } from "game/data"
 import LevelLayers from "game/scenes/level/layers"
 
 export default class BuildMode extends IModule {
-    static Name = "buildMode"
-
     setup() {
         this.enabled = false
         this.selectedTower = null
@@ -24,8 +22,8 @@ export default class BuildMode extends IModule {
         this.buildTiles.mask = this.mask
         this.buildTiles.visible = false
 
-        this.scene.addChild(this.buildTiles, this.scene.BuildmodeTiles)
-        this.scene.addChild(this.mask, this.scene.BuildmodeTiles)
+        game.world.addChild(this.buildTiles, LevelLayers.BuildmodeTiles)
+        game.world.addChild(this.mask, LevelLayers.BuildmodeTiles)
 
         game.on("tower_built", this.updateBuildTiles)
         game.on("tower_selected", this.onTowerSelected)
@@ -36,11 +34,11 @@ export default class BuildMode extends IModule {
     }
 
     close() {
-        this.scene.removeChild(this.buildTiles)
-        this.scene.removeChild(this.mask)
+        game.world.removeChild(this.buildTiles)
+        game.world.removeChild(this.mask)
 
         if (this.highlight) {
-            this.scene.removeChild(this.highlight)
+            game.world.removeChild(this.highlight)
         }
 
         this.inputProxy.close()
@@ -70,7 +68,7 @@ export default class BuildMode extends IModule {
         this.highlight.pivot.x = width / 2
         this.highlight.pivot.y = height / 2
 
-        this.scene.addChild(this.highlight, LevelLayers.BuildmodeHighlight)
+        game.world.addChild(this.highlight, LevelLayers.BuildmodeHighlight)
     }
 
     toggle() {

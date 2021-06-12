@@ -1,20 +1,18 @@
-import IModule from "game/scenes/imodule"
 import { createCrossIcon, createUpgradeIcon } from "game/ui/icons"
-import LevelLayers from "game/scenes/level/layers"
 import { Container } from "pixi.js";
+import { IModule } from "../."
+import LevelLayers from "game/scenes/level/layers"
 
 import OptionsButton from "./options_button"
 
 export default class TowerOptions extends IModule {
-    static Name = "towerOptions"
-
     setup() {
         this.selectedId = null
 
         this.container = new Container()
         this.container.visible = false
 
-        this.scene.addChild(this.container, LevelLayers.TowerOptions)
+        game.world.addChild(this.container, LevelLayers.TowerOptions)
 
         const texture = game.assets.TowerOptionsButton
         const buttons = [
@@ -40,7 +38,7 @@ export default class TowerOptions extends IModule {
     }
 
     close() {
-        this.scene.removeChild(this.container)
+        game.world.removeChild(this.container)
 
         game.removeListener("tower_clicked", this.onTowerClicked)
         game.removeListener("unselect_tower", this.onUnselectTower)

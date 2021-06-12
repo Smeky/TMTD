@@ -1,12 +1,10 @@
 import { createTowerDisplay } from "game/utils"
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 import { Button } from "game/ui"
 import { Container } from "pixi.js"
 import { TowerData } from "game/data"
 
 export default class TowerBar extends IModule {
-    static Name = "towerBar"
-
     setup() { 
         this.selected = -1
         

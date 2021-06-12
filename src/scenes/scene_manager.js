@@ -1,5 +1,7 @@
+import { Modules, createModulesStore } from "./modules"
+import { SceneData } from "game/data"
 import { Container } from "pixi.js"
-import Scenes from "game/scenes"
+import { Scene } from "."
 
 export default class SceneManager extends Container {
     constructor() {
@@ -8,38 +10,46 @@ export default class SceneManager extends Container {
     }
 
     setScene(name) {
+        if (!SceneData.hasOwnProperty(name)) {
+            throw new Error(`Unable to set scene - Unknown scene name "${name}"`)
+        }
+
         if (this.scene) {
             this.closeScene(this.scene)
             this.removeChild(this.scene)
         }
 
-        this.scene = new Scenes[name]()
-        this.addChild(this.scene)
+        this.scene = this.createScene(name, SceneData[name])
+        this.scene.started = true
 
-        this.scene.load()
-                  .then(() => {
-                        this.setupScene(this.scene)
-                        game.emit("scene_changed", name)
-                        
-                        this.scene.started = true
-                  })
+        game.emit("scene_changed", name)
     }
 
-    setupScene(scene) {
-        for (const module of scene.moduleList) {
+    createScene(sceneName, sceneData) {
+        const modules = sceneData.modules.map(name => Modules[name])
+        const scene = new Scene()
+        
+        scene.name = sceneName
+        scene.modules = createModulesStore(scene, modules)
+        
+        for (const module of Object.values(scene.modules)) {
             module.setup()
         }
+
+        return scene
     }
 
     closeScene(scene) {
-        for (const module of scene.moduleList) {
+        for (const module of Object.values(scene.modules)) {
             module.close()
         }
+
+        scene.started = false
     }
 
     update(delta) {
         if (this.scene && this.scene.started) {
-            for (const module of this.scene.moduleList) {
+            for (const module of Object.values(this.scene.modules)) {
                 module.update(delta)
             }
         }

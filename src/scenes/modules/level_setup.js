@@ -1,12 +1,10 @@
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 import { Vec2 } from "game/graphics"
 import { findPath, Tile } from "game/core"
 
 import LevelData from "media/levels/dev"
 
 export default class LevelSetupModule extends IModule {
-    static Name = "levelSetupModule"
-
     setup() {
         {   // Think we should handle all of this waaay better ;)
             const { grid } = game.world

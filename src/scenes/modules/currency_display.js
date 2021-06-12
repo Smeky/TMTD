@@ -1,9 +1,7 @@
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 import { Text } from "pixi.js"
 
 export default class CurrencyDisplay extends IModule {
-    static Name = "currencyDisplay"
-
     setup() {
         this.textObject = new Text("", { fill: 0xffffff, fontSize: 22 })
         game.uiContainer.addChild(this.textObject)

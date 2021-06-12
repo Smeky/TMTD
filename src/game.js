@@ -56,7 +56,7 @@ export default class Game extends EventEmitter {
     }
 
     afterLoad() {
-        this.sceneManager.setScene("level")
+        this.sceneManager.setScene("Level")
         this.ticker.start()
     }
     

@@ -1,8 +1,6 @@
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 
 export default class UserInputModule extends IModule {
-    static Name = "userInputModule"
-
     setup() {
         this.inputProxy = game.input.getProxy()
         this.inputProxy.on("keyup", this.onKeyUp)

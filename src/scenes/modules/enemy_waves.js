@@ -1,4 +1,4 @@
-import IModule from "game/scenes/imodule"
+import { IModule } from "."
 import { Cooldown } from "game/core"
 import { EnemyData } from "game/data"
 import LevelLayers from "game/scenes/level/layers"
@@ -6,8 +6,6 @@ import { Sprite } from "pixi.js"
 
 
 export default class EnemyWaves extends IModule {
-    static Name = "enemyWaves"
-
     setup() {
         this.spawnCooldown = new Cooldown(1.0)
 
@@ -71,7 +69,7 @@ export default class EnemyWaves extends IModule {
         const components = this.getEnemyComponents(enemyData, sprite)
         game.world.ecs.createEntity(components, "Enemy")
         
-        this.scene.addChild(sprite, LevelLayers.EnemyBase)
+        game.world.addChild(sprite, LevelLayers.EnemyBase)
     }
 
     getEnemyComponents(enemyData, sprite) {
@@ -92,7 +90,7 @@ export default class EnemyWaves extends IModule {
                 onFinished: (entity) => entity.despawn(),
             },
             "health": {
-                container: this.scene.getLayer(LevelLayers.EnemyHealthBar),
+                container: game.world.getLayer(LevelLayers.EnemyHealthBar),
                 onZeroHealth: (entity) => {
                     entity.despawn()
                     game.currency(game.currency() + 20)
