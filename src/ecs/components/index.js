@@ -59,12 +59,13 @@ export default {
         }
     },
     "clickable": function({ onClick }) {
-        return {
-            onClick
-        }
+        return { onClick }
     },
     "bullet": function({ source }) {
         return { source }
+    },
+    "dropTarget": function({ onDrop }) {
+        return { onDrop }
     },
     "stats": createStatsComponent
 }

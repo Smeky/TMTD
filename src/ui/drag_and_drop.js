@@ -1,6 +1,6 @@
-import { Container } from "pixi.js";
+import { EventEmitter } from "eventemitter3";
+import { Container, utils } from "pixi.js";
 import { Game } from "..";
-import DropTarget from "./drop_target";
 
 export default class DragAndDrop extends Container {
     constructor() {
@@ -8,11 +8,13 @@ export default class DragAndDrop extends Container {
 
         this.options = {}
         this.visible = false
+        this.type = null
     }
 
     setup(options) {
         this.options = { ...options }
         this.visible = true
+        this.type = options.type
         
         if (this.options.sprite) {
             this.addChild(this.options.sprite)
@@ -31,9 +33,19 @@ export default class DragAndDrop extends Container {
 
     reset() {
         this.visible = false
+        this.options = {}
+        this.type = null
 
         Game.interaction.removeListener("pointermove", this.onPointerMove)
         this.removeChildren()
+    }
+
+    conclude() {
+        const data = this.options.data
+
+        this.reset()
+
+        return data
     }
 
     onPointerMove = (event) => {
@@ -43,13 +55,14 @@ export default class DragAndDrop extends Container {
     onPointerUp = (event) => {
         const target = Game.interaction.hitTest(event.data.global)
 
-        if (target && target instanceof DropTarget) {
-            target.handleDragDrop(this.options.data)
-        }
-        else if (this.options.onCancel) {
-            this.options.onCancel()
+        if (target && (target instanceof utils.EventEmitter || target instanceof EventEmitter)) {
+            target.emit("dragdrop", this)
         }
 
-        this.reset()
+        // If Drag n' drop doesn't get concluded after the emit above, it stays visible
+        if (this.visible && this.options.onCancel) {
+            this.options.onCancel()
+            this.reset()
+        }
     }
 }

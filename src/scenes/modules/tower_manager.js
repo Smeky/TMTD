@@ -6,6 +6,20 @@ import { TowerEffects } from "game/graphics/effects"
 import LevelLayers from "game/scenes/level/layers"
 import { Container, Sprite } from "pixi.js"
 import { Game } from "game/"
+// import { DropTarget } from "game/ui"
+
+// class TowerDropTarget extends DropTarget {
+//     constructor(entity) {
+//         super()
+
+//         this.entity(entity)
+//         this.on("added", () => {
+//             const { width, height } = this.parent.getLocalBounds()
+//             this.width = width
+//             this.height = height
+//         })
+//     }
+// }
 
 export default class TowerManager extends IModule {
     setup() {
@@ -69,6 +83,7 @@ export default class TowerManager extends IModule {
         const baseSprite = new Sprite(Game.assets[towerData.base.textureId])
         const headSprite = new Sprite(Game.assets[towerData.head.textureId])
         const container = new Container()
+        container.on("test", console.log)
 
         container.addChild(baseSprite)
         container.addChild(headSprite)
@@ -83,6 +98,7 @@ export default class TowerManager extends IModule {
             "display": { displayObject: container },
             "stats": { ...towerData.stats.base },
             "clickable": { onClick: (entity) => Game.emit("tower_clicked", entity.id) },
+            "dropTarget": { onDrop: this.handleDragDrop },
             "tower": {
                 headSprite,
                 action: this.resolveTowerAction(towerData),
@@ -163,5 +179,9 @@ export default class TowerManager extends IModule {
         const targetHealth = target.components.health
 
         targetHealth.current -= sourceStats.damage
+    }
+
+    handleDragDrop = (item) => {
+        console.log("handleDragDrop", item)
     }
 }

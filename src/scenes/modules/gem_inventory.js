@@ -1,10 +1,9 @@
 import { Game } from "game/";
 import { Vec2 } from "game/graphics";
-import { DropTarget } from "game/ui";
 import { Container, Sprite } from "pixi.js";
 import { IModule } from ".";
 
-export class InventorySlot extends DropTarget {
+export class InventorySlot extends Container {
     constructor(bgTexture) {
         super()
 
@@ -25,6 +24,7 @@ export class InventorySlot extends DropTarget {
         this.on("pointerout", this.onPointerOut)
         this.on("pointerup", this.onPointerUp)
         this.on("pointerupoutside", this.onPointerUp)
+        this.on("dragdrop", this.onDragDrop)
     }
 
     onPointerDown = () => { this.isPressed = true }
@@ -36,15 +36,19 @@ export class InventorySlot extends DropTarget {
             const item = this.removeItem()
 
             Game.dragAndDrop.setup({
-                data: {
-                    type: "item",
-                    item
-                },
+                type: "item",
+                data: item,
                 sprite: item.icon,
                 onCancel: () => {
                     this.setItem(item)
                 }
             })
+        }
+    }
+
+    onDragDrop = (dragAndDrop) => {
+        if (dragAndDrop.type === "item") {
+            this.setItem(dragAndDrop.conclude())
         }
     }
 
@@ -68,6 +72,10 @@ export class InventorySlot extends DropTarget {
         
         this.removeChild(item.icon)
         return item        
+    }
+
+    hasItem() {
+        return !!this.item
     }
 }
 
@@ -102,6 +110,14 @@ class Inventory extends Container {
     setItem(index, item) {
         this.slots[index].setItem(item)
     }
+
+    addItem(item) {
+        for (let i = 0; i < this.slots.length; i++) {
+            if (!this.slots[i].hasItem()) {
+                return this.setItem(i, item)
+            }
+        }
+    }
 }
 
 export default class GemInventoryModule extends IModule {
@@ -114,14 +130,18 @@ export default class GemInventoryModule extends IModule {
         this.inventory.position.x = Game.renderer.width - 10
         this.inventory.position.y = Game.renderer.height - 10
 
-        this.inventory.setItem(1, {
-            icon: new Sprite(Game.assets.IconScorchingRay.texture)
-        })
+        this.addItem()
 
         Game.uiContainer.addChild(this.inventory)
     }
 
     close() {
         Game.uiContainer.removeChild(this.inventory)
+    }
+
+    addItem() {
+        this.inventory.addItem({
+            icon: new Sprite(Game.assets.IconScorchingRay.texture)
+        })
     }
 }

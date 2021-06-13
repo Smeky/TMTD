@@ -21,5 +21,8 @@ export default class UserInputModule extends IModule {
         else if (event.key === "Escape") {
             Game.emit("unselect_tower")
         }
+        else if (event.key === "g") {
+            Game.scene.modules.GemInventoryModule.addItem()
+        }
     }
 }

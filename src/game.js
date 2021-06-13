@@ -1,7 +1,7 @@
 import { World, InputModule } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
-import { SceneManager } from "game/scenes"
+import { Scene, SceneManager } from "game/scenes"
 import { Renderer, Vec2 } from "game/graphics"
 import { StoreManager, DefaultBaseState } from "game/store"
 import { DragAndDrop } from "game/ui"
@@ -16,6 +16,10 @@ class Game extends EventEmitter {
 
     get assets() { return this.loader.assets }
     get stores() { return this.storeManager.stores }
+
+    /**
+     * @returns {Scene}
+     */
     get scene() { return this.sceneManager.scene }
     get interaction() { return this.renderer.plugins.interaction }
 
