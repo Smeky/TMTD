@@ -1,23 +1,21 @@
 import React, { useEffect } from "react"
 
-import Game from "./game"
 import * as pixi from "pixi.js"
+import Game from "./game"
 
 export default function App() {
-    const game = new Game()
-    window.game = game // Expose to global scope
-
     if (process.env.NODE_ENV === "development") {
-        window.game.pixi = pixi 
+        window.game = Game
+        window.game.pixi = pixi
         console.log(window.game)
     }
 
     useEffect(() => {
-        game.beforeLoad()
-        game.load().then(() => game.afterLoad())
+        Game.beforeLoad()
+        Game.load().then(() => Game.afterLoad())
 
         return () => {
-            game.close()
+            Game.close()
         }
     }, [])
 

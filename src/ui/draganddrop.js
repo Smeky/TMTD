@@ -1,4 +1,5 @@
 import { Container } from "pixi.js";
+import { Game } from "..";
 
 export default class DragAndDrop extends Container {
     constructor() {
@@ -19,18 +20,18 @@ export default class DragAndDrop extends Container {
             this.pivot.x = width / 2
             this.pivot.y = height / 2
 
-            const mousePos = game.interaction.mouse.global
+            const mousePos = Game.interaction.mouse.global
             this.position.copyFrom(mousePos)
         }
         
-        game.interaction.on("pointermove", this.onPointerMove)
-        game.interaction.once("pointerup", this.onPointerUp)
+        Game.interaction.on("pointermove", this.onPointerMove)
+        Game.interaction.once("pointerup", this.onPointerUp)
     }
 
     reset() {
         this.visible = false
 
-        game.interaction.removeListener("pointermove", this.onPointerMove)
+        Game.interaction.removeListener("pointermove", this.onPointerMove)
         this.removeChildren()
     }
 
@@ -39,7 +40,7 @@ export default class DragAndDrop extends Container {
     }
 
     onPointerUp = (event) => {
-        const target = game.interaction.hitTest(event.data.global)
+        const target = Game.interaction.hitTest(event.data.global)
 
         if (target && this.options.onDrop) {
             this.options.onDrop(target)

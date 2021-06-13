@@ -1,3 +1,4 @@
+import { Game } from "game/";
 import { getTowerHeadEndPosition } from "game/ecs";
 import { AdvancedBloomFilter } from "pixi-filters";
 import { BLEND_MODES, Container, Sprite } from "pixi.js";
@@ -16,7 +17,7 @@ class TowerBeamEffect extends ActionEffect {
     constructor() {
         super()
 
-        this.sprite = new Sprite(game.assets["BeamBase"])
+        this.sprite = new Sprite(Game.assets["BeamBase"])
         this.addChild(this.sprite)
 
         this.sprite.scale.x = 0.5

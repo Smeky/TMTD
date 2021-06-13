@@ -1,13 +1,14 @@
 import { IModule } from "."
 import { Vec2 } from "game/graphics"
 import { findPath, Tile } from "game/core"
+import { Game } from "game/"
 
 import LevelData from "media/levels/dev"
 
 export default class LevelSetupModule extends IModule {
     setup() {
         {   // Think we should handle all of this waaay better ;)
-            const { grid } = game.world
+            const { grid } = Game.world
     
             grid.loadFromJson(LevelData)
     
@@ -23,10 +24,10 @@ export default class LevelSetupModule extends IModule {
 
 
             const gridSize = grid.sizeInPixels()
-            const centered = game.getCanvasSize().subtract(gridSize).divide(2)
+            const centered = Game.getCanvasSize().subtract(gridSize).divide(2)
     
-            game.world.resetZoom()
-            game.world.moveTo(centered.round())
+            Game.world.resetZoom()
+            Game.world.moveTo(centered.round())
         }
     }
     

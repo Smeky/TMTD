@@ -1,4 +1,4 @@
-import { World, InputModule, Observable } from "game/core"
+import { World, InputModule } from "game/core"
 import EventEmitter from "eventemitter3"
 import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
@@ -10,7 +10,7 @@ import * as pixi from "pixi.js"
 
 pixi.utils.skipHello()
 
-export default class Game extends EventEmitter {
+class Game extends EventEmitter {
     FPS = 120
     SPF = 1 / this.FPS
 
@@ -64,15 +64,6 @@ export default class Game extends EventEmitter {
         this.sceneManager.setScene("Level")
         this.ticker.start()
     }
-    
-    onVisibilityChange = (event) => {
-        const isPaused = event.target.visibilityState === "hidden"
-
-        if (isPaused) this.ticker.stop()
-        else          this.ticker.start()
-
-        this.emit("pause_change", isPaused)
-    }
 
     update = () => {
         // We don't use delta, since we want option (B)
@@ -91,12 +82,14 @@ export default class Game extends EventEmitter {
         this.deltaBuffer = delta
         this.renderer.render(this.stage)
     }
+    
+    onVisibilityChange = (event) => {
+        const isPaused = event.target.visibilityState === "hidden"
 
-    getCanvasSize() {
-        return new Vec2(
-            this.renderer.width,
-            this.renderer.height,
-        )
+        if (isPaused) this.ticker.stop()
+        else          this.ticker.start()
+
+        this.emit("pause_change", isPaused)
     }
 
     resizeWindow = (width, height) => {
@@ -126,4 +119,15 @@ export default class Game extends EventEmitter {
         this.world.handleViewResize(meta.after) // Todo: move this to camera, listen to event?
         this.emit("window_resized", meta)
     }
+
+    getCanvasSize() {
+        return new Vec2(
+            this.renderer.width,
+            this.renderer.height,
+        )
+    }
 }
+
+// Singleton, probably the only one we'll have ;)
+const _game = new Game()
+export default _game

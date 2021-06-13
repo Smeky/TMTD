@@ -1,3 +1,4 @@
+import { Game } from "game/";
 import { Vec2 } from "game/graphics";
 import { Container, Sprite } from "pixi.js";
 import { IModule } from ".";
@@ -10,7 +11,7 @@ export class InventorySlot extends Container {
         this.interactive = true
         this.isPressed = false
 
-        this.highlight = new Sprite(game.assets.InventorySlotHightlight)
+        this.highlight = new Sprite(Game.assets.InventorySlotHightlight)
         this.highlight.alpha = 0.1
         this.highlight.visible = false
 
@@ -33,7 +34,7 @@ export class InventorySlot extends Container {
         if (this.isPressed && this.item) {
             const item = this.removeItem()
 
-            game.dragAndDrop.setup({
+            Game.dragAndDrop.setup({
                 sprite: item.icon,
                 onDrop: (target) => { 
                     if (target instanceof InventorySlot) {
@@ -78,7 +79,7 @@ class Inventory extends Container {
     get slots() { return this.children }
 
     setupSlots(cellCount) {
-        const slotBgTexture = game.assets.InventorySlotBg
+        const slotBgTexture = Game.assets.InventorySlotBg
 
         for (let y = 0; y < cellCount.y; y++) {
             for (let x = 0; x < cellCount.x; x++) {
@@ -104,17 +105,17 @@ export default class GemInventoryModule extends IModule {
         const { width, height } = this.inventory.getLocalBounds()
         this.inventory.pivot.x = width
         this.inventory.pivot.y = height
-        this.inventory.position.x = game.renderer.width - 10
-        this.inventory.position.y = game.renderer.height - 10
+        this.inventory.position.x = Game.renderer.width - 10
+        this.inventory.position.y = Game.renderer.height - 10
 
         this.inventory.setItem(1, {
-            icon: new Sprite(game.assets.IconScorchingRay.texture)
+            icon: new Sprite(Game.assets.IconScorchingRay.texture)
         })
 
-        game.uiContainer.addChild(this.inventory)
+        Game.uiContainer.addChild(this.inventory)
     }
 
     close() {
-        game.uiContainer.removeChild(this.inventory)
+        Game.uiContainer.removeChild(this.inventory)
     }
 }

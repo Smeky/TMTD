@@ -3,6 +3,7 @@ import { Cooldown } from "game/core"
 import { EnemyData } from "game/data"
 import LevelLayers from "game/scenes/level/layers"
 import { Sprite } from "pixi.js"
+import { Game } from "game/"
 
 
 export default class EnemyWaves extends IModule {
@@ -63,13 +64,13 @@ export default class EnemyWaves extends IModule {
 
     createEnemy(enemyData) {
         const { textureId } = enemyData
-        const sprite = new Sprite(game.assets[textureId])
+        const sprite = new Sprite(Game.assets[textureId])
         sprite.anchor.set(0.5, 0.5)
 
         const components = this.getEnemyComponents(enemyData, sprite)
-        game.world.ecs.createEntity(components, "Enemy")
+        Game.world.ecs.createEntity(components, "Enemy")
         
-        game.world.addChild(sprite, LevelLayers.EnemyBase)
+        Game.world.addChild(sprite, LevelLayers.EnemyBase)
     }
 
     getEnemyComponents(enemyData, sprite) {
@@ -90,7 +91,7 @@ export default class EnemyWaves extends IModule {
                 onFinished: (entity) => entity.despawn(),
             },
             "health": {
-                container: game.world.getLayer(LevelLayers.EnemyHealthBar),
+                container: Game.world.getLayer(LevelLayers.EnemyHealthBar),
                 onZeroHealth: (entity) => {
                     entity.despawn()
                     this.handleEnemyDeath(weight)
@@ -104,7 +105,7 @@ export default class EnemyWaves extends IModule {
     }
 
     handleEnemyDeath(weight) {
-        game.stores.base.update((state) => {
+        Game.stores.base.update((state) => {
             return {
                 currency: state.currency + parseInt(weight / 10)
             }

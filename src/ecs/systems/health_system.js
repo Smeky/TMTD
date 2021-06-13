@@ -1,3 +1,4 @@
+import { Game } from "game/"
 import { Sprite } from "pixi.js"
 import { ECSSystem } from "."
 
@@ -7,7 +8,7 @@ export default class HealthSystem extends ECSSystem {
     setupEntity(entity) {
         const { health } = entity.components
 
-        health.sprite = new Sprite(game.assets.HealthBar)
+        health.sprite = new Sprite(Game.assets.HealthBar)
         health.sprite.anchor.set(0.0, 0.5)
         health.container.addChild(health.sprite)
 

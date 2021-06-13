@@ -2,6 +2,7 @@ import { Modules, createModulesStore } from "./modules"
 import { SceneData } from "game/data"
 import { Container } from "pixi.js"
 import { Scene } from "."
+import { Game } from ".."
 
 export default class SceneManager extends Container {
     constructor() {
@@ -22,7 +23,7 @@ export default class SceneManager extends Container {
         this.scene = this.createScene(name, SceneData[name])
         this.scene.started = true
 
-        game.emit("scene_changed", name)
+        Game.emit("scene_changed", name)
     }
 
     createScene(sceneName, sceneData) {
