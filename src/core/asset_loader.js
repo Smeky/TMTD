@@ -6,6 +6,8 @@ import { Rect } from "game/graphics"
 export const AssetList = [
     { name: "Tileset", url: "media/tileset.png" },
 
+    { name: "IconScorchingRay", url: "media/icons/items/Scorching_Ray_inventory_icon.png" },
+
     { name: "TowerBase1", textureDef: [50, 50, 0x35352f] },
     { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
     { name: "TowerHead1", textureDef: [8,  35, 0xffff00] }, 
@@ -24,6 +26,8 @@ export const AssetList = [
     { name: "Bullet", textureDef: [6,  2,  0xffffff] }, 
 
     { name: "TowerOptionsButton", textureDef: [50, 50, 0xffffff] },
+    { name: "InventorySlotBg", textureDef: [56, 56, 0x404040] },
+    { name: "InventorySlotHightlight", textureDef: [56, 56, 0xffffff] },
 ]
 
 export default class AssetLoader {

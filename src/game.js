@@ -4,6 +4,7 @@ import { Debug } from "game/debug"
 import { SceneManager } from "game/scenes"
 import { Renderer, Vec2 } from "game/graphics"
 import { StoreManager, DefaultBaseState } from "game/store"
+import { DragAndDrop } from "game/ui"
 import AssetLoader, { AssetList } from "game/core/asset_loader"
 import * as pixi from "pixi.js"
 
@@ -16,6 +17,8 @@ export default class Game extends EventEmitter {
     get assets() { return this.loader.assets }
     get stores() { return this.storeManager.stores }
     get scene() { return this.sceneManager.scene }
+    get interaction() { return this.renderer.plugins.interaction }
+
     get isPaused() { return !this.ticker.started }
 
     beforeLoad() {
@@ -30,6 +33,7 @@ export default class Game extends EventEmitter {
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
         this.uiContainer = new pixi.Container()
+        this.dragAndDrop = new DragAndDrop()
         
         this.storeManager = new StoreManager()
         this.storeManager.addStore("base", DefaultBaseState)
@@ -43,6 +47,7 @@ export default class Game extends EventEmitter {
 
         this.stage.addChild(this.world)
         this.stage.addChild(this.uiContainer)
+        this.stage.addChild(this.dragAndDrop)
         this.stage.addChild(this.debug)
         
         this.world.addChild(this.sceneManager)  // Todo: scene & its modules shouldn't render anything. Use World it self
