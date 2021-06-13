@@ -1,9 +1,10 @@
 import { Game } from "game/";
 import { Vec2 } from "game/graphics";
+import { DropTarget } from "game/ui";
 import { Container, Sprite } from "pixi.js";
 import { IModule } from ".";
 
-export class InventorySlot extends Container {
+export class InventorySlot extends DropTarget {
     constructor(bgTexture) {
         super()
 
@@ -35,16 +36,21 @@ export class InventorySlot extends Container {
             const item = this.removeItem()
 
             Game.dragAndDrop.setup({
+                data: {
+                    type: "item",
+                    item
+                },
                 sprite: item.icon,
-                onDrop: (target) => { 
-                    if (target instanceof InventorySlot) {
-                        target.setItem(item) 
-                    }
-                    else {
-                        this.setItem(item)
-                    }
+                onCancel: () => {
+                    this.setItem(item)
                 }
             })
+        }
+    }
+
+    handleDragDrop(data) {
+        if (data.type === "item") {
+            this.setItem(data.item)
         }
     }
 

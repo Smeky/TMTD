@@ -1,5 +1,6 @@
 import { Container } from "pixi.js";
 import { Game } from "..";
+import DropTarget from "./drop_target";
 
 export default class DragAndDrop extends Container {
     constructor() {
@@ -42,8 +43,11 @@ export default class DragAndDrop extends Container {
     onPointerUp = (event) => {
         const target = Game.interaction.hitTest(event.data.global)
 
-        if (target && this.options.onDrop) {
-            this.options.onDrop(target)
+        if (target && target instanceof DropTarget) {
+            target.handleDragDrop(this.options.data)
+        }
+        else if (this.options.onCancel) {
+            this.options.onCancel()
         }
 
         this.reset()
