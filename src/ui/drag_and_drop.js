@@ -19,10 +19,6 @@ export default class DragAndDrop extends Container {
         if (this.options.sprite) {
             this.addChild(this.options.sprite)
 
-            const { width, height } = this.getLocalBounds()
-            this.pivot.x = width / 2
-            this.pivot.y = height / 2
-
             const mousePos = Game.interaction.mouse.global
             this.position.copyFrom(mousePos)
         }

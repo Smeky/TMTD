@@ -37,6 +37,7 @@ class Game extends EventEmitter {
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
         this.uiContainer = new pixi.Container()
+        /** @member {DragAndDrop} */
         this.dragAndDrop = new DragAndDrop()
         
         this.storeManager = new StoreManager()

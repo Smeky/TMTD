@@ -36,7 +36,6 @@ export default {
     },
     "tower": function({ headSprite, action, actionEffect }) {
         return {
-            headSprite,
             target: null,
             action,
             actionCd: new Cooldown(),
@@ -64,8 +63,10 @@ export default {
     "bullet": function({ source }) {
         return { source }
     },
-    "dropTarget": function({ onDrop }) {
-        return { onDrop }
+    "socketable": function() {
+        return {
+            gem: null,
+        }
     },
     "stats": createStatsComponent
 }

@@ -61,14 +61,18 @@ export class InventorySlot extends Container {
     setItem(item) {
         this.item = item
 
+        item.icon.position.copyFrom(this.size.divide(2))
         item.icon.width = this.size.x
         item.icon.height = this.size.y
+
         this.addChild(item.icon)
     }
 
     removeItem() {
         const item = this.item
         this.item = null
+
+        item.icon.position.set(0, 0)
         
         this.removeChild(item.icon)
         return item        
@@ -140,8 +144,11 @@ export default class GemInventoryModule extends IModule {
     }
 
     addItem() {
+        const sprite = new Sprite(Game.assets.IconScorchingRay.texture)
+        sprite.anchor.set(0.5, 0.5)
+
         this.inventory.addItem({
-            icon: new Sprite(Game.assets.IconScorchingRay.texture)
+            icon: sprite
         })
     }
 }

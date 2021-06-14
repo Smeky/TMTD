@@ -20,9 +20,8 @@ export default class TowerControl extends ECSSystem {
             this.stopTowerEffect(entity)
         }
 
-        this.updateTowerHead(delta, entity)
-        this.updateTowerAction(delta, entity)
-        this.updateTowerEffect(delta, entity)
+        // this.updateTowerAction(delta, entity)
+        // this.updateTowerEffect(delta, entity)
     }
 
     closeEntity(entity) {
@@ -79,15 +78,6 @@ export default class TowerControl extends ECSSystem {
     isEnemyInRange(eTower, eEnemy) {
         const { transform, stats } = eTower.components
         return isEntityInRadius(eEnemy, transform.position, stats.range)
-    }
-
-    updateTowerHead(delta, entity) {
-        const { transform, tower } = entity.components
-
-        if (tower.target) {
-            const targetPos = tower.target.components.transform.position
-            tower.headSprite.rotation = transform.position.angle(targetPos) - Math.PI / 2
-        }
     }
 
     updateTowerAction(delta, entity) {

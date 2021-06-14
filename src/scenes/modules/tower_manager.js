@@ -6,20 +6,6 @@ import { TowerEffects } from "game/graphics/effects"
 import LevelLayers from "game/scenes/level/layers"
 import { Container, Sprite } from "pixi.js"
 import { Game } from "game/"
-// import { DropTarget } from "game/ui"
-
-// class TowerDropTarget extends DropTarget {
-//     constructor(entity) {
-//         super()
-
-//         this.entity(entity)
-//         this.on("added", () => {
-//             const { width, height } = this.parent.getLocalBounds()
-//             this.width = width
-//             this.height = height
-//         })
-//     }
-// }
 
 export default class TowerManager extends IModule {
     setup() {
@@ -46,7 +32,7 @@ export default class TowerManager extends IModule {
         }
 
         const snapped = grid.snapPosToTile(pos)
-        const texture = Game.assets[TowerData[towerId].base.textureId]
+        const texture = Game.assets[TowerData[towerId].textureId]
         const bounds = new Rect(snapped.x + 1, snapped.y + 1, texture.width, texture.height)
 
         const tiles = grid.getTilesByBounds(bounds)
@@ -63,7 +49,7 @@ export default class TowerManager extends IModule {
         const components = this.getTowerComponents(towerData, tiles[3].pos)
         Game.world.ecs.createEntity(components, "Tower")
     }
-    
+
     onRemoveTower = (entityId) => {
         const entity = Game.world.ecs.getEntity(entityId)
         const { transform, display } = entity.components
@@ -80,16 +66,11 @@ export default class TowerManager extends IModule {
     }
 
     getTowerComponents(towerData, position) {
-        const baseSprite = new Sprite(Game.assets[towerData.base.textureId])
-        const headSprite = new Sprite(Game.assets[towerData.head.textureId])
-        const container = new Container()
-        container.on("test", console.log)
-
-        container.addChild(baseSprite)
-        container.addChild(headSprite)
-
+        const baseSprite = new Sprite(Game.assets[towerData.textureId])
         baseSprite.anchor.set(0.5, 0.5)
-        headSprite.anchor.set(0.5, 0.2)
+
+        const container = new Container()
+        container.addChild(baseSprite)
 
         Game.world.addChild(container, LevelLayers.TowerBase)
 
@@ -98,12 +79,8 @@ export default class TowerManager extends IModule {
             "display": { displayObject: container },
             "stats": { ...towerData.stats.base },
             "clickable": { onClick: (entity) => Game.emit("tower_clicked", entity.id) },
-            "dropTarget": { onDrop: this.handleDragDrop },
-            "tower": {
-                headSprite,
-                action: this.resolveTowerAction(towerData),
-                actionEffect: this.resolveTowerEffect(towerData),
-            },
+            "socketable": {},
+            "tower": {},
         }
     }
 

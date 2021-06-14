@@ -110,21 +110,7 @@ export function round(number, decimals = 1) {
  */
 // Todo: Replace be with some proper impl, please!
 export function createTowerDisplay(towerData, headAngle = 0) {
-    const container = new Container()
-    const baseSprite = new Sprite(Game.assets[towerData.base.textureId])
-    const headSprite = new Sprite(Game.assets[towerData.head.textureId])
-
-    const { width, height } = baseSprite.texture
-    const size = new Vec2(width, height)
-
-    headSprite.position.copyFrom(towerData.head.position.multiply(size))
-    headSprite.pivot.copyFrom(towerData.head.pivot)
-    headSprite.rotation = headAngle
-
-    container.addChild(baseSprite)
-    container.addChild(headSprite)
-
-    return container
+    return new Sprite(Game.assets[towerData.textureId])
 }
 
 // Todo: move me, please!

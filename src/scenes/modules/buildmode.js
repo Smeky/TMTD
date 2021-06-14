@@ -62,7 +62,7 @@ export default class BuildMode extends IModule {
         }
 
         const data = TowerData[this.selectedTower]
-        const { width, height } = Game.assets[data.base.textureId]
+        const { width, height } = Game.assets[data.textureId]
 
         this.highlight = createTowerDisplay(data)
         this.highlight.alpha = 0.8

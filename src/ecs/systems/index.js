@@ -7,7 +7,7 @@ import TransformDisplaySync from "./transform_display_sync"
 import TowerControl from "./tower_control"
 import CollisionSystem from "./collision_system"
 import ClickSetup from "./click_setup"
-import DragDropSystem from "./drag_drop_system"
+import SocketableSystem from "./socketable_system"
 
 export default [
     HealthSystem,
@@ -17,5 +17,5 @@ export default [
     TowerControl,
     CollisionSystem,
     ClickSetup,
-    DragDropSystem,
+    SocketableSystem,
 ]
