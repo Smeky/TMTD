@@ -4,7 +4,7 @@ import { ECSSystem } from "."
 export default class SocketableSystem extends ECSSystem {
     static Dependencies = ["socketable", "display"]
 
-    setupEntity(entity) {
+    setupComponents(entity) {
         const { socketable, display } = entity.components
 
         const pickupGem = () => {

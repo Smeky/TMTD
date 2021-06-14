@@ -5,7 +5,7 @@ import { ECSSystem } from "."
 export default class HealthSystem extends ECSSystem {
     static Dependencies = ["transform", "display", "health"]
 
-    setupEntity(entity) {
+    setupComponents(entity) {
         const { health } = entity.components
 
         health.sprite = new Sprite(Game.assets.HealthBar)
@@ -29,7 +29,7 @@ export default class HealthSystem extends ECSSystem {
         this.updateHealthBar(entity)
     }
 
-    closeEntity(entity) {
+    closeComponents(entity) {
         const { health } = entity.components
         
         health.container.removeChild(health.sprite)

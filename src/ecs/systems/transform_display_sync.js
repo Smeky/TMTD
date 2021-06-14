@@ -3,7 +3,7 @@ import { ECSSystem } from "."
 export default class TransformDisplaySync extends ECSSystem {
     static Dependencies = ["transform", "display"]
 
-    setupEntity(entity) {
+    setupComponents(entity) {
         this.updateDisplayTransform(entity)
     }
 
@@ -11,7 +11,7 @@ export default class TransformDisplaySync extends ECSSystem {
         this.updateDisplayTransform(entity)
     }
 
-    closeEntity(entity) {
+    closeComponents(entity) {
         const { display } = entity.components
 
         if (display) {

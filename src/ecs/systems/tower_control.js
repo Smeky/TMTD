@@ -4,7 +4,7 @@ import { Entity, filterEntitiesByTags, isEntityInRadius } from ".."
 export default class TowerControl extends ECSSystem {
     static Dependencies = ["transform", "tower", "stats"]
 
-    setupEntity(entity) {
+    setupComponents(entity) {
         const { tower, stats } = entity.components
 
         tower.actionCd.total = stats.attackRate || Number.POSITIVE_INFINITY
@@ -24,7 +24,7 @@ export default class TowerControl extends ECSSystem {
         // this.updateTowerEffect(delta, entity)
     }
 
-    closeEntity(entity) {
+    closeComponents(entity) {
         const { tower } = entity.components
 
         if (tower.actionEffect && tower.actionEffect.parent) {

@@ -2,7 +2,7 @@
  * @abstract
  */
  export default class ECSSystem {
-    setupEntity(entity) {}
+    setupComponents(entity) {}
     updateEntity(delta, entity, entities) {}
-    closeEntity(entity) {}
+    closeComponents(entity) {}
 }

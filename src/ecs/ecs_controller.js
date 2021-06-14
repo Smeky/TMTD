@@ -38,7 +38,7 @@ export default class ECSController {
 
         for (const system of this.systems) {
             if (entity.hasComponents(system.constructor.Dependencies)) {
-                system.setupEntity(entity)
+                system.setupComponents(entity)
             }
         }
 
@@ -65,7 +65,7 @@ export default class ECSController {
         else {
             for (const system of this.systems) {
                 if (entity.hasComponents(system.constructor.Dependencies)) {
-                    system.closeEntity(entity)
+                    system.closeComponents(entity)
                 }
             }
 
