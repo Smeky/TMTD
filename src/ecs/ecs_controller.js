@@ -1,3 +1,4 @@
+import { includesAllOf, intersects } from "game/utils"
 import { Components, Systems, Entity } from "."
 
 export default class ECSController {
@@ -24,24 +25,9 @@ export default class ECSController {
     createEntity(components, tags) {
         const entity = new Entity(++this.idCounter, tags)
 
-        if (components) {
-            for (const [cmpName, cmpProps] of Object.entries(components)) {
-                if (!Components.hasOwnProperty(cmpName)) {
-                    throw new Error(`Invalid entity component name "${cmpName}"`)
-                }
-
-                entity.addComponent(cmpName, Components[cmpName](cmpProps, entity))
-            }
-        }
+        this.addEntityComponents(entity, components)
         
         this.entities.push(entity)
-
-        for (const system of this.systems) {
-            if (entity.hasComponents(system.constructor.Dependencies)) {
-                system.setupComponents(entity)
-            }
-        }
-
         return entity
     }
 
@@ -70,6 +56,50 @@ export default class ECSController {
             }
 
             this.entities.splice(index, 1)
+        }
+    }
+
+    /**
+     * 
+     * @param {Entity} entity 
+     * @param {Object} components 
+     */
+    addEntityComponents(entity, components) {
+        const cmpNames = Object.keys(components)
+
+        if (!cmpNames.length) {
+            return
+        }
+
+        for (const name of cmpNames) {
+            if (!Components.hasOwnProperty(name)) {
+                throw new Error(`Invalid entity component name "${name}"`)
+            }
+
+            const props = components[name]
+            entity.components[name] = Components[name](props, entity)
+        }
+
+        for (const system of this.systems) {
+            if (includesAllOf(system.constructor.Dependencies, cmpNames)) {
+                system.setupComponents(entity)
+            }
+        }
+    }
+
+    /**
+     * @param {Entity} entity
+     * @param {...string} names 
+     */
+    removeEntityComponents(entity, ...names) {
+        for (const system of this.systems) {
+            for (const name of names) {
+                if (entity.hasComponent(name) &&
+                    system.constructor.Dependencies.includes(name)) 
+                {
+                    system.closeComponents(entity)
+                }
+            }
         }
     }
 
