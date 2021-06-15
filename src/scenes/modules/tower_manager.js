@@ -21,22 +21,24 @@ export default class TowerManager extends IModule {
         Game.removeListener("remove_tower", this.onRemoveTower)
     }
 
-    onBuildTower = (event) => {
-        const { pos, towerId } = event
+    onBuildTower = (event) => { this.buildTower(event.towerId, event.pos) }
+    onRemoveTower = (entityId) => { this.removeTower(entityId) }
+
+    buildTower(towerId, position) {
         const { grid } = Game.world
 
         if (!TowerData.hasOwnProperty(towerId)) {
             return console.error(`Failed to build tower - invalid towerId ${towerId}`)
         }
 
-        const snapped = grid.snapPosToTile(pos)
+        const snapped = grid.snapPosToTile(position)
         const texture = Game.assets[TowerData[towerId].textureId]
         const bounds = new Rect(snapped.x + 1, snapped.y + 1, texture.width, texture.height)
 
         const tiles = grid.getTilesByBounds(bounds)
 
         if (!tiles || tiles.some(grid.isTileObstructed)) {
-            console.warn("Can not build here", pos)
+            console.warn("Can not build here", position)
             return
         }
 
@@ -48,7 +50,7 @@ export default class TowerManager extends IModule {
         Game.world.ecs.createEntity(components, "Tower")
     }
 
-    onRemoveTower = (entityId) => {
+    removeTower(entityId) {
         const entity = Game.world.ecs.getEntity(entityId)
         const { transform, display } = entity.components
         const { width, height } = display.getLocalBounds()

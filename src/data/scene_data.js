@@ -11,6 +11,7 @@ export default {
             "CurrencyDisplay",
             "UserInputModule",
             "GemInventoryModule",
+            "DevLevelSetupModules",
         ]
     },
     "Editor": {}
