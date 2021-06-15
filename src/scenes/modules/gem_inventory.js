@@ -148,7 +148,8 @@ export default class GemInventoryModule extends IModule {
         sprite.anchor.set(0.5, 0.5)
 
         this.inventory.addItem({
-            icon: sprite
+            icon: sprite,
+            actionId: "FireBeam"
         })
     }
 }

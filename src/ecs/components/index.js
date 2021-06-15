@@ -34,12 +34,13 @@ export default {
             sprite: null
         }
     },
-    "tower": function({ headSprite, action, actionEffect }) {
+    "towerAction": function({ actionId }) {
         return {
+            actionId,
             target: null,
-            action,
+            action: null,
             actionCd: new Cooldown(),
-            actionEffect,
+            actionEffect: null,
         }
     },
     "travelLimit": function({ maxDistance, onLimitReached }) {

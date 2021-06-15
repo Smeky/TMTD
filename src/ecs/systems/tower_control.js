@@ -1,35 +1,49 @@
+import { Game } from "game/"
+import { TowerActions } from "game/actions"
+import { TowerEffects } from "game/graphics/effects"
 import { ECSSystem } from "."
+import LevelLayers from "game/scenes/level/layers"
 import { Entity, filterEntitiesByTags, isEntityInRadius } from ".."
 
 export default class TowerControl extends ECSSystem {
-    static Dependencies = ["transform", "tower", "stats"]
+    static Dependencies = ["transform", "towerAction", "stats"]
 
     setupComponents(entity) {
-        const { tower, stats } = entity.components
+        const { towerAction, stats } = entity.components
+        const actionData = TowerActions[towerAction.actionId]
 
-        tower.actionCd.total = stats.attackRate || Number.POSITIVE_INFINITY
-    }
-
-    updateEntity(delta, entity, entities) {
-        const { tower } = entity.components
+        towerAction.action = actionData.action
+        towerAction.actionEffect = new TowerEffects[actionData.effect]()
+        towerAction.actionCd.total = stats.attackRate || Number.POSITIVE_INFINITY
         
-        const hadTarget = !!tower.target
-        tower.target = this.ensureTowerTarget(entity, entities)
-
-        if (hadTarget && !tower.target) {
-            this.stopTowerEffect(entity)
-        }
-
-        // this.updateTowerAction(delta, entity)
-        // this.updateTowerEffect(delta, entity)
+        // Todo: LevelLayers shouldn't be used here, so the zIndex should come from elsewhere.. effect data maybe?
+        Game.world.addChild(towerAction.actionEffect, LevelLayers[actionData.effectLayer])
     }
 
     closeComponents(entity) {
-        const { tower } = entity.components
+        const { towerAction } = entity.components
 
-        if (tower.actionEffect && tower.actionEffect.parent) {
-            tower.actionEffect.parent.removeChild(tower.actionEffect)
+        towerAction.action = null
+        towerAction.actionCd.reset()
+
+        if (towerAction.actionEffect && towerAction.actionEffect.parent) {
+            towerAction.actionEffect.parent.removeChild(towerAction.actionEffect)
+            towerAction.actionEffect = null
         }
+    }
+
+    updateEntity(delta, entity, entities) {
+        const { towerAction } = entity.components
+        
+        const hadTarget = !!towerAction.target
+        towerAction.target = this.ensureTowerTarget(entity, entities)
+
+        if (hadTarget && !towerAction.target) {
+            this.stopTowerEffect(entity)
+        }
+
+        this.updateTowerAction(delta, entity)
+        this.updateTowerEffect(delta, entity)
     }
 
     /**
@@ -39,10 +53,10 @@ export default class TowerControl extends ECSSystem {
      * @returns {Entity | null}
      */
     ensureTowerTarget(entity, entities) {
-        const { tower } = entity.components
+        const { towerAction } = entity.components
 
-        if (tower.target && tower.target.isActive() && this.isEnemyInRange(entity, tower.target)) {
-            return tower.target
+        if (towerAction.target && towerAction.target.isActive() && this.isEnemyInRange(entity, towerAction.target)) {
+            return towerAction.target
         }
 
         return this.findTowerTarget(entity, entities)
@@ -81,38 +95,45 @@ export default class TowerControl extends ECSSystem {
     }
 
     updateTowerAction(delta, entity) {
-        const { tower } = entity.components
+        const { towerAction } = entity.components
 
-        if (tower.actionCd.update(delta)) {
-            if (tower.target) {
-                tower.actionCd.reset()
-                tower.action(entity)
+        if (towerAction.actionCd.update(delta)) {
+            if (towerAction.target) {
+                towerAction.actionCd.reset()
+                towerAction.action(entity, towerAction.target)
                 
-                if (tower.actionEffect) {
-                    tower.actionEffect.start(entity)
+                if (towerAction.actionEffect) {
+                    towerAction.actionEffect.start(entity)
                 }
             }
         }
     }
 
     updateTowerEffect(delta, entity) {
-        const { tower } = entity.components
+        const { towerAction } = entity.components
 
-        if (tower.actionEffect) {
-            tower.actionEffect.update(delta, entity)
+        if (towerAction.actionEffect) {
+            towerAction.actionEffect.update(delta, entity)
         }
     }
 
     stopTowerEffect(entity) {
-        const { tower } = entity.components
+        const { towerAction } = entity.components
 
-        if (tower.actionEffect) {
-            tower.actionEffect.stop(entity)
+        if (towerAction.actionEffect) {
+            towerAction.actionEffect.stop(entity)
         }
     }
 
     clearTowerTarget(entity) {
-        const { tower } = entity.components
-        tower.target = null
+        const { towerAction } = entity.components
+        towerAction.target = null
+    }
+
+    handleDamage(source, target) {
+        const sourceStats = source.components.stats
+        const targetHealth = target.components.health
+
+        targetHealth.current -= sourceStats.damage
     }
 }

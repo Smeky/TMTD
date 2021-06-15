@@ -49,10 +49,18 @@ export default class SocketableSystem extends ECSSystem {
     
             display.addChild(item.icon)
         }
+
+        this.ecs.addEntityComponents(entity, {
+            "towerAction": {
+                actionId: item.actionId
+            }
+        })
     }
 
     removeGem(entity) {
         const { socketable, display } = entity.components
+
+        this.ecs.removeEntityComponents(entity, "towerAction")
 
         display.removeChild(socketable.gem.icon)
         socketable.gem = null

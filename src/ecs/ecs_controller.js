@@ -1,11 +1,11 @@
-import { includesAllOf, intersects } from "game/utils"
+import { includesAllOf, includesAnyOf, intersects } from "game/utils"
 import { Components, Systems, Entity } from "."
 
 export default class ECSController {
     constructor() {
         this.idCounter = 0
         this.entities = []
-        this.systems = Systems.map(System => new System())
+        this.systems = Systems.map(System => new System(this))
     }
 
     update(delta) {
@@ -81,7 +81,9 @@ export default class ECSController {
         }
 
         for (const system of this.systems) {
-            if (includesAllOf(system.constructor.Dependencies, cmpNames)) {
+            if (entity.hasComponents(system.constructor.Dependencies) && 
+                includesAnyOf(system.constructor.Dependencies, cmpNames))
+            {
                 system.setupComponents(entity)
             }
         }
@@ -100,6 +102,10 @@ export default class ECSController {
                     system.closeComponents(entity)
                 }
             }
+        }
+
+        for (const name of names) {
+            delete entity.components[name]
         }
     }
 

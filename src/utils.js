@@ -131,3 +131,7 @@ export function intersects(first, second) {
 export function includesAllOf(first, second) {
     return first.every(item => second.includes(item))
 }
+
+export function includesAnyOf(first, second) {
+    return first.some(item => second.includes(item))
+}

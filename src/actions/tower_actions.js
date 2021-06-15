@@ -1,7 +1,15 @@
+function instantDamage(source, target) {
+    // Todo: instantDamage - simple, temporary, ugh :D 
+    const sourceStats = source.components.stats
+    const targetHealth = target.components.health
 
-export default {
-    "ShootBullet": function(towerEntity, scene) {
-        
-    }
+    targetHealth.current -= sourceStats.damage   
 }
 
+export default {
+    "FireBeam": {
+        action: instantDamage,
+        effect: "BeamEffect",
+        effectLayer: "Beam",
+    }
+}

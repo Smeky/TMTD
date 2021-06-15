@@ -80,7 +80,6 @@ export default class TowerManager extends IModule {
             "stats": { ...towerData.stats.base },
             "clickable": { onClick: (entity) => Game.emit("tower_clicked", entity.id) },
             "socketable": {},
-            "tower": {},
         }
     }
 
@@ -149,16 +148,5 @@ export default class TowerManager extends IModule {
                 onLimitReached: (entity) => entity.despawn()
             },
         }
-    }
-
-    handleDamage(source, target) {
-        const sourceStats = source.components.stats
-        const targetHealth = target.components.health
-
-        targetHealth.current -= sourceStats.damage
-    }
-
-    handleDragDrop = (item) => {
-        console.log("handleDragDrop", item)
     }
 }
