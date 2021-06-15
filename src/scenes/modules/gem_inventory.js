@@ -149,17 +149,23 @@ export default class GemInventoryModule extends IModule {
     }
 
     addItem(tmp) {
-        let sprite = new Sprite(Game.assets.IconScorchingRay.texture)
+        if (!tmp) {
+            const sprite = new Sprite(Game.assets.IconScorchingRay.texture)
+            sprite.anchor.set(0.5, 0.5)
 
-        if (tmp) {
-            sprite = new Sprite(Game.assets.IconFortify.texture)
+            this.inventory.addItem({
+                icon: sprite,
+                actionId: "FireBeam"
+            })
         }
-
-        sprite.anchor.set(0.5, 0.5)
-
-        this.inventory.addItem({
-            icon: sprite,
-            actionId: "FireBeam"
-        })
+        else {
+            const sprite = new Sprite(Game.assets.IconFortify.texture)
+            sprite.anchor.set(0.5, 0.5)
+    
+            this.inventory.addItem({
+                icon: sprite,
+                actionId: "ShootPlasma"
+            })
+        }
     }
 }

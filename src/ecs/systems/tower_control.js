@@ -13,11 +13,14 @@ export default class TowerControl extends ECSSystem {
         const actionData = TowerActions[towerAction.actionId]
 
         towerAction.action = actionData.action
-        towerAction.actionEffect = new TowerEffects[actionData.effect]()
         towerAction.actionCd.total = stats.attackRate || Number.POSITIVE_INFINITY
-        
-        // Todo: LevelLayers shouldn't be used here, so the zIndex should come from elsewhere.. effect data maybe?
-        Game.world.addChild(towerAction.actionEffect, LevelLayers[actionData.effectLayer])
+
+        if (actionData.effect) {
+            towerAction.actionEffect = new TowerEffects[actionData.effect]()
+            
+            // Todo: LevelLayers shouldn't be used here, so the zIndex should come from elsewhere.. effect data maybe?
+            Game.world.addChild(towerAction.actionEffect, LevelLayers[actionData.effectLayer])
+        }
     }
 
     closeComponents(entity) {

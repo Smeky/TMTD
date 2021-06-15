@@ -1,8 +1,6 @@
 import { IModule } from "game/scenes"
-import { Rect, Vec2 } from "game/graphics"
-import { TowerData, BulletData } from "game/data"
-import { getTowerHeadEndPosition } from "game/ecs"
-import { TowerEffects } from "game/graphics/effects"
+import { Rect } from "game/graphics"
+import { TowerData } from "game/data"
 import LevelLayers from "game/scenes/level/layers"
 import { Container, Sprite } from "pixi.js"
 import { Game } from "game/"
@@ -80,73 +78,6 @@ export default class TowerManager extends IModule {
             "stats": { ...towerData.stats.base },
             "clickable": { onClick: (entity) => Game.emit("tower_clicked", entity.id) },
             "socketable": {},
-        }
-    }
-
-    resolveTowerAction(towerData) {
-        return (towerEntity) => {
-            switch (towerData.action.type) {
-                case "ShootBullet": this.shootBulletAction(towerEntity, towerData); break;
-                case "DirectDamage": this.handleDamage(towerEntity, towerEntity.components.tower.target); break;
-                default: throw new Error(`Unknown action type "${towerData.action.type}"`)
-            }
-        }
-    }
-
-    resolveTowerEffect(towerData) {
-        if (towerData.action.effectId) {
-            const effect = new TowerEffects[towerData.action.effectId]()
-            Game.world.addChild(effect, LevelLayers.Beams)
-
-            return effect
-        }
-    }
-
-    shootBulletAction(towerEntity, towerData) {
-        const { tower } = towerEntity.components
-
-        const angle = tower.headSprite.rotation + Math.PI / 2
-        const position = getTowerHeadEndPosition(towerEntity)
-
-        const components = this.getBulletComponents({
-            data: BulletData[towerData.action.bulletId],
-            position,
-            rotation: angle,
-            range: tower.range,
-            source: towerEntity
-        })
-
-        Game.world.ecs.createEntity(components, "Bullet")
-    }
-
-    getBulletComponents({ data, position, rotation, range, source }) {
-        const sprite = new Sprite(Game.assets[data.textureId])
-        const velocity = new Vec2(data.speed).velocity(rotation)
-
-        sprite.anchor.set(0.5, 0.5)
-
-        Game.world.addChild(sprite, LevelLayers.Bullets)
-
-        return {
-            "transform": { position, rotation },
-            "velocity": { velocity },
-            "display": { displayObject: sprite },
-            "bullet": { source },
-            "collideable": { 
-                type: "active",
-                solid: false,
-                radius: sprite.width / 2,
-                onCollision: (entity, target) => {
-                    const { bullet } = entity.components
-                    this.handleDamage(bullet.source, target)
-
-                    entity.despawn()
-                }
-            },
-            "travelLimit": {
-                maxDistance: range * 1.5,
-                onLimitReached: (entity) => entity.despawn()
-            },
         }
     }
 }
