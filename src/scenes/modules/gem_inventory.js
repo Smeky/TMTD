@@ -39,16 +39,21 @@ export class InventorySlot extends Container {
                 type: "item",
                 data: item,
                 sprite: item.icon,
-                onCancel: () => {
-                    this.setItem(item)
-                }
+                onCancel: () => { this.setItem(item) },
+                onSwap: (other) => { this.setItem(other) },
             })
         }
     }
 
     onDragDrop = (dragAndDrop) => {
         if (dragAndDrop.type === "item") {
-            this.setItem(dragAndDrop.conclude())
+            if (this.item) {
+                const item = this.removeItem()
+                this.setItem(dragAndDrop.swap(item))
+            }
+            else {
+                this.setItem(dragAndDrop.accept())
+            }
         }
     }
 
@@ -143,8 +148,13 @@ export default class GemInventoryModule extends IModule {
         Game.uiContainer.removeChild(this.inventory)
     }
 
-    addItem() {
-        const sprite = new Sprite(Game.assets.IconScorchingRay.texture)
+    addItem(tmp) {
+        let sprite = new Sprite(Game.assets.IconScorchingRay.texture)
+
+        if (tmp) {
+            sprite = new Sprite(Game.assets.IconFortify.texture)
+        }
+
         sprite.anchor.set(0.5, 0.5)
 
         this.inventory.addItem({

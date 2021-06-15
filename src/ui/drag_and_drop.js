@@ -1,5 +1,5 @@
 import { EventEmitter } from "eventemitter3";
-import { Container, utils } from "pixi.js";
+import { Container, Sprite, utils } from "pixi.js";
 import { Game } from "..";
 
 export default class DragAndDrop extends Container {
@@ -11,6 +11,14 @@ export default class DragAndDrop extends Container {
         this.type = null
     }
 
+    /**
+     * 
+     * @param {object} options
+     * @param {string} options.type 
+     * @param {data} options.any
+     * @param {Sprite} options.sprite  Sprite under the mouse
+     * @param {function} options.onCancel 
+     */
     setup(options) {
         this.options = { ...options }
         this.visible = true
@@ -36,14 +44,20 @@ export default class DragAndDrop extends Container {
         this.removeChildren()
     }
 
-    conclude() {
+    accept() {
         const data = this.options.data
-
         this.reset()
 
         return data
     }
 
+    swap(other) {
+        if (this.options.onSwap) {
+            this.options.onSwap(other)
+        }
+
+        return this.accept()
+    }
     onPointerMove = (event) => {
         this.position.copyFrom(event.data.global)
     }

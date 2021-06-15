@@ -22,7 +22,10 @@ export default class UserInputModule extends IModule {
             Game.emit("unselect_tower")
         }
         else if (event.key === "g") {
-            Game.scene.modules.GemInventoryModule.addItem()
+            Game.scene.modules.GemInventoryModule.addItem(0)
+        }
+        else if (event.key === "h") {
+            Game.scene.modules.GemInventoryModule.addItem(1)
         }
     }
 }

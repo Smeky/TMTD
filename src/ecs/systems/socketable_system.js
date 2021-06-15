@@ -8,22 +8,26 @@ export default class SocketableSystem extends ECSSystem {
         const { socketable, display } = entity.components
 
         const pickupGem = () => {
-            const gem = socketable.gem
-            this.removeGem(entity)
+            const gem = this.removeGem(entity)
 
             Game.dragAndDrop.setup({
                 type: "item",
                 data: gem,
                 sprite: gem.icon,
-                onCancel: () => {
-                    this.socketGem(entity, gem)
-                }
+                onCancel: () => { this.socketGem(entity, gem) },
+                onSwap: (other) => { this.socketGem(entity, other) },
             })
         }
 
         display.on("dragdrop", (dragAndDrop) => {
             if (dragAndDrop.type === "item") {
-                this.socketGem(entity, dragAndDrop.conclude())
+                if (socketable.gem) {
+                    const gem = this.removeGem(entity)
+                    this.socketGem(entity, dragAndDrop.swap(gem))
+                }
+                else {
+                    this.socketGem(entity, dragAndDrop.accept())
+                }
             }
         })
         display.on("pointerdown", (event) => {
@@ -60,9 +64,16 @@ export default class SocketableSystem extends ECSSystem {
     removeGem(entity) {
         const { socketable, display } = entity.components
 
-        this.ecs.removeEntityComponents(entity, "towerAction")
+        if (socketable.gem) {
+            this.ecs.removeEntityComponents(entity, "towerAction")
+            display.removeChild(socketable.gem.icon)
 
-        display.removeChild(socketable.gem.icon)
-        socketable.gem = null
+            const gem = socketable.gem
+            socketable.gem = null
+
+            return gem
+        }
+
+        return null
     }
 }

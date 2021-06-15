@@ -7,6 +7,7 @@ export const AssetList = [
     { name: "Tileset", url: "media/tileset.png" },
 
     { name: "IconScorchingRay", url: "media/icons/items/Scorching_Ray_inventory_icon.png" },
+    { name: "IconFortify", url: "media/icons/items/Fortify_Support_inventory_icon.png" },
 
     { name: "TowerBase1", textureDef: [50, 50, 0x35352f] },
     { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
