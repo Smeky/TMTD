@@ -1,4 +1,5 @@
 import { Game } from "game/"
+import { ItemData } from "game/data"
 import { IModule } from "."
 
 export default class UserInputModule extends IModule {
@@ -22,10 +23,10 @@ export default class UserInputModule extends IModule {
             Game.emit("unselect_tower")
         }
         else if (event.key === "g") {
-            Game.scene.modules.GemInventoryModule.addItem(0)
+            Game.scene.modules.GemInventoryModule.addItem(ItemData[1])
         }
         else if (event.key === "h") {
-            Game.scene.modules.GemInventoryModule.addItem(1)
+            Game.scene.modules.GemInventoryModule.addItem(ItemData[2])
         }
     }
 }

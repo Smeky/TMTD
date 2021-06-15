@@ -53,7 +53,12 @@ export default class AssetLoader {
 
         return new Promise((resolve) => {
             loader.load((loader, resources) => {
-                resolve(resources)
+                const keys = Object.keys(resources)
+
+                resolve(keys.reduce((textures, key) => {
+                    textures[key] = resources[key].texture
+                    return textures
+                }, {}))
             })
         })
     }

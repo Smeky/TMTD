@@ -1,4 +1,5 @@
 import { EventEmitter } from "eventemitter3";
+import { Vec2 } from "game/graphics";
 import { Container, Sprite, utils } from "pixi.js";
 import { Game } from "..";
 
@@ -9,6 +10,13 @@ export default class DragAndDrop extends Container {
         this.options = {}
         this.visible = false
         this.type = null
+
+        this.icon = new Sprite()
+        this.icon.anchor.set(0.5, 0.5)
+        this.icon.width = 50
+        this.icon.height = 50
+
+        this.addChild(this.icon)
     }
 
     /**
@@ -23,13 +31,9 @@ export default class DragAndDrop extends Container {
         this.options = { ...options }
         this.visible = true
         this.type = options.type
-        
-        if (this.options.sprite) {
-            this.addChild(this.options.sprite)
 
-            const mousePos = Game.interaction.mouse.global
-            this.position.copyFrom(mousePos)
-        }
+        this.icon.texture = this.options.texture
+        this.position.copyFrom(Game.interaction.mouse.global)
         
         Game.interaction.on("pointermove", this.onPointerMove)
         Game.interaction.once("pointerup", this.onPointerUp)
@@ -39,9 +43,9 @@ export default class DragAndDrop extends Container {
         this.visible = false
         this.options = {}
         this.type = null
+        this.icon.texture = null
 
         Game.interaction.removeListener("pointermove", this.onPointerMove)
-        this.removeChildren()
     }
 
     accept() {

@@ -64,9 +64,10 @@ export default {
     "bullet": function({ source }) {
         return { source }
     },
-    "socketable": function() {
-        return {
-            gem: null,
+    "socketable": function({ item }) {
+        return { 
+            item: item ?? null,
+            icon: null,
         }
     },
     "stats": createStatsComponent

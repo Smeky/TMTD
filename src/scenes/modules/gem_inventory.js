@@ -11,12 +11,19 @@ export class InventorySlot extends Container {
         this.interactive = true
         this.isPressed = false
 
+        this.icon = new Sprite()
+        this.icon.position.copyFrom(this.size.divide(2))
+        this.icon.anchor.set(0.5, 0.5)
+        this.icon.width = this.size.x - 4
+        this.icon.height = this.size.y - 4
+
         this.highlight = new Sprite(Game.assets.InventorySlotHightlight)
         this.highlight.alpha = 0.1
         this.highlight.visible = false
 
         this.addChild(new Sprite(bgTexture))
         this.addChild(this.highlight)
+        this.addChild(this.icon)
 
         this.on("pointerdown", this.onPointerDown)
         this.on("pointerover", this.onPointerOver)
@@ -38,7 +45,7 @@ export class InventorySlot extends Container {
             Game.dragAndDrop.setup({
                 type: "item",
                 data: item,
-                sprite: item.icon,
+                texture: Game.assets[item.iconId],
                 onCancel: () => { this.setItem(item) },
                 onSwap: (other) => { this.setItem(other) },
             })
@@ -64,23 +71,17 @@ export class InventorySlot extends Container {
     }
 
     setItem(item) {
+        this.icon.texture = Game.assets[item.iconId]
         this.item = item
-
-        item.icon.position.copyFrom(this.size.divide(2))
-        item.icon.width = this.size.x
-        item.icon.height = this.size.y
-
-        this.addChild(item.icon)
     }
 
     removeItem() {
         const item = this.item
         this.item = null
 
-        item.icon.position.set(0, 0)
-        
-        this.removeChild(item.icon)
-        return item        
+        this.icon.texture = null
+
+        return item
     }
 
     hasItem() {
@@ -139,8 +140,6 @@ export default class GemInventoryModule extends IModule {
         this.inventory.position.x = Game.renderer.width - 10
         this.inventory.position.y = Game.renderer.height - 10
 
-        this.addItem()
-
         Game.uiContainer.addChild(this.inventory)
     }
 
@@ -148,24 +147,7 @@ export default class GemInventoryModule extends IModule {
         Game.uiContainer.removeChild(this.inventory)
     }
 
-    addItem(tmp) {
-        if (!tmp) {
-            const sprite = new Sprite(Game.assets.IconScorchingRay.texture)
-            sprite.anchor.set(0.5, 0.5)
-
-            this.inventory.addItem({
-                icon: sprite,
-                actionId: "FireBeam"
-            })
-        }
-        else {
-            const sprite = new Sprite(Game.assets.IconFortify.texture)
-            sprite.anchor.set(0.5, 0.5)
-    
-            this.inventory.addItem({
-                icon: sprite,
-                actionId: "ShootPlasma"
-            })
-        }
+    addItem(item) {
+        this.inventory.addItem(item)
     }
 }

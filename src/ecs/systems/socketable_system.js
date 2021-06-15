@@ -1,4 +1,5 @@
 import { Game } from "game/"
+import { Sprite } from "pixi.js"
 import { ECSSystem } from "."
 
 export default class SocketableSystem extends ECSSystem {
@@ -7,71 +8,73 @@ export default class SocketableSystem extends ECSSystem {
     setupComponents(entity) {
         const { socketable, display } = entity.components
 
-        const pickupGem = () => {
-            const gem = this.removeGem(entity)
+        const pickupItem = () => {
+            const item = this.removeItem(entity)
 
             Game.dragAndDrop.setup({
                 type: "item",
-                data: gem,
-                sprite: gem.icon,
-                onCancel: () => { this.socketGem(entity, gem) },
-                onSwap: (other) => { this.socketGem(entity, other) },
+                data: item,
+                texture: Game.assets[item.iconId],
+                onCancel: () => { this.socketItem(entity, item) },
+                onSwap: (otherItem) => { this.socketItem(entity, otherItem) },
             })
         }
 
         display.on("dragdrop", (dragAndDrop) => {
             if (dragAndDrop.type === "item") {
-                if (socketable.gem) {
-                    const gem = this.removeGem(entity)
-                    this.socketGem(entity, dragAndDrop.swap(gem))
+                if (socketable.item) {
+                    const item = this.removeItem(entity)
+                    this.socketItem(entity, dragAndDrop.swap(item))
                 }
                 else {
-                    this.socketGem(entity, dragAndDrop.accept())
+                    this.socketItem(entity, dragAndDrop.accept())
                 }
             }
         })
         display.on("pointerdown", (event) => {
             event.stopPropagation()
             
-            if (socketable.gem) {
-                display.once("pointermove", pickupGem)
-                display.once("pointerup", () => { display.removeListener("pointermove", pickupGem) })
-                display.once("pointerupoutside", () => { display.removeListener("pointermove", pickupGem) })
+            if (socketable.item) {
+                display.once("pointermove", pickupItem)
+                display.once("pointerup", () => { display.removeListener("pointermove", pickupItem) })
+                display.once("pointerupoutside", () => { display.removeListener("pointermove", pickupItem) })
             }
         })
     }
 
-    socketGem(entity, item) {
+    socketItem(entity, item) {
         const { socketable, display } = entity.components
+        const { width, height } = display.getLocalBounds()
 
-        socketable.gem = item
+        socketable.item = item
 
-        {   // Add icon to display
-            const { width, height } = display.getLocalBounds()
-            item.icon.width = width
-            item.icon.height = height
-    
-            display.addChild(item.icon)
-        }
+        socketable.icon = new Sprite(Game.assets[item.iconId])
+        socketable.icon.anchor.set(0.5, 0.5)
+        socketable.icon.width = width
+        socketable.icon.height = height
+
+        display.addChild(socketable.icon)
 
         this.ecs.addEntityComponents(entity, {
             "towerAction": {
-                actionId: item.actionId
+                actionId: item.skillId
             }
         })
     }
 
-    removeGem(entity) {
+    removeItem(entity) {
         const { socketable, display } = entity.components
 
-        if (socketable.gem) {
+        if (socketable.item) {
             this.ecs.removeEntityComponents(entity, "towerAction")
-            display.removeChild(socketable.gem.icon)
+            display.removeChild(socketable.icon)
 
-            const gem = socketable.gem
-            socketable.gem = null
+            const item = socketable.item
 
-            return gem
+            socketable.item = null
+            socketable.icon = null
+
+            return item
         }
 
         return null
