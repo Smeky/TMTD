@@ -2,7 +2,7 @@ import LevelLayers from "game/scenes/level/layers"
 import { BulletData } from "game/data"
 import { Vec2 } from "game/graphics"
 import { Sprite } from "pixi.js"
-import { Game } from ".."
+import { Game } from "../.."
 
 function instantDamage(source, target) {
     // Todo: instantDamage - simple, temporary, ugh :D 
@@ -43,7 +43,13 @@ function getBulletComponents({ data, position, rotation, range, source }) {
     }
 }
 
-function spawnProjectile(projectileId) {
+/**
+ * 
+ * @param {object} properties
+ * @param {string} properties.projectileId
+ * @returns 
+ */
+function spawnProjectile({ projectileId }) {
     const data = BulletData[projectileId]
 
     return (source, target) => {
@@ -64,13 +70,9 @@ function spawnProjectile(projectileId) {
     }
 }
 
-export default {
-    "FireBeam": {
-        action: instantDamage,
-        effect: "BeamEffect",
-        effectLayer: "Beam",
-    },
-    "ShootPlasma": {
-        action: spawnProjectile("SimpleOne"),
+export function getEntityAction(actionId, actionProps) {
+    switch(actionId) {
+        case "InstantDamage": return instantDamage;
+        case "SpawnProjectile": return spawnProjectile(actionProps);
     }
 }

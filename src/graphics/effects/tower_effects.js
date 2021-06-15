@@ -47,10 +47,10 @@ class TowerBeamEffect extends ActionEffect {
 
     update(delta, entity) {
         if (this.sprite.visible) {
-            const { towerAction, transform } = entity.components
+            const { towerSkill, transform } = entity.components
     
-            if (towerAction.target) {
-                const targetPos = towerAction.target.components.transform.position
+            if (towerSkill.target) {
+                const targetPos = towerSkill.target.components.transform.position
     
                 this.sprite.position.copyFrom(transform.position)
                 this.sprite.height = transform.position.distance(targetPos)

@@ -56,8 +56,8 @@ export default class SocketableSystem extends ECSSystem {
         display.addChild(socketable.icon)
 
         this.ecs.addEntityComponents(entity, {
-            "towerAction": {
-                actionId: item.skillId
+            "towerSkill": {
+                skillId: item.skillId
             }
         })
     }
@@ -66,7 +66,7 @@ export default class SocketableSystem extends ECSSystem {
         const { socketable, display } = entity.components
 
         if (socketable.item) {
-            this.ecs.removeEntityComponents(entity, "towerAction")
+            this.ecs.removeEntityComponents(entity, "towerSkill")
             display.removeChild(socketable.icon)
 
             const item = socketable.item

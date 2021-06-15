@@ -34,9 +34,9 @@ export default {
             sprite: null
         }
     },
-    "towerAction": function({ actionId }) {
+    "towerSkill": function({ skillId }) {
         return {
-            actionId,
+            skillId,
             target: null,
             action: null,
             actionCd: new Cooldown(),
