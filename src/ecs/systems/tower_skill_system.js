@@ -7,7 +7,7 @@ import { TowerSkillData } from "game/data"
 import LevelLayers from "game/scenes/level/layers"
 import { addStatsToComponent } from "../components/stats"
 
-export default class TowerControl extends ECSSystem {
+export default class TowerSkillSystem extends ECSSystem {
     static Dependencies = ["transform", "towerSkill", "stats"]
 
     setupComponents(entity) {
