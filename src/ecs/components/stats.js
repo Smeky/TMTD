@@ -47,3 +47,19 @@ export function addStatsToComponent(obj, component) {
         component[stat] += value
     }
 }
+
+/**
+ * Mutates the component by adding (and defining when necessary) stats 
+ * @param {Object} obj { statName: statValue }
+ * @param {Object} component Stats component
+ */
+export function removeStatsFromComponent(obj, component) {
+    for (const [stat, value] of Object.entries(obj)) {
+        // Define the stat if the component doesn't have it yet
+        if (!component.hasOwnProperty(stat)) {
+            component[stat] = 0
+        }
+
+        component[stat] -= value
+    }
+}

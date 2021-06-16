@@ -5,7 +5,7 @@ import { getEntityAction } from "game/ecs/actions/tower_actions"
 import { TowerEffects } from "game/graphics/effects"
 import { TowerSkillData } from "game/data"
 import LevelLayers from "game/scenes/level/layers"
-import { addStatsToComponent } from "../components/stats"
+import { addStatsToComponent, removeStatsFromComponent } from "../components/stats"
 
 export default class TowerSkillSystem extends ECSSystem {
     static Dependencies = ["transform", "towerSkill", "stats"]
@@ -28,8 +28,12 @@ export default class TowerSkillSystem extends ECSSystem {
     }
 
     closeComponents(entity) {
-        const { towerSkill } = entity.components
+        const { towerSkill, stats } = entity.components
+        const skillData = TowerSkillData[towerSkill.skillId]
 
+        removeStatsFromComponent(skillData.stats, stats)
+
+        towerSkill.skillId = null
         towerSkill.action = null
         towerSkill.actionCd.reset()
 
