@@ -5,13 +5,14 @@ import { Graphics, Sprite } from "pixi.js"
 import { IModule } from "."
 import { TowerData } from "game/data"
 import LevelLayers from "game/scenes/level/layers"
+import { Game } from "game/"
 
 export default class BuildMode extends IModule {
     setup() {
         this.enabled = false
         this.selectedTower = null
 
-        this.inputProxy = game.input.getProxy()
+        this.inputProxy = Game.input.getProxy()
 
         this.mask = new Sprite.from("media/build_mask.png") // Todo:texture: load from assets
         this.mask.scale.set(2, 2)
@@ -22,30 +23,30 @@ export default class BuildMode extends IModule {
         this.buildTiles.mask = this.mask
         this.buildTiles.visible = false
 
-        game.world.addChild(this.buildTiles, LevelLayers.BuildmodeTiles)
-        game.world.addChild(this.mask, LevelLayers.BuildmodeTiles)
+        Game.world.addChild(this.buildTiles, LevelLayers.BuildmodeTiles)
+        Game.world.addChild(this.mask, LevelLayers.BuildmodeTiles)
 
-        game.on("tower_built", this.updateBuildTiles)
-        game.on("tower_selected", this.onTowerSelected)
-        game.on("tower_unselected", this.onTowerUnselected)
+        Game.on("tower_built", this.updateBuildTiles)
+        Game.on("tower_selected", this.onTowerSelected)
+        Game.on("tower_unselected", this.onTowerUnselected)
 
         this.inputProxy.on("pointerup", this.handleMouseUp)
         this.inputProxy.on("pointermove", this.handleMouseMove)
     }
 
     close() {
-        game.world.removeChild(this.buildTiles)
-        game.world.removeChild(this.mask)
+        Game.world.removeChild(this.buildTiles)
+        Game.world.removeChild(this.mask)
 
         if (this.highlight) {
-            game.world.removeChild(this.highlight)
+            Game.world.removeChild(this.highlight)
         }
 
         this.inputProxy.close()
 
-        game.removeListener("tower_built", this.updateBuildTiles)
-        game.removeListener("tower_selected", this.onTowerSelected)
-        game.removeListener("tower_unselected", this.onTowerUnselected)
+        Game.removeListener("tower_built", this.updateBuildTiles)
+        Game.removeListener("tower_selected", this.onTowerSelected)
+        Game.removeListener("tower_unselected", this.onTowerUnselected)
     }
 
     update(delta) {
@@ -61,14 +62,14 @@ export default class BuildMode extends IModule {
         }
 
         const data = TowerData[this.selectedTower]
-        const { width, height } = game.assets[data.base.textureId]
+        const { width, height } = Game.assets[data.textureId]
 
         this.highlight = createTowerDisplay(data)
         this.highlight.alpha = 0.8
         this.highlight.pivot.x = width / 2
         this.highlight.pivot.y = height / 2
 
-        game.world.addChild(this.highlight, LevelLayers.BuildmodeHighlight)
+        Game.world.addChild(this.highlight, LevelLayers.BuildmodeHighlight)
     }
 
     toggle() {
@@ -81,8 +82,8 @@ export default class BuildMode extends IModule {
             this.updateBuildTiles()
 
             // Mouse pos
-            const screenPos = game.renderer.plugins.interaction.mouse.global
-            const worldPos = game.world.correctMousePos(screenPos)
+            const screenPos = Game.interaction.mouse.global
+            const worldPos = Game.world.correctMousePos(screenPos)
 
             this.mask.x = worldPos.x - (this.mask.width) / 2
             this.mask.y = worldPos.y - (this.mask.height) / 2
@@ -100,7 +101,7 @@ export default class BuildMode extends IModule {
         this.buildTiles.clear()
 
         const padding = 4
-        const tiles = game.world.grid.getAllGroundTiles()
+        const tiles = Game.world.grid.getAllGroundTiles()
 
         for (const tile of tiles) {
             if (!tile.isBlocked) {
@@ -127,7 +128,7 @@ export default class BuildMode extends IModule {
         this.mask.x = position.x - (this.mask.width) / 2
         this.mask.y = position.y - (this.mask.height) / 2
 
-        const snapped = game.world.grid.snapPosToTile(position.add(Tile.Size / 2))
+        const snapped = Game.world.grid.snapPosToTile(position.add(Tile.Size / 2))
         this.highlight.x = snapped.x
         this.highlight.y = snapped.y
     }
@@ -136,7 +137,7 @@ export default class BuildMode extends IModule {
         if (this.enabled) {
             const { x, y, pivot } = this.highlight
             
-            game.emit("build_tower", { 
+            Game.emit("build_tower", { 
                 towerId: this.selectedTower,
                 pos: new Vec2(x - pivot.x, y - pivot.y), 
             })
@@ -146,7 +147,7 @@ export default class BuildMode extends IModule {
     handleMouseMove = (event) => {
         if (this.enabled) {
             const { x, y } = event
-            const pos = game.world.correctMousePos(new Vec2(x, y))
+            const pos = Game.world.correctMousePos(new Vec2(x, y))
     
             this.updateHighlightPosition(pos)
         }
@@ -154,7 +155,7 @@ export default class BuildMode extends IModule {
 
     onTowerSelected = towerId => {
         this.setSelectedTower(towerId)
-        this.updateHighlightPosition(game.world.getMousePos())
+        this.updateHighlightPosition(Game.world.getMousePos())
 
         if (!this.enabled) {
             this.toggle()

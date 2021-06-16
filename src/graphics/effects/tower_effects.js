@@ -1,4 +1,4 @@
-import { getTowerHeadEndPosition } from "game/ecs";
+import { Game } from "game/";
 import { AdvancedBloomFilter } from "pixi-filters";
 import { BLEND_MODES, Container, Sprite } from "pixi.js";
 
@@ -16,7 +16,7 @@ class TowerBeamEffect extends ActionEffect {
     constructor() {
         super()
 
-        this.sprite = new Sprite(game.assets["BeamBase"])
+        this.sprite = new Sprite(Game.assets["BeamBase"])
         this.addChild(this.sprite)
 
         this.sprite.scale.x = 0.5
@@ -46,15 +46,14 @@ class TowerBeamEffect extends ActionEffect {
 
     update(delta, entity) {
         if (this.sprite.visible) {
-            const { tower } = entity.components
+            const { towerSkill, transform } = entity.components
     
-            if (tower.target) {
-                const fromPos = getTowerHeadEndPosition(entity)
-                const targetPos = tower.target.components.transform.position
+            if (towerSkill.target) {
+                const targetPos = towerSkill.target.components.transform.position
     
-                this.sprite.position.copyFrom(fromPos)
-                this.sprite.height = fromPos.distance(targetPos)
-                this.sprite.rotation = tower.headSprite.rotation
+                this.sprite.position.copyFrom(transform.position)
+                this.sprite.height = transform.position.distance(targetPos)
+                this.sprite.rotation = transform.position.angle(targetPos) - Math.PI / 2
             }
         }
     }

@@ -10,6 +10,8 @@ export default {
             "TowerManager",
             "CurrencyDisplay",
             "UserInputModule",
+            "GemInventoryModule",
+            "DevLevelSetupModules",
         ]
     },
     "Editor": {}

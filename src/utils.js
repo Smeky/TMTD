@@ -1,5 +1,6 @@
 import { Vec2, Rect } from "game/graphics"
 import { Container, Graphics, Sprite, Texture } from "pixi.js"
+import { Game } from "."
 
 /**
  * Creates a new position that is limited to (does not exceed) the bounds
@@ -58,7 +59,7 @@ export function rgbColorToString(r, g, b) {
 // Todo: moved those two here for now. Move it somewhere appropriate
 export function createTextureFromObject(displayObject) {
     const {width, height} = displayObject.getLocalBounds()
-    const pixels = game.renderer.extract.pixels(displayObject)
+    const pixels = Game.renderer.extract.pixels(displayObject)
 
     return Texture.fromBuffer(pixels, width, height)
 }
@@ -109,21 +110,7 @@ export function round(number, decimals = 1) {
  */
 // Todo: Replace be with some proper impl, please!
 export function createTowerDisplay(towerData, headAngle = 0) {
-    const container = new Container()
-    const baseSprite = new Sprite(game.assets[towerData.base.textureId])
-    const headSprite = new Sprite(game.assets[towerData.head.textureId])
-
-    const { width, height } = baseSprite.texture
-    const size = new Vec2(width, height)
-
-    headSprite.position.copyFrom(towerData.head.position.multiply(size))
-    headSprite.pivot.copyFrom(towerData.head.pivot)
-    headSprite.rotation = headAngle
-
-    container.addChild(baseSprite)
-    container.addChild(headSprite)
-
-    return container
+    return new Sprite(Game.assets[towerData.textureId])
 }
 
 // Todo: move me, please!
@@ -138,5 +125,13 @@ export function intersection(first, second) {
 }
 
 export function intersects(first, second) {
+    return first.some(item => second.includes(item))
+}
+
+export function includesAllOf(first, second) {
+    return first.every(item => second.includes(item))
+}
+
+export function includesAnyOf(first, second) {
     return first.some(item => second.includes(item))
 }

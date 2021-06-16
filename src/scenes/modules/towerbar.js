@@ -3,13 +3,14 @@ import { IModule } from "."
 import { Button } from "game/ui"
 import { Container } from "pixi.js"
 import { TowerData } from "game/data"
+import { Game } from "game/"
 
 export default class TowerBar extends IModule {
     setup() { 
         this.selected = -1
         
         this.container = new Container()
-        game.uiContainer.addChild(this.container)
+        Game.uiContainer.addChild(this.container)
         
         let offset = 0
         for (const [id, tower] of Object.entries(TowerData)) {
@@ -24,15 +25,15 @@ export default class TowerBar extends IModule {
 
         this.updateContainerPosition()
 
-        game.on("select_tower", this.onSelectTower)
-        game.on("unselect_tower", this.onUnselectTower)
-        game.on("window_resized", this.onWindowResized)
+        Game.on("select_tower", this.onSelectTower)
+        Game.on("unselect_tower", this.onUnselectTower)
+        Game.on("window_resized", this.onWindowResized)
     }
 
     close() {
-        game.removeListener("select_tower", this.onSelectTower)
-        game.removeListener("unselect_tower", this.onUnselectTower)
-        game.removeListener("window_resized", this.onWindowResized)
+        Game.removeListener("select_tower", this.onSelectTower)
+        Game.removeListener("unselect_tower", this.onUnselectTower)
+        Game.removeListener("window_resized", this.onWindowResized)
     }
 
     onSelectTower = (index) => {
@@ -56,7 +57,7 @@ export default class TowerBar extends IModule {
     selectTower(id) {
         if (this.selected !== id) {
             this.selected = id
-            game.emit("tower_selected", id)
+            Game.emit("tower_selected", id)
         }
         else {
             this.clearSelection()
@@ -66,7 +67,7 @@ export default class TowerBar extends IModule {
     clearSelection() {
         if (this.selected) {
             this.selected = null
-            game.emit("tower_unselected")
+            Game.emit("tower_unselected")
         }
     }
 
@@ -76,7 +77,7 @@ export default class TowerBar extends IModule {
 
     updateContainerPosition() {
         const { width, height } = this.container.getLocalBounds()
-        const canvasSize = game.getCanvasSize()
+        const canvasSize = Game.getCanvasSize()
         
         this.container.x = Math.round(canvasSize.x / 2)
         this.container.y = canvasSize.y - 40

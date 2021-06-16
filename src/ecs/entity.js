@@ -13,19 +13,7 @@ export default class Entity {
     }
 
     isActive() { 
-        return !this.shouldDespawn 
-    }
-
-    addComponent(name, component) {
-        this.components[name] = component
-    }
-
-    getComponent(name) { 
-        return this.components[name]
-    }
-    // It's important to return components in the same order as the names array
-    getComponents(names) { 
-        return names.map(name => this.getComponent(name)) 
+        return !this.shouldDespawn
     }
 
     hasComponent(name) {

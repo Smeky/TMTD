@@ -2,7 +2,11 @@
  * @abstract
  */
  export default class ECSSystem {
-    setupEntity(entity) {}
+    constructor(controller) {
+        this.ecs = controller
+    }
+
+    setupComponents(entity) {}
     updateEntity(delta, entity, entities) {}
-    closeEntity(entity) {}
+    closeComponents(entity) {}
 }

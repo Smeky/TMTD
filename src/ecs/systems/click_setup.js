@@ -3,7 +3,7 @@ import { ECSSystem } from "."
 export default class ClickSetup extends ECSSystem {
     static Dependencies = ["clickable", "display"]
 
-    setupEntity(entity) {
+    setupComponents(entity) {
         const { display } = entity.components
 
         display.interactive = true

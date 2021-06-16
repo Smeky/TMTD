@@ -8,6 +8,8 @@ import TowerManager from "./tower_manager"
 import CurrencyDisplay from "./currency_display"
 import UserInputModule from "./user_input"
 import LevelSetupModule from "./level_setup"
+import GemInventoryModule from "./gem_inventory"
+import DevLevelSetupModules from "./devlevel_setup"
 
 export const Modules = {
     EnemyWaves,
@@ -18,6 +20,8 @@ export const Modules = {
     CurrencyDisplay,
     UserInputModule,
     LevelSetupModule,
+    GemInventoryModule,
+    DevLevelSetupModules,
 }
 
 export function createModulesStore(scene, Modules = []) {

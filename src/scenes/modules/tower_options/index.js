@@ -4,6 +4,7 @@ import { IModule } from "../."
 import LevelLayers from "game/scenes/level/layers"
 
 import OptionsButton from "./options_button"
+import { Game } from "game/";
 
 export default class TowerOptions extends IModule {
     setup() {
@@ -12,12 +13,12 @@ export default class TowerOptions extends IModule {
         this.container = new Container()
         this.container.visible = false
 
-        game.world.addChild(this.container, LevelLayers.TowerOptions)
+        Game.world.addChild(this.container, LevelLayers.TowerOptions)
 
-        const texture = game.assets.TowerOptionsButton
+        const texture = Game.assets.TowerOptionsButton
         const buttons = [
-            // { icon: createUpgradeIcon(0xffeb74, 4), callback: () => game.emit("upgrade_tower", this.selectedId) },
-            { icon: createCrossIcon(0xa20e0e, 4),   callback: () => game.emit("remove_tower",  this.selectedId) },
+            // { icon: createUpgradeIcon(0xffeb74, 4), callback: () => Game.emit("upgrade_tower", this.selectedId) },
+            { icon: createCrossIcon(0xa20e0e, 4),   callback: () => Game.emit("remove_tower",  this.selectedId) },
         ]
         .forEach((data, index) => {
             const angle = index * (Math.PI * 0.32)
@@ -32,17 +33,17 @@ export default class TowerOptions extends IModule {
             this.container.addChild(button)
         })
 
-        game.on("tower_clicked", this.onTowerClicked)
-        game.on("unselect_tower", this.onUnselectTower)
-        game.on("tower_removed", this.onTowerRemoved)
+        Game.on("tower_clicked", this.onTowerClicked)
+        Game.on("unselect_tower", this.onUnselectTower)
+        Game.on("tower_removed", this.onTowerRemoved)
     }
 
     close() {
-        game.world.removeChild(this.container)
+        Game.world.removeChild(this.container)
 
-        game.removeListener("tower_clicked", this.onTowerClicked)
-        game.removeListener("unselect_tower", this.onUnselectTower)
-        game.removeListener("tower_removed", this.onTowerRemoved)
+        Game.removeListener("tower_clicked", this.onTowerClicked)
+        Game.removeListener("unselect_tower", this.onUnselectTower)
+        Game.removeListener("tower_removed", this.onTowerRemoved)
     }
 
     onTowerClicked = (entityId) => {
@@ -64,7 +65,7 @@ export default class TowerOptions extends IModule {
     }
 
     selectTower(entityId) {
-        const entity = game.world.ecs.getEntity(entityId)
+        const entity = Game.world.ecs.getEntity(entityId)
         const position = entity.components.transform.position
 
 

@@ -4,7 +4,7 @@ import { intersects } from "game/utils"
 export { default as Components } from "./components"
 export { default as Systems } from "./systems"
 export { default as Entity } from "./entity"
-export { default as ECSController } from "./controller"
+export { default as ECSController } from "./ecs_controller"
 
 /**
  * 
@@ -28,6 +28,7 @@ export function isEntityInRadius(entity, position, radius) {
     return position.distance(entity.components.transform.position) <= radius
 }
 
+/* Obsolete */
 export function getTowerHeadEndPosition(entity) {
     const { transform, tower } = entity.components
 

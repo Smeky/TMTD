@@ -1,7 +1,7 @@
 import { createRectTexture } from "game/utils"
 import { Rect, Vec2, Layers } from "game/graphics"
 import { Sprite } from "pixi.js"
-
+import { Game } from ".."
 
 export default class Camera extends Layers {
     /**
@@ -51,9 +51,9 @@ export default class Camera extends Layers {
         }
 
         if (this.options.grabDebug) {
-            this.debugParent = game.debug.parent
-            this.debugParent.removeChild(game.debug)
-            this.addChild(game.debug)
+            this.debugParent = Game.debug.parent
+            this.debugParent.removeChild(Game.debug)
+            this.addChild(Game.debug)
         }
     }
 
@@ -63,8 +63,8 @@ export default class Camera extends Layers {
         }
 
         if (this.options.grabDebug) {
-            this.removeChild(game.debug)
-            this.debugParent.addChild(game.debug)
+            this.removeChild(Game.debug)
+            this.debugParent.addChild(Game.debug)
         }
     }
 
@@ -130,7 +130,7 @@ export default class Camera extends Layers {
         const scale = Math.max((this.scale.x + change), 0.1)
 
         const bounds = this.getBounds()
-        const mousePos = new Vec2(game.renderer.plugins.interaction.mouse.global)
+        const mousePos = new Vec2(Game.interaction.mouse.global)
 
         this.x -= ((mousePos.x - bounds.x) / bounds.width) * (bounds.width * delta)
         this.y -= ((mousePos.y - bounds.y) / bounds.height) * (bounds.height * delta)
@@ -150,6 +150,6 @@ export default class Camera extends Layers {
     }
 
     getMousePos() {
-        return new Vec2(this.toLocal(game.renderer.plugins.interaction.mouse.global))
+        return new Vec2(this.toLocal(Game.interaction.mouse.global))
     }
 }

@@ -34,13 +34,13 @@ export default {
             sprite: null
         }
     },
-    "tower": function({ headSprite, action, actionEffect }) {
+    "towerSkill": function({ skillId }) {
         return {
-            headSprite,
+            skillId,
             target: null,
-            action,
+            action: null,
             actionCd: new Cooldown(),
-            actionEffect,
+            actionEffect: null,
         }
     },
     "travelLimit": function({ maxDistance, onLimitReached }) {
@@ -59,12 +59,16 @@ export default {
         }
     },
     "clickable": function({ onClick }) {
-        return {
-            onClick
-        }
+        return { onClick }
     },
     "bullet": function({ source }) {
         return { source }
+    },
+    "socketable": function({ item }) {
+        return { 
+            item: item ?? null,
+            icon: null,
+        }
     },
     "stats": createStatsComponent
 }
