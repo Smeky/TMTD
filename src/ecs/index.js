@@ -28,6 +28,7 @@ export function isEntityInRadius(entity, position, radius) {
     return position.distance(entity.components.transform.position) <= radius
 }
 
+/* Obsolete */
 export function getTowerHeadEndPosition(entity) {
     const { transform, tower } = entity.components
 

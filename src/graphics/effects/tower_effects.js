@@ -1,5 +1,4 @@
 import { Game } from "game/";
-import { getTowerHeadEndPosition } from "game/ecs";
 import { AdvancedBloomFilter } from "pixi-filters";
 import { BLEND_MODES, Container, Sprite } from "pixi.js";
 

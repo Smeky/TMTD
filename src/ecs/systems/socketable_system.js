@@ -56,9 +56,7 @@ export default class SocketableSystem extends ECSSystem {
         display.addChild(socketable.icon)
 
         this.ecs.addEntityComponents(entity, {
-            "towerSkill": {
-                skillId: item.skillId
-            }
+            "towerSkill": { skillId: item.skillId }
         })
     }
 
