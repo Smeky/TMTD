@@ -29,6 +29,9 @@ export const AssetList = [
     { name: "TowerOptionsButton", textureDef: [50, 50, 0xffffff] },
     { name: "InventorySlotBg", textureDef: [56, 56, 0x404040] },
     { name: "InventorySlotHightlight", textureDef: [56, 56, 0xffffff] },
+
+    { name: "InventoryBg", url: "media/ui/inventory_bg.png" },
+    { name: "InventorySlot", url: "media/ui/inventory_slot.png" },
 ]
 
 export default class AssetLoader {
