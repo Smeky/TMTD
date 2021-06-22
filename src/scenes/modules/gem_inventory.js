@@ -13,11 +13,11 @@ export default class GemInventoryModule extends IModule {
         this.inventory.position.x = Game.renderer.width
         this.inventory.position.y = Game.renderer.height
 
-        Game.uiContainer.addChild(this.inventory)
+        Game.ui.addChild(this.inventory)
     }
 
     close() {
-        Game.uiContainer.removeChild(this.inventory)
+        Game.ui.removeChild(this.inventory)
     }
 
     addItem(item) {

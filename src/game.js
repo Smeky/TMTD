@@ -4,7 +4,7 @@ import { Debug } from "game/debug"
 import { Scene, SceneManager } from "game/scenes"
 import { Renderer, Vec2 } from "game/graphics"
 import { StoreManager, DefaultBaseState } from "game/store"
-import { DragAndDrop } from "game/ui"
+import { DragAndDrop, UIRoot } from "game/ui"
 import AssetLoader, { AssetList } from "game/core/asset_loader"
 import * as pixi from "pixi.js"
 
@@ -36,7 +36,7 @@ class Game extends EventEmitter {
         
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
-        this.uiContainer = new pixi.Container()
+        this.ui = new UIRoot()
         /** @member {DragAndDrop} */
         this.dragAndDrop = new DragAndDrop()
         
@@ -51,7 +51,7 @@ class Game extends EventEmitter {
         })
 
         this.stage.addChild(this.world)
-        this.stage.addChild(this.uiContainer)
+        this.stage.addChild(this.ui)
         this.stage.addChild(this.dragAndDrop)
         this.stage.addChild(this.debug)
         
@@ -120,8 +120,9 @@ class Game extends EventEmitter {
         }
 
         this.renderer.resize(meta.after.x, meta.after.y)
-
+        this.ui.handleWindowResized(meta.before, meta.after)
         this.world.handleViewResize(meta.after) // Todo: move this to camera, listen to event?
+
         this.emit("window_resized", meta)
     }
 

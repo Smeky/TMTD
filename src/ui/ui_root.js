@@ -1,12 +1,7 @@
-import { Container } from "pixi.js";
+import { Widget } from ".";
 
-export default class UIRoot extends Container {
+export default class UIRoot extends Widget {
     constructor() {
         super()
-
-        this.right  = new Container()
-        this.bottom = new Container()
-        this.left   = new Container()
-        this.top    = new Container()
     }
 }

@@ -8,7 +8,7 @@ export default class _Renderer extends Renderer {
         super({ 
             width: width, 
             height: height,
-            backgroundColor: 0x1c2433,
+            backgroundColor: 0x0e0f12,
             antialias: true,
         })
 

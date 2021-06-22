@@ -1,34 +1,29 @@
 import { IModule } from "."
 import { Text } from "pixi.js"
 import { Game } from "game/"
+import { Widget } from "game/ui"
 
 export default class CurrencyDisplay extends IModule {
     setup() {
         const baseStore = Game.stores.base
         
         this.cachedCurrency = null
-        this.textObject = new Text("", { fill: 0xffffff, fontSize: 22 })
-        Game.uiContainer.addChild(this.textObject)
+        this.widget = Game.ui.addChild(new Widget())
+        this.textObject = this.widget.addChild(new Text("", { fill: 0xffffff, fontSize: 22 }))
         
         this.updateText(baseStore.state.currency)
         this.updatePosition()
 
         baseStore.subscribe(this.handleCurrencyChanged)
-        Game.on("window_resized", this.onWindowResized)
     }
     
     close() {
-        Game.uiContainer.removeChild(this.textObject)
+        Game.ui.removeChild(this.widget)
         Game.stores.base.removeListener(this.handleCurrencyChanged)
-        Game.removeListener("window_resized", this.onWindowResized)
     }
 
     handleCurrencyChanged = (state) => {
         this.updateText(state.currency)
-    }
-
-    onWindowResized = () => {
-        this.updatePosition()
     }
 
     updateText(value) {
@@ -39,7 +34,7 @@ export default class CurrencyDisplay extends IModule {
     }
 
     updatePosition() {
-        this.textObject.x = Math.round(Game.getCanvasSize().x / 2) - 50
-        this.textObject.y = 30
+        this.widget.x = Math.round(Game.getCanvasSize().x / 2)
+        this.widget.y = 30
     }
 }

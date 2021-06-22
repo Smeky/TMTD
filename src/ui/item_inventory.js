@@ -1,8 +1,8 @@
 import { Game } from ".."
-import { ItemSlot } from "."
+import { ItemSlot, Widget } from "."
 import { Container, Sprite } from "pixi.js"
 
-export default class ItemInventory extends Container {
+export default class ItemInventory extends Widget {
     /**
      * 
      * @param {Vec2} cellCount

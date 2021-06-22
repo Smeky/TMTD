@@ -1,7 +1,6 @@
 import { createTowerDisplay } from "game/utils"
 import { IModule } from "."
-import { Button } from "game/ui"
-import { Container } from "pixi.js"
+import { Button, Widget } from "game/ui"
 import { TowerData } from "game/data"
 import { Game } from "game/"
 
@@ -9,8 +8,7 @@ export default class TowerBar extends IModule {
     setup() { 
         this.selected = -1
         
-        this.container = new Container()
-        Game.uiContainer.addChild(this.container)
+        this.container = Game.ui.addChild(new Widget())
         
         let offset = 0
         for (const [id, tower] of Object.entries(TowerData)) {
@@ -27,13 +25,11 @@ export default class TowerBar extends IModule {
 
         Game.on("select_tower", this.onSelectTower)
         Game.on("unselect_tower", this.onUnselectTower)
-        Game.on("window_resized", this.onWindowResized)
     }
 
     close() {
         Game.removeListener("select_tower", this.onSelectTower)
         Game.removeListener("unselect_tower", this.onUnselectTower)
-        Game.removeListener("window_resized", this.onWindowResized)
     }
 
     onSelectTower = (index) => {
@@ -48,10 +44,6 @@ export default class TowerBar extends IModule {
 
     onUnselectTower = () => {
         this.clearSelection()
-    }
-
-    onWindowResized = (event) => {
-        this.updateContainerPosition()
     }
 
     selectTower(id) {

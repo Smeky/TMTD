@@ -16,7 +16,7 @@ export default {
             projectileId: "SimpleOne",
         },
         stats: {
-            attackRate: 1,
+            attackRate: 0.5,
             damage: 18,
             range: 250,
         }
