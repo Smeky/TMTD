@@ -67,13 +67,13 @@ export default class EnemyWaves extends IModule {
         const sprite = new Sprite(Game.assets[textureId])
         sprite.anchor.set(0.5, 0.5)
 
-        const components = this.getEnemyComponents(enemyData, sprite)
+        const components = this.setupEnemyComponents(enemyData, sprite)
         Game.world.ecs.createEntity(components, "Enemy")
         
         Game.world.addChild(sprite, LevelLayers.EnemyBase)
     }
 
-    getEnemyComponents(enemyData, sprite) {
+    setupEnemyComponents(enemyData, sprite) {
         const { speed, health, weight } = enemyData
 
         return {
