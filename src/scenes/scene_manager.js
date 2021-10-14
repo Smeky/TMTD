@@ -1,5 +1,5 @@
 import { Modules, createModulesStore } from "./modules"
-import { SceneData } from "game/data"
+import Scenes from "game/scenes"
 import { Container } from "pixi.js"
 import { Scene } from "."
 import { Game } from ".."
@@ -11,7 +11,7 @@ export default class SceneManager extends Container {
     }
 
     setScene(name) {
-        if (!SceneData.hasOwnProperty(name)) {
+        if (!Scenes.hasOwnProperty(name)) {
             throw new Error(`Unable to set scene - Unknown scene name "${name}"`)
         }
 
@@ -20,7 +20,7 @@ export default class SceneManager extends Container {
             this.removeChild(this.scene)
         }
 
-        this.scene = this.createScene(name, SceneData[name])
+        this.scene = this.createScene(name, Scenes[name])
         this.scene.started = true
 
         Game.emit("scene_changed", name)

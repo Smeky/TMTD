@@ -4,7 +4,7 @@ import { Game } from "game/"
 import { getEntityAction } from "game/ecs/actions/tower_actions"
 import { TowerEffects } from "game/graphics/effects"
 import { TowerSkillData } from "game/data"
-import LevelLayers from "game/scenes/level/layers"
+import LayerList from "game/graphics/layerList"
 import { addStatsToComponent, removeStatsFromComponent } from "../components/stats"
 
 export default class TowerSkillSystem extends ECSSystem {
@@ -22,8 +22,8 @@ export default class TowerSkillSystem extends ECSSystem {
         if (skillData.effectId) {
             towerSkill.actionEffect = new TowerEffects[skillData.effectId]()
             
-            // Todo: LevelLayers shouldn't be used here, so the zIndex should come from elsewhere.. effect data maybe?
-            Game.world.addChild(towerSkill.actionEffect, LevelLayers[skillData.effectLayer])
+            // Todo: LayerList shouldn't be used here, so the zIndex should come from elsewhere.. effect data maybe?
+            Game.world.addChild(towerSkill.actionEffect, LayerList[skillData.effectLayer])
         }
     }
 
