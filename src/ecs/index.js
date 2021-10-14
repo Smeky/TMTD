@@ -27,16 +27,3 @@ export function filterOutEntityById(id) {
 export function isEntityInRadius(entity, position, radius) {
     return position.distance(entity.components.transform.position) <= radius
 }
-
-/* Obsolete */
-export function getTowerHeadEndPosition(entity) {
-    const { transform, tower } = entity.components
-
-    const offset = tower.headSprite.height * (1.0 - tower.headSprite.anchor.y)
-    const angle = tower.headSprite.rotation + Math.PI / 2
-    
-    return new Vec2(
-        transform.position.x + tower.headSprite.x + Math.cos(angle) * offset,
-        transform.position.y + tower.headSprite.y + Math.sin(angle) * offset,
-    )
-}

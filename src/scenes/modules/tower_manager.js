@@ -63,8 +63,12 @@ export default class TowerManager extends IModule {
         const baseSprite = new Sprite(Game.assets[towerData.textureId])
         baseSprite.anchor.set(0.5, 0.5)
 
+        const headSprite = new Sprite(Game.assets[towerData.head.textureId])
+        headSprite.anchor.copyFrom(towerData.head.anchor)
+
         const container = new Container()
         container.addChild(baseSprite)
+        container.addChild(headSprite)
 
         Game.world.addChild(container, "tower-base")
 
@@ -73,7 +77,11 @@ export default class TowerManager extends IModule {
             "display": { displayObject: container },
             "stats": {},
             "clickable": { onClick: (entity) => Game.emit("tower_clicked", entity.id) },
-            "socketable": {},
+            "tower": { headSprite },
+            "towerSkill": { 
+                skillId: towerData.actions[0].temp,
+                headSprite,
+            }
         }
     }
 }

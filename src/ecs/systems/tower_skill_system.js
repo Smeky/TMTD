@@ -5,9 +5,10 @@ import { getEntityAction } from "game/ecs/actions/tower_actions"
 import { TowerEffects } from "game/graphics/effects"
 import { TowerSkillData } from "game/data"
 import { addStatsToComponent, removeStatsFromComponent } from "../components/stats"
+import { Vec2 } from "game/graphics"
 
 export default class TowerSkillSystem extends ECSSystem {
-    static Dependencies = ["transform", "towerSkill", "stats"]
+    static Dependencies = ["towerSkill", "tower", "transform", "stats"]
 
     setupComponents(entity) {
         const { towerSkill, stats } = entity.components
@@ -43,74 +44,24 @@ export default class TowerSkillSystem extends ECSSystem {
     }
 
     updateEntity(delta, entity, entities) {
-        const { towerSkill } = entity.components
+        const { tower } = entity.components
         
-        const hadTarget = !!towerSkill.target
-        towerSkill.target = this.ensureTowerTarget(entity, entities)
-
-        if (hadTarget && !towerSkill.target) {
+        if (tower.hadTarget && !tower.target) {
             this.stopTowerEffect(entity)
         }
 
+        // this.updateTowerHead(delta, entity)
         this.updateTowerAction(delta, entity)
         this.updateTowerEffect(delta, entity)
     }
 
-    /**
-     * Ensure the tower's target is valid by all requirements, otherwise returns a null
-     * @param {*} entity 
-     * @param {*} entities 
-     * @returns {Entity | null}
-     */
-    ensureTowerTarget(entity, entities) {
-        const { towerSkill } = entity.components
-
-        if (towerSkill.target && towerSkill.target.isActive() && this.isEnemyInRange(entity, towerSkill.target)) {
-            return towerSkill.target
-        }
-
-        return this.findTowerTarget(entity, entities)
-    }
-
-    findTowerTarget(entity, entities) {
-        const { transform, stats } = entity.components
-
-        const enemies = entities.filter(filterEntitiesByTags("Enemy"))
-        const closest = enemies.reduce((winner, enemy) => {
-            const enemyPos = enemy.components.transform.position
-            const distance = transform.position.distance(enemyPos)
-
-            if (distance <= stats.range) {
-                if (!winner.enemy) {
-                    winner.enemy = enemy
-                    winner.distance = distance
-                }
-                else {
-                    if (distance < winner.distance) {
-                        winner.enemy = enemy
-                        winner.distance = distance
-                    }
-                }
-            }
-
-            return winner
-        }, { enemy: null, distance: null })
-
-        return closest.enemy
-    }
-
-    isEnemyInRange(eTower, eEnemy) {
-        const { transform, stats } = eTower.components
-        return isEntityInRadius(eEnemy, transform.position, stats.range)
-    }
-
     updateTowerAction(delta, entity) {
-        const { towerSkill } = entity.components
+        const { tower, towerSkill } = entity.components
 
         if (towerSkill.actionCd.update(delta)) {
-            if (towerSkill.target) {
+            if (tower.target) {
                 towerSkill.actionCd.reset()
-                towerSkill.action(entity, towerSkill.target)
+                towerSkill.action(entity, tower.target)
                 
                 if (towerSkill.actionEffect) {
                     towerSkill.actionEffect.start(entity)
@@ -133,17 +84,5 @@ export default class TowerSkillSystem extends ECSSystem {
         if (towerSkill.actionEffect) {
             towerSkill.actionEffect.stop(entity)
         }
-    }
-
-    clearTowerTarget(entity) {
-        const { towerSkill } = entity.components
-        towerSkill.target = null
-    }
-
-    handleDamage(source, target) {
-        const sourceStats = source.components.stats
-        const targetHealth = target.components.health
-
-        targetHealth.current -= sourceStats.damage
     }
 }

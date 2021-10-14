@@ -34,13 +34,21 @@ export default {
             sprite: null
         }
     },
-    "towerSkill": function({ skillId }) {
+    "tower": function({ headSprite }) {
+        return {
+            target: null,
+            hadTarget: false,
+            headSprite
+        }
+    },
+    "towerSkill": function({ skillId, headSprite }) {
         return {
             skillId,
             target: null,
             action: null,
             actionCd: new Cooldown(),
             actionEffect: null,
+            headSprite,
         }
     },
     "travelLimit": function({ maxDistance, onLimitReached }) {

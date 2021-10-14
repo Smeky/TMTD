@@ -2,6 +2,7 @@ import { BulletData } from "game/data"
 import { Vec2 } from "game/graphics"
 import { Sprite } from "pixi.js"
 import { Game } from "../.."
+import { getTowerHeadEndPosition } from "../ecs_utils"
 
 function instantDamage(source, target) {
     // Todo: instantDamage - simple, temporary, ugh :D 
@@ -59,7 +60,7 @@ function spawnProjectile({ projectileId }) {
 
         const components = getBulletComponents({
             data,
-            position: sourceTransform.position,
+            position: getTowerHeadEndPosition(source),
             rotation: angle,
             range: stats.range,
             source

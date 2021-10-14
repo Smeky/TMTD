@@ -1,4 +1,5 @@
 import { Game } from "game/";
+import { getTowerHeadEndPosition } from "game/ecs/ecs_utils";
 import { AdvancedBloomFilter } from "pixi-filters";
 import { BLEND_MODES, Container, Sprite } from "pixi.js";
 
@@ -46,14 +47,15 @@ class TowerBeamEffect extends ActionEffect {
 
     update(delta, entity) {
         if (this.sprite.visible) {
-            const { towerSkill, transform } = entity.components
+            const { tower } = entity.components
     
-            if (towerSkill.target) {
-                const targetPos = towerSkill.target.components.transform.position
+            if (tower.target) {
+                const fromPos = getTowerHeadEndPosition(entity)
+                const targetPos = tower.target.components.transform.position
     
-                this.sprite.position.copyFrom(transform.position)
-                this.sprite.height = transform.position.distance(targetPos)
-                this.sprite.rotation = transform.position.angle(targetPos) - Math.PI / 2
+                this.sprite.position.copyFrom(fromPos)
+                this.sprite.height = fromPos.distance(targetPos)
+                this.sprite.rotation = tower.headSprite.rotation - Math.PI / 2
             }
         }
     }
