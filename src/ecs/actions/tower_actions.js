@@ -1,4 +1,3 @@
-import LayerList from "game/graphics/layerList"
 import { BulletData } from "game/data"
 import { Vec2 } from "game/graphics"
 import { Sprite } from "pixi.js"
@@ -18,7 +17,7 @@ function getBulletComponents({ data, position, rotation, range, source }) {
 
     sprite.anchor.set(0.5, 0.5)
 
-    Game.world.addChild(sprite, LayerList.Bullets)
+    Game.world.addChild(sprite, "projectiles")
 
     return {
         "transform": { position, rotation },

@@ -3,7 +3,7 @@ export default {
     "FireBeam": {
         actionId: "InstantDamage",
         effectId: "BeamEffect",
-        effectLayer: "Beam",
+        effectLayer: "lasers",
         stats: {
             damage: 1,
             attackRate: 0.05,

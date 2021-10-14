@@ -1,22 +1,19 @@
 
-export const LayerList = [
-    "Grid",
-    "TowerBase",
-    "EnemyBase",
-    "TowerSelection",
-    "Bullets",
-    "Beams",
-    "BuildmodeTiles",
-    "BuildmodeHighlight",
-    "EnemyHealthBar",
-    "TowerOptions",
-]
-
 // The list gets reversed so the top elements have highest zIndex value, thus being in front
-// Spits out {"layerAbc": 0, ...}
-const NamedLayers = LayerList.reverse().reduce((acc, item, index) => {
-    acc[item] = index
-    return acc
-}, {})
+export default [
+    "tower-options",
+    "enemy-health",
 
-export default NamedLayers
+    "buildmode-highlight",
+    "buildmode-tiles",
+
+    "lasers",
+    "projectiles",
+
+    "tower-selection",
+    "enemy-ground",
+    "tower-base",
+
+    "tilegrid-1",
+    "tilegrid-2",
+].reverse()

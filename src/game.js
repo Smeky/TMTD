@@ -55,8 +55,6 @@ class Game extends EventEmitter {
         this.stage.addChild(this.dragAndDrop)
         this.stage.addChild(this.debug)
         
-        this.world.addChild(this.sceneManager)  // Todo: scene & its modules shouldn't render anything. Use World it self
-
         window.addEventListener("resize", this.handleResize)
         document.addEventListener("visibilitychange", this.onVisibilityChange)
     }

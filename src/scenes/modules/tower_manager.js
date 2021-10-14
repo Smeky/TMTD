@@ -1,22 +1,16 @@
 import { IModule } from "game/scenes"
 import { Rect } from "game/graphics"
 import { TowerData } from "game/data"
-import LayerList from "game/graphics/layerList"
 import { Container, Sprite } from "pixi.js"
 import { Game } from "game/"
 
 export default class TowerManager extends IModule {
     setup() {
-        this.container = new Container()
-        Game.world.addChild(this.container, LayerList.TowerBase)
-
         Game.on("build_tower", this.onBuildTower)
         Game.on("remove_tower", this.onRemoveTower)
     }
 
     close() {
-        Game.world.removeChild(this.container)
-
         Game.removeListener("build_tower", this.onBuildTower)       
         Game.removeListener("remove_tower", this.onRemoveTower)
     }
@@ -72,7 +66,7 @@ export default class TowerManager extends IModule {
         const container = new Container()
         container.addChild(baseSprite)
 
-        Game.world.addChild(container, LayerList.TowerBase)
+        Game.world.addChild(container, "tower-base")
 
         return {
             "transform": { position },

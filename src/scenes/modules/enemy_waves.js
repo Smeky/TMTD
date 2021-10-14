@@ -1,7 +1,6 @@
 import { IModule } from "."
 import { Cooldown } from "game/core"
 import { EnemyData } from "game/data"
-import LayerList from "game/graphics/layerList"
 import { Sprite } from "pixi.js"
 import { Game } from "game/"
 
@@ -70,7 +69,7 @@ export default class EnemyWaves extends IModule {
         const components = this.setupEnemyComponents(enemyData, sprite)
         Game.world.ecs.createEntity(components, "Enemy")
         
-        Game.world.addChild(sprite, LayerList.EnemyBase)
+        Game.world.addChild(sprite, "enemy-ground")
     }
 
     setupEnemyComponents(enemyData, sprite) {
@@ -91,7 +90,7 @@ export default class EnemyWaves extends IModule {
                 onFinished: (entity) => entity.despawn(),
             },
             "health": {
-                container: Game.world.getLayer(LayerList.EnemyHealthBar),
+                container: Game.world.getLayer("enemy-health"),
                 onZeroHealth: (entity) => {
                     entity.despawn()
                     this.handleEnemyDeath(weight)

@@ -1,4 +1,5 @@
 import { Container } from "pixi.js"
+import LayerList from "./layerList"
 
 class Layer extends Container {
     constructor(level) {
@@ -8,11 +9,16 @@ class Layer extends Container {
 }
 
 export default class Layers extends Container {
-    constructor() {
-        super()
-    }
-
     addChild(object, level) {
+        if (typeof level === "string") {
+            const name = level
+            level = LayerList.indexOf(name)
+
+            if (level < 0) {
+                throw new Error(`Unknown layer name "${name}"`)
+            }
+        }
+
         const layer = this.ensureLayer(level)
         layer.addChild(object)
     }

@@ -4,7 +4,6 @@ import { Rect, Vec2 } from "game/graphics"
 import { Graphics, Sprite } from "pixi.js"
 import { IModule } from "."
 import { TowerData } from "game/data"
-import LayerList from "game/graphics/layerList"
 import { Game } from "game/"
 
 export default class BuildMode extends IModule {
@@ -23,8 +22,8 @@ export default class BuildMode extends IModule {
         this.buildTiles.mask = this.mask
         this.buildTiles.visible = false
 
-        Game.world.addChild(this.buildTiles, LayerList.BuildmodeTiles)
-        Game.world.addChild(this.mask, LayerList.BuildmodeTiles)
+        Game.world.addChild(this.buildTiles, "buildmode-tiles")
+        Game.world.addChild(this.mask, "buildmode-tiles")
 
         Game.on("tower_built", this.updateBuildTiles)
         Game.on("tower_selected", this.onTowerSelected)
@@ -69,7 +68,7 @@ export default class BuildMode extends IModule {
         this.highlight.pivot.x = width / 2
         this.highlight.pivot.y = height / 2
 
-        Game.world.addChild(this.highlight, LayerList.BuildmodeHighlight)
+        Game.world.addChild(this.highlight, "buildmode-highlight")
     }
 
     toggle() {
