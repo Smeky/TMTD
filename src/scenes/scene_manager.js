@@ -28,6 +28,14 @@ export default class SceneManager extends Container {
 
     createScene(sceneName, sceneData) {
         const modules = sceneData.modules.map(name => Modules[name])
+                                         .filter((module, index) => { 
+                                            if (!module) {
+                                                console.error(new Error(`Scene has nonexistent module "${sceneData.modules[index]}". Maybe check scene definition..`))
+                                                return false
+                                            }
+
+                                            return true
+                                          })
         const scene = new Scene()
         
         scene.name = sceneName

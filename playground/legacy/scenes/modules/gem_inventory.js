@@ -1,7 +1,7 @@
 import { Game } from "game/";
 import { Vec2 } from "game/graphics";
 import { ItemInventory } from "game/ui";
-import { IModule } from ".";
+import { IModule } from "../../../../src/scenes/modules";
 
 export default class GemInventoryModule extends IModule {
     setup() {

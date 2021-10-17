@@ -8,7 +8,6 @@ import TowerManager from "./tower_manager"
 import CurrencyDisplay from "./currency_display"
 import UserInputModule from "./user_input"
 import LevelSetupModule from "./level_setup"
-import GemInventoryModule from "./gem_inventory"
 import DevLevelSetupModules from "./devlevel_setup"
 
 export const Modules = {
@@ -20,14 +19,19 @@ export const Modules = {
     CurrencyDisplay,
     UserInputModule,
     LevelSetupModule,
-    GemInventoryModule,
     DevLevelSetupModules,
 }
 
 export function createModulesStore(scene, Modules = []) {
     return Modules.reduce((acc, Module) => {
-        const instance = new Module(scene)
-        acc[instance.constructor.name] = instance
+        try {
+            const instance = new Module(scene)
+            acc[instance.constructor.name] = instance
+        }
+        catch(error) {
+            console.error(`Failed to initialize scene module`)
+            console.error(error)
+        }
 
         return acc
     }, {})
