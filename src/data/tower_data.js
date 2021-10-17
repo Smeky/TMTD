@@ -6,17 +6,17 @@ export default {
             textureId: "TowerHead1",
             anchor: { x: 0.2, y: 0.5 }
         },
+        stats: {        // Todo: change stats somehow.. Actions should have CDs, not attackRate. (AR should modify CDs of attacks or something)
+            damage: 1,
+            attackRate: 0.05,
+            range: 150,
+        },
         actions: [
             {
                 temp: "FireBeam",
                 actionId: "InstantDamage",
                 effectId: "BeamEffect",
                 effectLayer: "lasers",
-                stats: {        // Todo: change stats somehow.. Actions should have CDs, not attackRate. (AR should modify CDs of attacks or something)
-                    damage: 1,
-                    attackRate: 0.05,
-                    range: 150,
-                }
             },
         ]
     },
@@ -26,6 +26,11 @@ export default {
             textureId: "TowerHead2",
             anchor: { x: 0.2, y: 0.5 }
         },
+        stats: {
+            damage: 18,
+            attackRate: 0.5,
+            range: 250,
+        },
         actions: [
             {
                 temp: "ShootPlasma",
@@ -33,11 +38,6 @@ export default {
                 actionProps: {
                     projectileId: "SimpleOne",
                 },
-                stats: {
-                    attackRate: 0.5,
-                    damage: 18,
-                    range: 250,
-                }
             }
         ]
     },

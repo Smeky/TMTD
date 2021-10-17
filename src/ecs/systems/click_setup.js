@@ -7,7 +7,7 @@ export default class ClickSetup extends ECSSystem {
         const { display } = entity.components
 
         display.interactive = true
-        display.on("click", () => { this.handleEntityClick(entity) })
+        display.on("click", () => { this.handleEntityClick(entity); console.log(entity) })
     }
 
     handleEntityClick(entity) {

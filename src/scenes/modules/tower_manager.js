@@ -75,7 +75,7 @@ export default class TowerManager extends IModule {
         return {
             "transform": { position },
             "display": { displayObject: container },
-            "stats": {},
+            "stats": { ...towerData.stats },
             "clickable": { onClick: (entity) => Game.emit("tower_clicked", entity.id) },
             "tower": { headSprite },
             "towerSkill": { 

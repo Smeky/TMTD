@@ -33,7 +33,7 @@ export default function createStatsComponent(stats, entity) {
 }
 
 /**
- * Mutates the component by adding (and defining when necessary) stats 
+ * Mutates the component defining (and subsenquentially adding) stats 
  * @param {Object} obj { statName: statValue }
  * @param {Object} component Stats component
  */
@@ -49,7 +49,7 @@ export function addStatsToComponent(obj, component) {
 }
 
 /**
- * Mutates the component by removing stats 
+ * Subtracts stats 
  * @param {Object} obj { statName: statValue }
  * @param {Object} component Stats component
  */

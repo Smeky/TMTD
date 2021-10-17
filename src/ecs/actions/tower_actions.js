@@ -66,7 +66,7 @@ function spawnProjectile({ projectileId }) {
             source
         })
 
-        Game.world.ecs.createEntity(components, "Bullet")
+        Game.world.ecs.createEntity(components, "Projectile")
     }
 }
 

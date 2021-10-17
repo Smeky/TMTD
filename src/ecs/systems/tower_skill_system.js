@@ -1,11 +1,9 @@
 import { ECSSystem } from "."
-import { Entity, filterEntitiesByTags, isEntityInRadius } from ".."
 import { Game } from "game/"
 import { getEntityAction } from "game/ecs/actions/tower_actions"
 import { TowerEffects } from "game/graphics/effects"
 import { TowerSkillData } from "game/data"
 import { addStatsToComponent, removeStatsFromComponent } from "../components/stats"
-import { Vec2 } from "game/graphics"
 
 export default class TowerSkillSystem extends ECSSystem {
     static Dependencies = ["towerSkill", "tower", "transform", "stats"]
@@ -14,7 +12,9 @@ export default class TowerSkillSystem extends ECSSystem {
         const { towerSkill, stats } = entity.components
         const skillData = TowerSkillData[towerSkill.skillId]
 
-        addStatsToComponent(skillData.stats, stats)
+        if (skillData.hasOwnProperty("stats")) {
+            addStatsToComponent(skillData.stats, stats)
+        }
 
         towerSkill.action = getEntityAction(skillData.actionId, skillData.actionProps)
         towerSkill.actionCd.total = stats.attackRate || Number.POSITIVE_INFINITY
