@@ -6,13 +6,13 @@ import { Rect } from "game/graphics"
 export const AssetList = [
     { name: "Tileset", url: "media/tileset.png" },
 
-    { name: "IconScorchingRay", url: "media/icons/items/Scorching_Ray_inventory_icon.png" },
-    { name: "IconFortify", url: "media/icons/items/Fortify_Support_inventory_icon.png" },
+    // { name: "IconScorchingRay", url: "media/icons/items/Scorching_Ray_inventory_icon.png" },
+    // { name: "IconFortify", url: "media/icons/items/Fortify_Support_inventory_icon.png" },
 
     { name: "TowerBase1", textureDef: [50, 50, 0x35352f] },
     { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
-    { name: "TowerHead1", textureDef: [35,  8, 0xffff00] }, 
-    { name: "TowerHead2", textureDef: [35,  8, 0x999999] }, 
+    { name: "TowerHead1", textureDef: [35,  8, 0xffff00] },
+    { name: "TowerHead2", textureDef: [35,  8, 0x999999] },
 
     { name: "EnemyMrPink", textureDef: [16, 16, 0xffc0cb] }, 
     { name: "EnemyMrBlonde", textureDef: [16, 16, 0xfaf0be] }, 
@@ -27,7 +27,7 @@ export const AssetList = [
     { name: "Bullet", textureDef: [4, 1.5,  0xffffff] }, 
 
     { name: "TowerOptionsButton", textureDef: [50, 50, 0xffffff] },
-    { name: "InventorySlotBg", textureDef: [56, 56, 0x404040] },
+    { name: "InventorySlotBg", textureDef: [56, 56, 0xaaaaaa] },
     { name: "InventorySlotHightlight", textureDef: [56, 56, 0xffffff] },
 
     { name: "InventoryBg", url: "media/ui/inventory_bg.png" },

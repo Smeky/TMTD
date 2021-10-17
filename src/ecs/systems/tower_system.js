@@ -27,10 +27,6 @@ export default class TowerSystem extends ECSSystem {
         if (tower.target) {
             const targetPos = tower.target.components.transform.position
             tower.headSprite.rotation = transform.position.angle(targetPos)
-    
-            // this.sprite.position.copyFrom(fromPos)
-            // this.sprite.height = fromPos.distance(targetPos)
-            // this.sprite.rotation = fromPos.angle(targetPos) - Math.PI / 2
         }
     }
 
