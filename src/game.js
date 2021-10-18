@@ -37,7 +37,6 @@ class Game extends EventEmitter {
         this.renderer = new Renderer()
         this.stage = new pixi.Container()
         this.ui = new UIRoot()
-        /** @member {DragAndDrop} */
         this.dragAndDrop = new DragAndDrop()
         
         this.storeManager = new StoreManager()
@@ -134,4 +133,5 @@ class Game extends EventEmitter {
 
 // Singleton, probably the only one we'll have ;)
 const _game = new Game()
+/** @module Game */
 export default _game
