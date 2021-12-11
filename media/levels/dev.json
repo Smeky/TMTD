@@ -2,7 +2,7 @@
     "meta": {
       "width": 17,
       "height": 14,
-      "paletteFile": "media/tileset.png"
+      "paletteAssetId": "Tileset"
     },
     "tiles": [
       {

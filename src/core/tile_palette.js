@@ -1,14 +1,14 @@
 import { Tile } from "game/core"
 import { Container, Graphics, Rectangle, Sprite, Texture } from "pixi.js"
+import { Game } from "game/"
 
 export default class TilePalette extends Container {
-    constructor(filename, opts = {visible: false}) {
+    constructor(textureId, opts = {visible: false}) {
         super()
 
         this.visible = opts.visible
         this.onSelected = null
-        this.filename = filename
-        this.atlas = new Texture.from(filename)
+        this.atlas = Game.assets[textureId]
         this.tiles = new Container()
 
         // Todo: replace nums with atlas.w/h when we have texture loading at start

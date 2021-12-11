@@ -7,8 +7,9 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "dev": "webpack --config config/webpack-dev.js",
-        "start": "webpack serve --config config/webpack-dev.js"
+        "dev": "webpack serve --config config/webpack.dev.js",
+        "build": "webpack --config config/webpack.prod.js",
+        "proxy": "http-server -p 9001 --cors"
     },
     "eslintConfig": {
         "env": {
@@ -31,12 +32,14 @@
         "css-loader": "^5.0.1",
         "file-loader": "^6.2.0",
         "html-webpack-plugin": "^4.5.1",
+        "http-server": "^14.0.0",
         "sass": "^1.32.4",
         "sass-loader": "^10.1.1",
         "style-loader": "^2.0.0",
         "url-loader": "^4.1.1",
         "webpack": "^5.15.0",
         "webpack-cli": "^4.4.0",
-        "webpack-dev-server": "^3.11.2"
+        "webpack-dev-server": "^3.11.2",
+        "webpack-merge": "^5.8.0"
     }
 }

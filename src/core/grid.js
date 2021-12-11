@@ -17,7 +17,7 @@ export default class Grid extends Container {
     }
 
     loadFromJson(json) {
-        const palette = new TilePalette(json.meta.paletteFile)
+        const palette = new TilePalette(json.meta.paletteAssetId)
         
         this.size = new Vec2(json.meta.width, json.meta.height)
 

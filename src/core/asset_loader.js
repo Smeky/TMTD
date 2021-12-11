@@ -9,6 +9,8 @@ export const AssetList = [
     // { name: "IconScorchingRay", url: "media/icons/items/Scorching_Ray_inventory_icon.png" },
     // { name: "IconFortify", url: "media/icons/items/Fortify_Support_inventory_icon.png" },
 
+    { name: "BuildModeMask", url: "media/build_mask.png" },
+
     { name: "TowerBase1", textureDef: [50, 50, 0x35352f] },
     { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
     { name: "TowerHead1", textureDef: [35,  8, 0xffff00] },
@@ -52,7 +54,7 @@ export default class AssetLoader {
         const loader = Loader.shared
 
         loader.add(assetFiles)
-        loader.onError.add(console.error)
+        loader.onError.add(console.error)   // Todo: Not working? Check how this behaves (missing file, incorrect url, etc.)
 
         return new Promise((resolve) => {
             loader.load((loader, resources) => {

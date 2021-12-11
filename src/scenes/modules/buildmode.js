@@ -13,7 +13,7 @@ export default class BuildMode extends IModule {
 
         this.inputProxy = Game.input.getProxy()
 
-        this.mask = new Sprite.from("media/build_mask.png") // Todo:texture: load from assets
+        this.mask = new Sprite.from(Game.assets["BuildModeMask"]) // Todo:texture: load from assets
         this.mask.scale.set(2, 2)
 
         // We're gonna need to play around a bit to find something that looks good :)

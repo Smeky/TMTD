@@ -4,15 +4,13 @@ const webpack = require("webpack")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
-    mode: "development",
-    devtool: "eval-source-map",
-    devServer: {
-        port: 9000
-    },
+    context: path.resolve(__dirname, "../src"),
+    entry: "./index.js",
+    target: "web",
     resolve: {
         alias: {
-            game: path.resolve("src"),
-            media: path.resolve("media")
+            game: path.resolve(__dirname, "../src"),
+            media: path.resolve(__dirname, "../media")
         }
     },
     module: {
