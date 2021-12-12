@@ -3,11 +3,11 @@ import { Renderer } from "pixi.js"
 export default class _Renderer extends Renderer {
     constructor() {
         const containerEl = document.getElementById("canvas_container")
-        const { width, height } = containerEl.getBoundingClientRect()
+        // const { width, height } = containerEl.getBoundingClientRect()
 
         super({ 
-            width: width, 
-            height: height,
+            width: 1024, // width, 
+            height: 768, // height,
             backgroundColor: 0x0e0f12,
             antialias: true,
         })
