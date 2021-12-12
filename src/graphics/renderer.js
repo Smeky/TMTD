@@ -1,4 +1,5 @@
 import { Renderer } from "pixi.js"
+import { Vec2 } from "."
 
 export default class _Renderer extends Renderer {
     constructor() {
@@ -20,4 +21,11 @@ export default class _Renderer extends Renderer {
 
     set height(v) { throw "Can't set height this way" }
     get height() { return this.view.height }
+
+    getWindowPosition() {
+        const canvas = document.getElementById("canvas_container").getElementsByTagName("canvas")[0]
+        const { x, y } = canvas.getBoundingClientRect()
+
+        return new Vec2(x, y)
+    }
 }
