@@ -150,7 +150,7 @@ export default class Camera extends Layers {
     }
 
     correctMousePos(pos) {
-        const offset = Game.renderer.getWindowPosition()        
+        const offset = Game.renderer.getWindowPosition()
         return new Vec2(this.toLocal(pos)).subtract(offset)
     }
 

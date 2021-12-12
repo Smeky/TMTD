@@ -80,15 +80,13 @@ export default class BuildMode extends IModule {
         if (this.enabled) {
             this.updateBuildTiles()
 
-            // Mouse pos
-            const screenPos = Game.interaction.mouse.global
-            const worldPos = Game.world.correctMousePos(screenPos)
+            const mousePos = Game.world.getMousePos()
 
-            this.mask.x = worldPos.x - (this.mask.width) / 2
-            this.mask.y = worldPos.y - (this.mask.height) / 2
+            this.mask.x = mousePos.x - (this.mask.width) / 2
+            this.mask.y = mousePos.y - (this.mask.height) / 2
 
-            this.highlight.x = worldPos.x
-            this.highlight.y = worldPos.y
+            this.highlight.x = mousePos.x
+            this.highlight.y = mousePos.y
         }
         else {
             this.selectedTower = null
