@@ -10,6 +10,7 @@ export default class Camera extends Layers {
      * @param {boolean} [options.zoomEnabled] [optional] enable wheel events for zoom in and out
      * @param {boolean} [options.dragEnabled] [optional] enable camera movement by pointer dragging
      * @param {boolean} [options.grabDebug] [optional] whether game debug should be affected by camera
+     * @param {boolean} [options.disableInteraction] [optional] Disables most camera functionality, resulting in static view
      */
     constructor(options = {}) {
         super()
@@ -19,6 +20,7 @@ export default class Camera extends Layers {
             zoomEnabled: false,
             dragEnabled: false,
             grabDebug: false,
+            disableInteraction: false,
             ...options,
         }
 
@@ -35,19 +37,21 @@ export default class Camera extends Layers {
         this.isDragging = false
         this.interactive = true
 
-        if (this.options.zoomEnabled) {
-            window.addEventListener("wheel", this.onWheelEvent)
-        }
-
-        if (this.options.dragEnabled) {
-            this.background.on("pointerdown", this.onDragStart)
-            this.background.on("pointerup", this.onDragEnd)
-            this.background.on("pointerupoutside", this.onDragEnd)
-            this.background.on("pointermove", this.onDragMove)
-            this.on("pointerdown", this.onDragStart)
-            this.on("pointerup", this.onDragEnd)
-            this.on("pointerupoutside", this.onDragEnd)
-            this.on("pointermove", this.onDragMove)
+        if (!this.options.disableInteraction) {
+            if (this.options.zoomEnabled) {
+                window.addEventListener("wheel", this.onWheelEvent)
+            }
+    
+            if (this.options.dragEnabled) {
+                this.background.on("pointerdown", this.onDragStart)
+                this.background.on("pointerup", this.onDragEnd)
+                this.background.on("pointerupoutside", this.onDragEnd)
+                this.background.on("pointermove", this.onDragMove)
+                this.on("pointerdown", this.onDragStart)
+                this.on("pointerup", this.onDragEnd)
+                this.on("pointerupoutside", this.onDragEnd)
+                this.on("pointermove", this.onDragMove)
+            }
         }
 
         if (this.options.grabDebug) {

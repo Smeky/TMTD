@@ -47,6 +47,7 @@ class Game extends EventEmitter {
             size: new Vec2(this.renderer.width, this.renderer.height),
             zoomEnabled: true,
             dragEnabled: true,
+            disableInteraction: true,
         })
 
         this.stage.addChild(this.world)
