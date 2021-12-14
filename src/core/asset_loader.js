@@ -34,7 +34,9 @@ export const AssetList = [
 
     { name: "InventoryBg", url: "media/ui/inventory_bg.png" },
     { name: "InventorySlot", url: "media/ui/inventory_slot.png" },
-]
+
+    { name: "UIFunctionsBarButtonBg", textureDef: [42, 42, 0x35352f] }
+] 
 
 export default class AssetLoader {
     constructor() {

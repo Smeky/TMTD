@@ -1,5 +1,3 @@
-import utils from "game/utils"
-import { Rect } from "game/graphics"
 import { ButtonBase } from "game/ui"
 import { Sprite } from "pixi.js"
 import { AdvancedBloomFilter, BevelFilter } from "pixi-filters"

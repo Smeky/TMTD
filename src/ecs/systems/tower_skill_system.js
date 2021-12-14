@@ -50,7 +50,6 @@ export default class TowerSkillSystem extends ECSSystem {
             this.stopTowerEffect(entity)
         }
 
-        // this.updateTowerHead(delta, entity)
         this.updateTowerAction(delta, entity)
         this.updateTowerEffect(delta, entity)
     }

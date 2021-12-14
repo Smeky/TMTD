@@ -12,8 +12,8 @@ export default class TowerBar extends IModule {
         
         let offset = 0
         for (const [id, tower] of Object.entries(TowerData)) {
-            const display = createTowerDisplay(tower, Math.PI * 0.9)
-            const button = new Button(display)
+            const icon = createTowerDisplay(tower, Math.PI * 0.9)
+            const button = new Button({ icon })
             
             button.x = (offset += 60)
             button.on("click", () => this.selectTower(id))

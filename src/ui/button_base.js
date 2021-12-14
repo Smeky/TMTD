@@ -1,52 +1,47 @@
 import { Container } from "pixi.js"
 
 export default class ButtonBase extends Container {
-    constructor() {
-        super()
-
-        this.isPressed = false
-        this.isHover = false
-        this.interactive = true
-
-        this.on("pointerdown", this.handleMouseDown)
-        this.on("pointerup", this.handleMouseUp)
-        this.on("pointerupoutside", this.handleMouseUpOutside)
-        this.on("pointerover", this.handleMouseOver)
-        this.on("pointerout", this.handleMouseOut)
-    }
-
-    handleMouseDown = (event) => {
-        event.stopPropagation()
-        this.isPressed = true
-        this.onMouseDown()
+    States = {
+        Resting: "rest",
+        Active: "active",
+        MouseOver: "mouseover",
+        Disabled: "disabled",
     }
     
-    handleMouseUp = (event) => {
-        if (this.isPressed) {
-            event.stopPropagation()
+    constructor(options) {
+        super()
+        
+        this.interactive = true
+        this.state = this.States.Resting
+        this.options = {
+            ...options
         }
 
-        this.isPressed = false
-        this.onMouseUp()
+        this.on("pointerdown", (event) => {
+            event.stopPropagation()
+            this.setState(this.States.Active)
+        })
+        this.on("pointerover", () => {
+            if (this.state !== this.States.Active) {
+                this.setState(this.States.MouseOver)
+            }
+        })
+        this.on("pointerout", () => {
+            if (this.state !== this.States.Active) {
+                this.setState(this.States.Resting)
+            }
+        })
+        this.on("pointerup", () => this.setState(this.States.MouseOver))
+        this.on("pointerupoutside", () => this.setState(this.States.Resting))
     }
 
-    handleMouseUpOutside = () => {
-        this.isPressed = false
-        this.onMouseUp()
-    }
-    
-    handleMouseOver = () => {
-        this.isHover = true
-        this.onMouseOver()
-    }
-    
-    handleMouseOut = () => {
-        this.isHover = false
-        this.onMouseOut()
+    setState(state) {
+        if (this.state !== state) {
+            const prevState = this.state
+            this.state = state
+            this.onStateChange(prevState, this.state)
+        }
     }
 
-    onMouseDown() {}
-    onMouseUp() {}
-    onMouseOver() {}
-    onMouseOut() {}
+    onStateChange(prevState, newState) {}
 }
