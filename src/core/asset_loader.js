@@ -9,8 +9,8 @@ function resolveUrlPath(path) {
 
 // How should we properly do this?
 export const AssetList = [
-    { name: "Tileset", url: resolveUrlPath("media/tileset.png") },
-    { name: "BuildModeMask", url: resolveUrlPath("media/build_mask.png") },
+    { name: "Tileset", url: "media/tileset.png" },
+    { name: "BuildModeMask", url: "media/build_mask.png" },
 
     { name: "TowerBase1", textureDef: [50, 50, 0x35352f] },
     { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
@@ -33,8 +33,8 @@ export const AssetList = [
     { name: "InventorySlotBg", textureDef: [56, 56, 0xaaaaaa] },
     { name: "InventorySlotHightlight", textureDef: [56, 56, 0xffffff] },
 
-    { name: "InventoryBg", url: resolveUrlPath("media/ui/inventory_bg.png") },
-    { name: "InventorySlot", url: resolveUrlPath("media/ui/inventory_slot.png") },
+    { name: "InventoryBg", url: "media/ui/inventory_bg.png" },
+    { name: "InventorySlot", url: "media/ui/inventory_slot.png" },
 
     { name: "UIFunctionsBarButtonBg", textureDef: [42, 42, 0x35352f] }
 ] 
@@ -45,7 +45,14 @@ export default class AssetLoader {
     }
 
     async loadAssets(assetList) {
-        const [assetFiles, assetTextures] = partition(assetList, asset => !asset.hasOwnProperty("textureDef"))
+        const list = assetList.map((entry) => {
+            if (entry.hasOwnProperty("url")) {
+                entry.url = resolveUrlPath(entry.url)
+            }
+            return entry
+        })
+        
+        const [assetFiles, assetTextures] = partition(list, asset => !asset.hasOwnProperty("textureDef"))
 
         const files = await this.loadFiles(assetFiles)
         const placeholders = await this.createPlaceholderTextures(assetTextures)
