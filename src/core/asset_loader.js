@@ -2,14 +2,15 @@ import { Loader } from "pixi.js"
 import { partition, createRectTexture } from "game/utils"
 import { Rect } from "game/graphics"
 
+function resolveUrlPath(path) {
+    const production = process.env.NODE_ENV === "production"
+    return production ? `http://localhost:9001/${path}` : path 
+}
+
 // How should we properly do this?
 export const AssetList = [
-    { name: "Tileset", url: "media/tileset.png" },
-
-    // { name: "IconScorchingRay", url: "media/icons/items/Scorching_Ray_inventory_icon.png" },
-    // { name: "IconFortify", url: "media/icons/items/Fortify_Support_inventory_icon.png" },
-
-    { name: "BuildModeMask", url: "media/build_mask.png" },
+    { name: "Tileset", url: resolveUrlPath("media/tileset.png") },
+    { name: "BuildModeMask", url: resolveUrlPath("media/build_mask.png") },
 
     { name: "TowerBase1", textureDef: [50, 50, 0x35352f] },
     { name: "TowerBase2", textureDef: [50, 50, 0x955550] },
@@ -32,8 +33,8 @@ export const AssetList = [
     { name: "InventorySlotBg", textureDef: [56, 56, 0xaaaaaa] },
     { name: "InventorySlotHightlight", textureDef: [56, 56, 0xffffff] },
 
-    { name: "InventoryBg", url: "media/ui/inventory_bg.png" },
-    { name: "InventorySlot", url: "media/ui/inventory_slot.png" },
+    { name: "InventoryBg", url: resolveUrlPath("media/ui/inventory_bg.png") },
+    { name: "InventorySlot", url: resolveUrlPath("media/ui/inventory_slot.png") },
 
     { name: "UIFunctionsBarButtonBg", textureDef: [42, 42, 0x35352f] }
 ] 
